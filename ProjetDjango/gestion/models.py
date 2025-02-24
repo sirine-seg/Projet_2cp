@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from phonenumber_field.modelfields import PhoneNumberField
 
+
 # Ceci doit etre instalé:
 #python -m pip install Pillow
 #pip install django-phonenumber-field

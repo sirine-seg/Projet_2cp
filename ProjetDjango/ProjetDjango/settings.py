@@ -38,7 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gestion',
+    'auth_app',
     'phonenumber_field',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -78,9 +83,9 @@ WSGI_APPLICATION = 'ProjetDjango.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mybdd2',
+        'NAME': 'sirineDB', # Nom de la base de données
         'USER': 'postgres',
-        'PASSWORD': '12345',
+        'PASSWORD': '31454602',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -134,3 +139,20 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # URL pour accéder aux fichiers médias
 MEDIA_URL = '/media/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'email',  # Use email as the unique identifier
+    'TOKEN_OBTAIN_SERIALIZER': 'auth_app.serializers.CustomTokenObtainPairSerializer',
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+        'rest_framework_simplejwt.tokens.RefreshToken',
+    ),
+    'BLACKLIST_AFTER_ROTATION': True,
+}
