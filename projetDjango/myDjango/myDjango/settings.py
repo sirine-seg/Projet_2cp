@@ -39,7 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'gestion',
+    'auth_app',
+    'user',
+    'django_filters',
     'phonenumber_field',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    
 ]
 
 MIDDLEWARE = [
@@ -139,4 +146,15 @@ MEDIA_URL = '/media/'
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+
+
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'email',  # Use email as the unique identifier
+    'TOKEN_OBTAIN_SERIALIZER': 'auth_app.serializers.CustomTokenObtainPairSerializer',
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+        'rest_framework_simplejwt.tokens.RefreshToken',
+    ),
+    'BLACKLIST_AFTER_ROTATION': True,
 }

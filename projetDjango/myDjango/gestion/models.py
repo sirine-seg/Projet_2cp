@@ -42,7 +42,10 @@ class User(AbstractUser):
         (ADMIN, 'Administrateur'),
         (TECHNICIEN, 'Technicien'),
         (PERSONNEL, 'Personnel'),
+        
     ]
+
+
 
     # Champs supplémentaires
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, verbose_name='Rôle', default='Personnel')
@@ -61,6 +64,8 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+
+   
     objects = UserManager()
 
     def __str__(self):

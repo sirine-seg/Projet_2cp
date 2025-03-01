@@ -5,3 +5,4 @@ class EquipementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipement
         fields = '__all__' 
+        
