@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gestion',
     'auth_app',
+    'intervention',
     'phonenumber_field',
     'rest_framework',
     'rest_framework.authtoken',
@@ -83,9 +84,9 @@ WSGI_APPLICATION = 'ProjetDjango.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sirineDB', # Nom de la base de données
+        'NAME': 'postgres', # Nom de la base de données
         'USER': 'postgres',
-        'PASSWORD': '31454602',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '5432',
     }

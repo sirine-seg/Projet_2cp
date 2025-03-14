@@ -1,4 +1,5 @@
 from rest_framework.permissions import BasePermission
+from gestion.models import User
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
