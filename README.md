@@ -29,8 +29,8 @@ docker-compose exec web python manage.py createsuperuser
 
 ### Test Accounts
 
-- Admin: admin@test.com / admin123
-- Technician: tech@test.com / tech123
+- Admin: nm_djabri@esi.dz / admin123
+- Technician: nm_bekoul@esi.dz / tech123
 - Personnel: personnel@test.com / personnel123
 
 ### Development Workflow
