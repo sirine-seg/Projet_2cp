@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from rest_framework import generics, permissions
-from .models import User
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from .models import User, Technicien, Personnel
 from .serializers import UserSerializer, TechnicienCreationSerializer, PersonnelCreationSerializer
 from accounts_management.permissions import IsAdminUser
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 @login_required
 def login_success(request):
@@ -13,19 +16,34 @@ def login_success(request):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    #permission_classes = [permissions.IsAuthenticated] not for now
+    permission_classes = [permissions.IsAuthenticated , IsAdminUser]     
+    filter_backends = [DjangoFilterBackend , SearchFilter]
+    filterset_fields = ['role'] 
+    search_fields = ['email' , 'first_name' , 'last_name']
 
-class TechniciansListView (generics.ListAPIView):
-    queryset = User.objects.filter(role=User.TECHNICIEN)
-    serializer_class = UserSerializer
-    #permission_classes = [permissions.IsAuthenticated , permissions.IsTechnician] not for now
 
-class TechnicienCreateView(generics.CreateAPIView):
+# Views for admins to create technicians
+class TechnicianCreationView(generics.CreateAPIView):
+    """Allows admins to pre-register technicians"""
     queryset = User.objects.all()
     serializer_class = TechnicienCreationSerializer
-    #permission_classes = [permissions.IsAuthenticated, IsAdminUser] not for now
-
-class PersonnelCreateView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = PersonnelCreationSerializer
-    #permission_classes = [permissions.IsAuthenticated, IsAdminUser] not for now 
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    
+    def perform_create(self, serializer):
+        # Create technician with email, name, etc.
+        user = serializer.save(role=User.TECHNICIEN)
+        
+        # Create technician profile
+        Technicien.objects.create(
+            user=user,
+            disponibilite=serializer.validated_data.get('disponibilite', True),
+            poste=serializer.validated_data.get('poste', '')
+        )
+        
+        # For technicians without Google authentication
+        if serializer.validated_data.get('use_password', False):
+            user.set_password(serializer.validated_data.get('password'))
+        else:
+            # For Google auth technicians - set unusable password
+            user.set_unusable_password()
+        user.save()

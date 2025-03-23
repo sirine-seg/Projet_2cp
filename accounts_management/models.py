@@ -8,6 +8,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 #pip install phonenumbers
 
 
+
+    
+
 """ Manager personnalisé pour le modèle User sans champ username """
 class UserManager(BaseUserManager):
 
@@ -46,13 +49,18 @@ class User(AbstractUser):
 
     # Champs supplémentaires
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, verbose_name='Rôle', default='Personnel')
-    numero_tel = PhoneNumberField(verbose_name='Numéro de téléphone', unique=True, null=True)
+    numero_tel = PhoneNumberField(
+        verbose_name='Numéro de téléphone', 
+        unique=True, 
+        null=True,
+        help_text='Entrez le numéro au format international (ex: +213XXXXXXXXX)'
+    )
     
     # Personnalisation des champs existants d'AbstractUser
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50, verbose_name='Prénom') 
     last_name = models.CharField(max_length=50, verbose_name='Nom')
-    password = models.CharField(max_length=100, verbose_name='Mot de passe')
+    password = models.CharField(max_length=100, verbose_name='Mot de passe' , null=True , blank=True)
 
     photo = models.ImageField(upload_to='profile_pics/', verbose_name='Photo de profil', null=True, blank=True)
 
@@ -79,7 +87,7 @@ class Technicien(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     disponibilite = models.BooleanField(default=True)
-    poste = models.CharField(max_length=100)
+    poste = models.CharField(max_length=100 , null = True , blank = True)
 
     def __str__(self):
         return f"Technicien: {self.user.email}"

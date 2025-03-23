@@ -1,24 +1,11 @@
 from django.urls import path
-# Change this in urls.py
-from .views import (
-    InterventionRecordListView,  # NOT MaintenanceRecordListView
-    InterventionRecordDetailView, 
-    InterventionRecordCreateView,
-    InterventionRecordUpdateView,
-    InterventionRecordDeleteView,
-    InterventionRecordsByEquipmentView,
-    InterventionRecordsByInterventionView
-)
+from . import views  
 
 urlpatterns = [
-    # Update URL patterns to use the correct view names
-    path('records/', InterventionRecordListView.as_view(), name='intervention_record_list'),
-    path('records/<int:pk>/', InterventionRecordDetailView.as_view(), name='intervention_record_detail'),
-    path('records/create/', InterventionRecordCreateView.as_view(), name='intervention_record_create'),
-    path('records/update/<int:pk>/', InterventionRecordUpdateView.as_view(), name='intervention_record_update'),
-    path('records/delete/<int:pk>/', InterventionRecordDeleteView.as_view(), name='intervention_record_delete'),
-    path('equipment/<int:equipment_id>/records/', InterventionRecordsByEquipmentView.as_view(), 
-         name='equipment_intervention_records'),
-    path('intervention/<int:intervention_id>/records/', InterventionRecordsByInterventionView.as_view(), 
-         name='intervention_records'),
+    path('list/', views.InterventionListAPIView.as_view(), name='intervention_list'),
+    path('create/', views.InterventionCreateAPIView.as_view(), name='intervention_create'),
+    path('update/<int:pk>/', views.InterventionUpdateAPIView.as_view(), name='intervention_update'),
+    path('delete/<int:pk>/', views.InterventionDeleteAPIView.as_view(), name='intervention_delete'),
+    path('interventions/technician/', views.TechnicianInterventionsListAPIView.as_view(), name='technician-interventions'),
+    path('technician/update/<int:pk>/', views.TechnicianInterventionUpdateAPIView.as_view(), name='technician-intervention-update'),
 ]

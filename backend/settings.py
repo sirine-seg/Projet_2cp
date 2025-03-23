@@ -9,23 +9,15 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0s%4%16%1mps004n$hf!h^@i(2pm2%&xyyhjqwf673dl!wsr!b'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+# Retrieve from environment variables
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-0s%4%16%1mps004n$hf!h^@i(2pm2%&xyyhjqwf673dl!wsr!b')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split() or []
 
 
 # Application definition
@@ -93,13 +85,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-  'default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'amine', #change this to your database name
-        'USER': 'postgres',
-        'PASSWORD': '31454602',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME', 'amine'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', '31454602'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
@@ -148,6 +140,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts_management.User' #have to be changed 
 
+
+REST_FRAMEWORK = {
+   'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.TokenAuthentication',
+         'rest_framework.authentication.SessionAuthentication',
+            'rest_framework.authentication.BasicAuthentication',    
+
+   ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
@@ -172,6 +177,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
+SOCIALACCOUNT_ADAPTER = 'accounts_management.adapters.ESIDZSocialAccountAdapter'
+
 SOCIALACCOUNT_LOGIN_ON_GET= False # avoid continue button
 LOGIN_REDIRECT_URL = 'login_success'
 LOGIN_URL = 'account_login'
@@ -186,4 +193,7 @@ ACCOUNT_USERNAME_REQUIRED = False ;
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None ; 
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True   
 SOCIALACCOUNT_LOGIN_ON_GET = True 
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_STORE_TOKENS = True 
 #SOCIALACCOUNT_ONLY = True  if we want to allow only social login
+
