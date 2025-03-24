@@ -6,6 +6,6 @@ urlpatterns = [
     path('create/', views.InterventionCreateAPIView.as_view(), name='intervention_create'),
     path('update/<int:pk>/', views.InterventionUpdateAPIView.as_view(), name='intervention_update'),
     path('delete/<int:pk>/', views.InterventionDeleteAPIView.as_view(), name='intervention_delete'),
-    path('interventions/technician/', views.TechnicianInterventionsListAPIView.as_view(), name='technician-interventions'),
-    path('technician/update/<int:pk>/', views.TechnicianInterventionUpdateAPIView.as_view(), name='technician-intervention-update'),
+    path('listInterventionAssigneTechnician/', views.TechnicianInterventionsListAPIView.as_view(), name='technician-interventions'),
+    path('InterventionAssigneUpdateTechnician/<int:pk>/', views.TechnicianInterventionUpdateAPIView.as_view(), name='technician-intervention-update'),
 ]
