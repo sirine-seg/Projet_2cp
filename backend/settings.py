@@ -14,14 +14,23 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Retrieve from environment variables
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-0s%4%16%1mps004n$hf!h^@i(2pm2%&xyyhjqwf673dl!wsr!b')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split() or []
+# Hardcoded settings for local development
+SECRET_KEY = 'o51#8oksqfs(*zbawv0pi=k-9)#0c_3#+_sb*258x-2!6rb_wi'
+DEBUG = True    
 
+# Database settings for local development
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'hakim',
+        'USER': 'postgres',
+        'PASSWORD': '31454602',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -33,7 +42,7 @@ INSTALLED_APPS = [
     'django_filters',
     'intervention_management',
     'accounts_management',
-    'equipements_management' , 
+    'equipements_management',
     'phonenumber_field',
     'allauth',
     'allauth.account',
@@ -43,11 +52,10 @@ INSTALLED_APPS = [
 ]
 
 SPAGHETTI_SAUCE = {
-    'apps': ['intervention_management', 'equipements_management' , 'accounts_management'],
+    'apps': ['intervention_management', 'equipements_management', 'accounts_management'],
     'show_fields': False,
     'exclude': {'auth': ['user']}
 }
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,7 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware' , 
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -80,25 +88,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'amine'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', '31454602'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
-}
-
-
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -114,40 +104,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = 'static/'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-AUTH_USER_MODEL = 'accounts_management.User' #have to be changed 
-
+AUTH_USER_MODEL = 'accounts_management.User'
 
 REST_FRAMEWORK = {
-   'DEFAULT_AUTHENTICATION_CLASSES': (
-       'rest_framework.authentication.TokenAuthentication',
-         'rest_framework.authentication.SessionAuthentication',
-            'rest_framework.authentication.BasicAuthentication',    
-
-   ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
@@ -169,31 +145,24 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-SITE_ID = 1 # lazem    
+SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-
 SOCIALACCOUNT_ADAPTER = 'accounts_management.adapters.ESIDZSocialAccountAdapter'
-
-SOCIALACCOUNT_LOGIN_ON_GET= False # avoid continue button
+SOCIALACCOUNT_LOGIN_ON_GET = False
 LOGIN_REDIRECT_URL = 'login_success'
 LOGIN_URL = 'account_login'
-SOCIALACCOUNT_AUTO_SIGNUP = True    # keep it True to create new user if not exist
-
-#ACCOUNT_LOGIN_METHODS = {'email'} incorrect 
+SOCIALACCOUNT_AUTO_SIGNUP = True
 ACCOUNT_LOGIN_METHODS = {'email'}
-#ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none' 
-ACCOUNT_EMAIL_REQUIRED = True 
-ACCOUNT_USERNAME_REQUIRED = False ; 
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None ; 
-SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True   
-SOCIALACCOUNT_LOGIN_ON_GET = True 
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
-SOCIALACCOUNT_STORE_TOKENS = True 
-#SOCIALACCOUNT_ONLY = True  if we want to allow only social login
-
+SOCIALACCOUNT_STORE_TOKENS = True

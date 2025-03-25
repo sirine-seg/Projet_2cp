@@ -9,4 +9,6 @@ class EquipementFilter(django_filters.FilterSet):
             'etat': ['exact'],
             'localisation': ['exact'],
         }
-        
+
+
+

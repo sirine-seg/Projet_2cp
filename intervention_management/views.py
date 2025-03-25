@@ -125,7 +125,7 @@ class InterventionDeleteAPIView(DestroyAPIView):
 
 class TechnicianInterventionUpdateAPIView(UpdateAPIView):
     serializer_class = InterventionSerializer
-    permission_classes = [IsAuth, IsTechnician]
+    #permission_classes = [IsAuth, IsTechnician]
     
     def get_queryset(self):
         """Only allow technicians to update interventions assigned to them"""
