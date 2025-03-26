@@ -8,7 +8,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 
 # Add this before your Equipement model
-class EtatEquipement(models.Model):
+class EtatEquipement(models.Model): 
     """Model to store possible equipment states"""
     nom = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -27,6 +27,77 @@ class Equipement(models.Model):
     #     ('En maintenance', 'En maintenance'),
     #     ('En panne', 'En panne'),
     # ]
+
+    CATEGORIE_CHOICES  = [
+    ("IT", "Équipement Informatique"),
+    ("ELEC", "Équipement Électrique"),
+    ("MECA", "Équipement Mécanique"),
+    ("MED", "Équipement Médical"),
+    ("LABO", "Équipement de Laboratoire"),
+    ("INDUS", "Équipement Industriel"),
+    ("SECUR", "Équipement de Sécurité"),
+    ("COMM", "Équipement de Communication"),
+    ("OUTILS", "Outils & Instruments"),
+    ("AUTRE", "Autre"),
+    ]
+
+    TYPE_CHOICES  = [
+    ("ORDI_PORT", "Ordinateur Portable"),
+    ("ORDI_BUR", "Ordinateur de Bureau"),
+    ("IMPRIMANTE", "Imprimante"),
+    ("SERVEUR", "Serveur"),
+    ("SWITCH", "Commutateur Réseau"),
+    ("ROUTEUR", "Routeur"),
+    ("ONDULEUR", "Onduleur (UPS)"),
+
+    # Équipement Électrique
+    ("GENERATEUR", "Générateur"),
+    ("TRANSFO", "Transformateur"),
+    ("DISJONCTEUR", "Disjoncteur"),
+    ("BATTERIE", "Batterie"),
+
+    # Équipement Mécanique
+    ("POMPE", "Pompe"),
+    ("COMPRESSEUR", "Compresseur"),
+    ("MOTEUR", "Moteur Électrique"),
+    ("VANNE", "Vanne"),
+
+    # Équipement Médical
+    ("RADIOLOGIE", "Machine de Radiologie"),
+    ("IRM", "Scanner IRM"),
+    ("DEFIBRILLATEUR", "Défibrillateur"),
+
+    # Équipement de Laboratoire
+    ("MICROSCOPE", "Microscope"),
+    ("SPECTROMETRE", "Spectromètre"),
+    ("CNC", "Machine CNC"),
+
+    # Équipement Industriel
+    ("CHARIOT", "Chariot Élévateur"),
+    ("CONVOYEUR", "Bande Transporteuse"),
+    ("SOUDURE", "Poste à Souder"),
+
+    # Équipement de Sécurité
+    ("EXTINCTEUR", "Extincteur"),
+    ("ALARME", "Système d'Alarme"),
+    ("EPI", "Équipement de Protection Individuelle"),
+
+    # Équipement de Communication
+    ("RADIO", "Émetteur Radio"),
+    ("INTERPHONE", "Système Interphone"),
+    ("CAMERA", "Caméra de Surveillance (CCTV)"),
+
+    # Outils & Instruments
+    ("MULTIMETRE", "Multimètre"),
+    ("OSCILLO", "Oscilloscope"),
+    ("PERCEUSE", "Perceuse Électrique"),
+
+    # Autres
+    ("AUTRE", "Autre"),
+    ]
+
+
+
 
 
     LOCALISATION_CHOICES = [
@@ -67,23 +138,10 @@ class Equipement(models.Model):
 
     id_equipement = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)
-    categorie = models.CharField(max_length=100 , null  = True  , blank = True) 
-    type = models.CharField(max_length=100  , null = True , blank=True)
-    #localisation = models.CharField(max_length=100 , null=True  , blank=True)
+    categorie = models.CharField(max_length=100 , null  = True  , blank = True , choices=CATEGORIE_CHOICES) 
+    typee = models.CharField(max_length=100  , null = True , blank=True ,  choices=TYPE_CHOICES) 
     date_ajout = models.DateTimeField(auto_now_add=True)
-    etat = models.ForeignKey(EtatEquipement, on_delete=models.PROTECT)
+    etat = models.ForeignKey(EtatEquipement, on_delete=models.PROTECT , blank=True , null=True) 
     manuel = models.BinaryField(null=True, blank=True)
     
-    def get_maintenance_history(self):
-        """Return complete maintenance history for this equipment"""
-        from intervention_management.models import InterventionRecord, Intervention
-        
-        # Get all interventions for this equipment
-        interventions = Intervention.objects.filter(id_equipement=self)
-        
-        # Get all records for these interventions
-        intervention_ids = interventions.values_list('id', flat=True)
-        return InterventionRecord.objects.filter(intervention__id__in=intervention_ids).order_by('-date_action')
     
-    def __str__(self):
-        return f"{self.nom}: {self.id_equipement}"

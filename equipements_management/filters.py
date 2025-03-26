@@ -12,3 +12,4 @@ class EquipementFilter(django_filters.FilterSet):
 
 
 
+

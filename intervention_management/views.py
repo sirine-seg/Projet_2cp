@@ -96,7 +96,7 @@ class InterventionUpdateAPIView(UpdateAPIView):
         return super().update(request, *args, **kwargs)
     
     def perform_update(self, serializer):
-        old_status = self.get_object().statut
+        old_status =  self.get_object().statut
         
         # Get original data before saving
         original_data = self.get_object().__dict__.copy()
@@ -119,13 +119,13 @@ class InterventionUpdateAPIView(UpdateAPIView):
 class InterventionDeleteAPIView(DestroyAPIView):
     queryset = Intervention.objects.all()
     serializer_class = InterventionSerializer
-    #permission_classes = [IsAuth, IsAdminUser]
+    permission_classes = [IsAuth, IsAdminUser]
 
 
 
 class TechnicianInterventionUpdateAPIView(UpdateAPIView):
     serializer_class = InterventionSerializer
-    #permission_classes = [IsAuth, IsTechnician]
+    permission_classes = [IsAuth, IsTechnician]
     
     def get_queryset(self):
         """Only allow technicians to update interventions assigned to them"""
@@ -155,3 +155,22 @@ class TechnicianInterventionUpdateAPIView(UpdateAPIView):
 
         return intervention
 
+
+class EquipementLogs (ListAPIView) : 
+    queryset = Intervention.objects.all () 
+    serializer_class = InterventionSerializer
+    def get_queryset(self):
+        equipement_id = self.request.query_params.get ("equipement_id") 
+        if not equipement_id : 
+            return Intervention.objects.none () 
+        return Intervention.objects.filter (id_equipement = equipement_id , statut = 1)
+    
+    def list (self , request , *args  , **kwargs) : 
+        queryset = self.get_queryset ()
+
+        serializer  = self.get_serializer (queryset , many = True) 
+        return Response (serializer.data) 
+    
+
+
+    

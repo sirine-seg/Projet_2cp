@@ -17,9 +17,10 @@ class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated , IsAdminUser]     
-    filter_backends = [DjangoFilterBackend , SearchFilter]
-    filterset_fields = ['role'] 
+    # filter_backends = [DjangoFilterBackend , SearchFilter]
+    # filterset_fields = ['role'] 
     search_fields = ['email' , 'first_name' , 'last_name']
+
 
 
 # Views for admins to create technicians
@@ -47,3 +48,4 @@ class TechnicianCreationView(generics.CreateAPIView):
             # For Google auth technicians - set unusable password
             user.set_unusable_password()
         user.save()
+
