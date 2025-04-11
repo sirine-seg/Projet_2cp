@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+/*
+.custom-shape-divider-bottom-1742133021 {
+  background-color: #202020;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1742133021 svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 166px;
+}
+
+.custom-shape-divider-bottom-1742133021 .shape-fill {
+  fill: #FFFFFF;
+}*/
+.custom-shape-divider-bottom-1742461672 {
+  background-color: #20599E;
+  
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.custom-shape-divider-bottom-1742461672 svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 146px;
+}
+
+.custom-shape-divider-bottom-1742461672 .shape-fill {
+  fill: #F4F4F5;
+}
+
+.custom-shape-divider-bottom-1742465065 {
+  background-color: #F4F4F5;
+  
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.custom-shape-divider-bottom-1742465065 svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 253px;
+}
+
+.custom-shape-divider-bottom-1742465065 .shape-fill {
+  fill: #FFFFFF;
+}
