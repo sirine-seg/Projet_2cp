@@ -6,6 +6,8 @@ import Login from "./pages/Login";
 
 import Home from "./pages/Home";
 import Register from "./pages/Register";
+import Registermobile from "./pages/registermobile";
+import Loginmobile from "./pages/Loginmobileee";
 
 
 
@@ -18,6 +20,8 @@ function App() {
      
          <Route path="/Login" element={< Login />} />
         <Route path="/Register" element={< Register />} />
+        <Route path="/Loginmobile" element={< Loginmobile />} />
+        <Route path="/Registermobile" element={< Registermobile />} />
       
       </Routes>
     </Router>
