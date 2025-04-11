@@ -1,66 +1,60 @@
 from rest_framework import serializers
 from .models import Intervention, Status, Equipement, Technicien, Personnel, Admin 
+from accounts_management.models import User 
+from accounts_management import serializers as account_serializers
 
-class InterventionSerializer(serializers.ModelSerializer):
-    """Serializer for interventions using only IDs, but allowing status creation by name"""
+# serializer for status 
+class StatusSerializer (serializers.ModelSerializer) : 
+    class Meta : 
+        model  = Status 
+        fields  = ['id' , 'name']
+        # the id is just to make the status easy to handle 
 
+
+class AdminInterventionSerializer(serializers.ModelSerializer):
     # Primary Key Related Fields (Only IDs for Foreign Keys)
-    id_equipement = serializers.PrimaryKeyRelatedField(queryset=Equipement.objects.all())
-    id_technicien = serializers.PrimaryKeyRelatedField(queryset=Technicien.objects.all())
-    id_personnel = serializers.PrimaryKeyRelatedField(queryset=Personnel.objects.all(), required=False, allow_null=True)
-    id_admin = serializers.PrimaryKeyRelatedField(queryset=Admin.objects.all())
-    statut = serializers.PrimaryKeyRelatedField(queryset=Status.objects.all(), required=False, allow_null=True)
-    statut_name = serializers.CharField(write_only=True, required=False)  # Allow new status creation
-    notes = serializers.CharField(required=False, allow_null=True)
+    equipement = serializers.PrimaryKeyRelatedField(queryset=Equipement.objects.all() , required  = True)
+    technicien = serializers.PrimaryKeyRelatedField(queryset=Technicien.objects.all() , required  = True) 
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
+    # the id of the admin is automatically assigned to the logged in admin  
+    admin = serializers.PrimaryKeyRelatedField(read_only=True )
+
+    description = serializers.CharField(required=False, allow_null=True , allow_blank = True) 
+    notes = serializers.CharField(required=False, allow_null=True , allow_blank = True)
+    statut = StatusSerializer(read_only=True)
 
 
     class Meta:
         model = Intervention
         fields = [
-            'id', 'id_equipement', 'id_personnel', 'id_technicien', 'id_admin', 
-            'urgence', 'date_debut', 'date_fin', 'statut', 'statut_name', 'description', 'notes'
+            'id', 'equipement', 'technicien', 'admin', 
+            'urgence', 'date_debut', 'date_fin', 'statut' , 'description', 'notes' , 'user'
         ]    
 
-    def validate(self, data):
-        """Validate that end date is after start date & handle status creation"""
-        # Date validation
-        if 'date_debut' in data and 'date_fin' in data:
-            if data['date_fin'] < data['date_debut']:
-                raise serializers.ValidationError("End date must be after start date")
+    def create (self , validated_data) : 
+        validated_data ['admin'] = self.context ['request'].user.admin
+        return super().create(validated_data)
 
-        return data
 
-    def create(self, validated_data):
-        """Create intervention with new or existing status"""
-        statut_name = validated_data.pop('statut_name', None)
-        statut = validated_data.pop('statut', None)
 
-        # Handle new status creation
-        if statut_name:
-            statut, created = Status.objects.get_or_create(name="affecté")
+class InterventionUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Intervention
+        fields = '__all__'
+        extra_kwargs = {field: {'required': False} for field in fields}
 
-        # If no status provided, raise error
-        if not statut:
-            raise serializers.ValidationError({"statut": "Either 'statut' ID or 'statut_name' must be provided."})
 
-        # Create intervention
-        intervention = Intervention.objects.create(**validated_data, statut=statut)
-        return intervention
 
-    def update(self, instance, validated_data):
-        """Update intervention and handle status creation"""
-        statut_name = validated_data.pop('statut_name', None)
-        statut = validated_data.pop('statut', None)
 
-        # Handle new status creation
-        if statut_name:
-            statut, created = Status.objects.get_or_create(name=statut_name)
-            instance.statut = statut
+class UserInterventionSerializer(serializers.ModelSerializer):
+    equipement = serializers.PrimaryKeyRelatedField(queryset=Equipement.objects.all() , required  = True)
+    description = serializers.CharField(required=False, allow_null=True  ,allow_blank = True) 
+    class Meta  : 
+        model = Intervention 
+        fields  = ['id' ,  'user' , 'equipement'  , 'description'] 
 
-        # If existing status is provided, update it
-        elif statut:
-            instance.statut = statut
-
-        return super().update(instance, validated_data)
+    def create (self  , validated_data)  : 
+        validated_data ['user'] = self.context ['request'].user 
+        return super().create(validated_data) 
 
 

@@ -42,13 +42,14 @@ class EquipementSerializer(serializers.ModelSerializer):
         required=False
     )
     custom_localisation = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    image = serializers.ImageField(max_length=None, use_url=True, required=False , allow_null=True) 
 
 
 
     class Meta:
         model = Equipement
         fields = ['id_equipement' ,'nom', 'category', 'type_', 'localisation', 'custom_localisation'  , 
-                 'date_ajout', 'manuel' , 'etat']
+                 'date_ajout', 'manuel' , 'etat' , 'image']
         read_only_fields = ['date_ajout' , 'id_equipement']
 
 

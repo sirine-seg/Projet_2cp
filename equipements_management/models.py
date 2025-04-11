@@ -143,5 +143,6 @@ class Equipement(models.Model):
     date_ajout = models.DateTimeField(auto_now_add=True)
     etat = models.ForeignKey(EtatEquipement, on_delete=models.PROTECT , blank=True , null=True) 
     manuel = models.BinaryField(null=True, blank=True)
+    image = models.ImageField(upload_to='equip_imges/', verbose_name='photo equipement', null=True, blank=True)
     
     

@@ -1,14 +1,18 @@
-from rest_framework import generics 
+from rest_framework import generics  , status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Equipement, EtatEquipement
-from intervention_management.models import Intervention 
+from intervention_management.models import Intervention  , Status
 from .serializers import EquipementSerializer, EtatEquipementSerializer
 from accounts_management.permissions import IsAdminUser as IsAdmin 
 from accounts_management.permissions import IsTechnician 
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import EquipementFilter
 from rest_framework.response import Response 
+from django.shortcuts import get_object_or_404 
+from intervention_management.serializers import AdminInterventionSerializer
+
+
 
 
 class EquipementListView(generics.ListAPIView):
@@ -58,4 +62,25 @@ class EquipementChoicesAPIView (APIView)  :
 
 class EquipementLogsAPIView (APIView) : 
     """API qui retourne les logs d'un equipement"""
+    def get (self , request  , id_equipement) : 
+        # retrieve the equipement instance 404 
+        # 
+        equipement = get_object_or_404(Equipement  , id = id_equipement) 
+
+        # fetch "Terminée" and "Annulée" status 
+        termine_status = Status.objects.filter(name="Terminé").first()
+        annule_status  = Status.objects.filter(name="Annulé").first()
+
+        if not termine_status or not annule_status  : 
+            return Response ({"error" : "Statueses 'Terminée' or 'Annulée' not found"})
+        
+        # filter the interventions related to the equipement  
+        intervention = Intervention.objects.filter(equipement=equipement,statut__in=[termine_status, annule_status]).order_by("date_fin")
+
+        
+
+        # serilaize the intervetnion 
+        data  =  AdminInterventionSerializer (intervention , many =  True).data  
+        return Response (data , status = status.HTTP_200_ok)
+
 

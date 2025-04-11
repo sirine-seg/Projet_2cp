@@ -9,7 +9,7 @@ urlpatterns = [
     path('delete/<int:pk>/', EquipementDeleteView.as_view(), name='equipement_delete'),
     path ('changerStatus/<int:pk>' ,EtatEquipementAssignAndCreateview.as_view() , name = 'equipement_status_changer' )     , 
     path('equipementchoices' , EquipementChoicesAPIView.as_view () , name = 'equipemnt_choices_choose') , 
-    path("logs/", EquipementLogs.as_view(), name="intervention-logs")
+    path('logs/<int:pk>', EquipementLogs.as_view(), name="intervention-logs")
 ]
 
 

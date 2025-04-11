@@ -22,7 +22,7 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hakim',
+        'NAME': 'lastone',
         'USER': 'postgres',
         'PASSWORD': '31454602',
         'HOST': 'localhost',
@@ -133,8 +133,8 @@ REST_FRAMEWORK = {
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': '507510054319-lni959994pei6dpk20469hqdl79ct32s.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': '746021296567-ps7a99uvjgduiic1536edgo26tajha98.apps.googleusercontent.com',
+            'secret': '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',
         },
         'SCOPE': [
             'profile',
@@ -153,17 +153,16 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+
 SOCIALACCOUNT_ADAPTER = 'accounts_management.adapters.ESIDZSocialAccountAdapter'
-SOCIALACCOUNT_LOGIN_ON_GET = False
 LOGIN_REDIRECT_URL = 'login_success'
 LOGIN_URL = 'account_login'
 SOCIALACCOUNT_AUTO_SIGNUP = True
-ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email', 'password1', 'password2']
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none' 
 SOCIALACCOUNT_STORE_TOKENS = True

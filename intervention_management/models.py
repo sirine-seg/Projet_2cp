@@ -32,21 +32,21 @@ class Intervention(models.Model):
     ]
 
     # Remove the STATUT_CHOICES list
-    
-    id_equipement = models.ForeignKey('equipements_management.Equipement', on_delete=models.CASCADE)
-    id_personnel = models.ForeignKey('accounts_management.Personnel', on_delete=models.CASCADE  ,   blank = True , null=True )
-    id_technicien = models.ForeignKey('accounts_management.Technicien', on_delete=models.CASCADE)
-    id_admin = models.ForeignKey('accounts_management.Admin', on_delete=models.CASCADE)
+    # fields de donées 
+    equipement = models.ForeignKey('equipements_management.Equipement', on_delete=models.CASCADE)
+    user = models.ForeignKey('accounts_management.User', on_delete=models.CASCADE  ,   blank = True , null=True )
+    technicien = models.ForeignKey('accounts_management.Technicien', on_delete=models.CASCADE , null = True , blank=True)
+    admin = models.ForeignKey('accounts_management.Admin', on_delete=models.SET_NULL , null = True , blank = True)
 
-    urgence = models.IntegerField(choices=URGENCE_CHOICES, default=3)
-    date_debut = models.DateTimeField()
-    date_fin = models.DateTimeField()
+    urgence = models.IntegerField(choices=URGENCE_CHOICES, default=3 , null=True , blank=True) 
+    date_debut = models.DateTimeField(null=True , blank=True)
+    date_fin = models.DateTimeField(null=True , blank=True)
     # Replace CharField with ForeignKey to Status model 
-    statut = models.ForeignKey(Status, on_delete=models.PROTECT)
+    #fields de communication entre l'admin et le technicien
+    statut = models.ForeignKey(Status, on_delete=models.PROTECT , blank=True , null=True) 
     description = models.TextField(blank = True , null = True) 
     notes  = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"Intervention sur {self.id_equipement.nom} par {self.id_technicien.user.email}"
-
+        return f"Intervention sur {self.equipement.nom} par {self.technicien.user.email}"
 
