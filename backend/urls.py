@@ -26,5 +26,6 @@ urlpatterns = [
     path('accounts_management/', include('accounts_management.urls')),
     path('equipements/', include('equipements_management.urls')),
     path('intervention/', include('intervention_management.urls')),
+    path('notifications/', include('notifications_management.urls')),
     path('diagram/', include('django_spaghetti.urls')),
 ] 

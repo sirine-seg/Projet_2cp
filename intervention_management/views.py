@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated as IsAuth
 from .models import Intervention, Status 
 from .serializers import AdminInterventionSerializer , UserInterventionSerializer , InterventionUpdateSerializer
 from accounts_management.permissions import IsAdminUser , IsTechnician , IsPersonnel
+from notifications_management.models import Notification
 from rest_framework import serializers
 from .permissions import CanDeclareIntervention
 
@@ -30,7 +31,20 @@ class AdminInterventionCreateAPIView(CreateAPIView):
         maintenance_state, _ = EtatEquipement.objects.get_or_create(nom="En maintenance")
         equipement.etat = maintenance_state
         equipement.save()
-
+        
+         # Create notification with information about the intervention to the technician
+        notification = Notification.objects.create(
+            recipient=intervention.technicien,  
+            title="Nouvelle intervention assignée",
+            message=f"Vous avez été assigné à une nouvelle intervention sur l'équipement {intervention.id_equipement.nom}. "
+                    f"Date de début: {intervention.date_debut.strftime('%d/%m/%Y %H:%M')}",
+            notification_type="assignment",
+            url=f"/interventions/{intervention.id}/",
+        )
+        
+        # Send email notification
+        notification.send_email_notification()
+        
         return intervention
     
 
@@ -159,6 +173,33 @@ class TechnicianInterventionUpdateAPIView(UpdateAPIView):
             active_state, _ = EtatEquipement.objects.get_or_create(nom="En service")
             equipement.etat = active_state
             equipement.save()
+            
+        # Notify admin of status change with email
+            admins = intervention.id_admin
+            if admins:
+                notification = Notification.objects.create(
+                    recipient=admins.user,
+                    title="Intervention mise à jour par technicien",
+                    message=f"Le technicien {intervention.id_technicien} a changé le statut de l'intervention sur "
+                            f"{intervention.id_equipement.nom} de '{old_status}' à '{intervention.get_statut_display_custom()}'.",
+                    notification_type="assignment",
+                    url=f"/interventions/{intervention.id}/",
+                )
+                notification.send_email_notification()    
+            
+            # Notify personnel if intervention is complete
+            if new_status in ['Termine', 'Resolu']:
+                personnel = intervention.id_personnel
+                if personnel:
+                    notification = Notification.objects.create(
+                        recipient=personnel.user,
+                        title="Intervention terminée",
+                        message=f"L'intervention sur {intervention.id_equipement.nom} a été marquée comme {intervention.get_statut_display_custom()} "
+                                f"par le technicien {intervention.id_technicien}.",
+                        notification_type="assignment",
+                        url=f"/interventions/{intervention.id}/",
+                    )
+                    notification.send_email_notification()    
 
         return intervention
 

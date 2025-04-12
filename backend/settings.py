@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
+import ssl
 from pathlib import Path
+
+# Disable SSL verification (temporary fix for development)
+ssl._create_default_https_context = ssl._create_unverified_context
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,9 +26,9 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'lastone',
+        'NAME': 'esi_track',
         'USER': 'postgres',
-        'PASSWORD': '31454602',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -43,6 +47,7 @@ INSTALLED_APPS = [
     'intervention_management',
     'accounts_management',
     'equipements_management',
+    'notifications_management',
     'phonenumber_field',
     'allauth',
     'allauth.account',
@@ -50,6 +55,24 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'django_spaghetti',
 ]
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'esitrack6@gmail.com'
+EMAIL_HOST_PASSWORD = 'dcjz emud tnau lmyw'  # Remove trailing space
+DEFAULT_FROM_EMAIL = 'ESI Track <esitrack6@gmail.com>'
+
+# For development/testing, you can use the console backend instead:
+if DEBUG:
+    # Uncomment to output emails to console instead of sending them
+    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    pass
+
+# Frontend URL for links in emails
+FRONTEND_URL = 'http://localhost:3000'  # Change to your frontend URL
 
 SPAGHETTI_SAUCE = {
     'apps': ['intervention_management', 'equipements_management', 'accounts_management'],
@@ -160,7 +183,8 @@ LOGIN_URL = 'account_login'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email', 'password1', 'password2']
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 SOCIALACCOUNT_LOGIN_ON_GET = True

@@ -1,0 +1,12 @@
+{{ notification.title }}
+
+Bonjour {{ notification.recipient.first_name }},
+
+{{ notification.message }}
+
+{% if notification.url %}
+Pour voir les détails, visitez: {{ frontend_url }}{{ notification.url }}
+{% endif %}
+
+Cette notification a été envoyée par ESI Track.
+Si vous avez des questions, veuillez contacter l'administrateur.
