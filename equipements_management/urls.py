@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import EquipementListView, EquipementCreateView, EquipementUpdateView, EquipementDeleteView ,  EtatEquipementAssignAndCreateview  , EquipementChoicesAPIView 
+from .views import EquipementListView, EquipementCreateView, EquipementUpdateView, EquipementDeleteView ,  EtatEquipementAssignAndCreateview  , EquipementChoicesAPIView  , GetEquipementByIdView
 from intervention_management.views import EquipementLogs
 
 urlpatterns = [
@@ -9,7 +9,9 @@ urlpatterns = [
     path('delete/<int:pk>/', EquipementDeleteView.as_view(), name='equipement_delete'),
     path ('changerStatus/<int:pk>' ,EtatEquipementAssignAndCreateview.as_view() , name = 'equipement_status_changer' )     , 
     path('equipementchoices' , EquipementChoicesAPIView.as_view () , name = 'equipemnt_choices_choose') , 
-    path('logs/<int:pk>', EquipementLogs.as_view(), name="intervention-logs")
+    path('logs/<int:pk>', EquipementLogs.as_view(), name="intervention-logs") , 
+    path('equipments/<int:id>/', GetEquipementByIdView.as_view(), name='equipment-detail')
+
 ]
 
 

@@ -32,6 +32,7 @@ class EtatEquipementSerializer(serializers.Serializer):
 
 
 
+
 class EquipementSerializer(serializers.ModelSerializer):
     # Use a custom field for equipment state that handles both reading and writing
     category = serializers.ChoiceField (source='categorie', allow_null=True, allow_blank=True, required=False , choices = Equipement.CATEGORIE_CHOICES)

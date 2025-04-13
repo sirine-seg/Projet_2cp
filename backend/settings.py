@@ -49,6 +49,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'django_spaghetti',
+    # 'rest_framework_simple_jwt' , 
+    #'corsheaders',
+    'rest_framework_simplejwt' , 
+    'simpleauthentif' , 
+    'rest_framework_simplejwt.token_blacklist'
+
 ]
 
 SPAGHETTI_SAUCE = {
@@ -66,7 +72,46 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+#    'corsheaders.middleware.CorsMiddleware',
+#    'django.middleware.common.CommonMiddleware',
 ]
+
+#CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
+#
+#CORS_ALLOW_CREDENTIALS = True
+#
+#CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+#
+#HEADLESS_FRONTEND_URLS = {
+#    "account_confirm_email": "http://localhost:5173",
+#    "account_reset_password_from_key": "http://localhost:5173",
+#    "account_signup": "http://localhost:5173",
+#    "socialaccount_login_error": "http://localhost:5173",
+#}
+#
+#
+
+
+
+
+SIMPLE_JWT = {
+    #"ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    #"REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
+
+    'AUTH_COOKIE': 'access_token',  # Cookie name for the access token
+    'AUTH_COOKIE_REFRESH': 'refresh_token',  # Cookie name for the refresh token
+    'AUTH_COOKIE_SECURE': False,  # Set to True if using HTTPS
+    'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HTTP only
+    'AUTH_COOKIE_PATH': '/',  # Root path for the cookie
+    'AUTH_COOKIE_SAMESITE': 'Lax',  # Adjust according to your needs
+
+}
+
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -101,8 +146,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+    }
+    ]
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -120,9 +165,7 @@ AUTH_USER_MODEL = 'accounts_management.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -146,23 +189,28 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-SITE_ID = 1
+#HEADLESS_ONLY = True # to use react instead of django templates ... 
+#SITE_ID = 1
+# salem
+#AUTHENTICATION_BACKENDS = [
+#    'django.contrib.auth.backends.ModelBackend',
+#    'allauth.account.auth_backends.AuthenticationBackend',
+#]
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
 
+# Core Allauth settings
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_VERIFICATION = 'none'  # no email confirmation required
+# LOGIN_URL = 'account_login'
+# LOGIN_REDIRECT_URL = 'login_success'
 
-SOCIALACCOUNT_ADAPTER = 'accounts_management.adapters.ESIDZSocialAccountAdapter'
-LOGIN_REDIRECT_URL = 'login_success'
-LOGIN_URL = 'account_login'
-SOCIALACCOUNT_AUTO_SIGNUP = True
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email', 'password1', 'password2']
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
-SOCIALACCOUNT_LOGIN_ON_GET = True
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'none' 
-SOCIALACCOUNT_STORE_TOKENS = True
+# # Social account settings
+# SOCIALACCOUNT_ADAPTER = 'accounts_management.adapters.ESIDZSocialAccountAdapter'
+# SOCIALACCOUNT_AUTO_SIGNUP = True
+# SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+# SOCIALACCOUNT_STORE_TOKENS = True
+# SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+# SOCIALACCOUNT_LOGIN_ON_GET = True

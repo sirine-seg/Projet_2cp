@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Intervention, Status, Equipement, Technicien, Personnel, Admin 
-from accounts_management.models import User 
+from accounts_management.models import User     
 from accounts_management import serializers as account_serializers
 
 # serializer for status 

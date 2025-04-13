@@ -27,4 +27,6 @@ urlpatterns = [
     path('equipements/', include('equipements_management.urls')),
     path('intervention/', include('intervention_management.urls')),
     path('diagram/', include('django_spaghetti.urls')),
+    path("_allauth/", include("allauth.headless.urls")) , 
+    path ("authentification/" , include ('simpleauthentif.urls')) 
 ] 

@@ -23,6 +23,13 @@ class EquipementListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated , IsAdmin] 
 
 
+class GetEquipementByIdView(generics.RetrieveAPIView):
+    queryset = Equipement.objects.all()
+    serializer_class = EquipementSerializer
+    permission_classes = [IsAuthenticated , IsAdmin] 
+    lookup_field = 'id'  # Use 'id' as the lookup field instead of 'pk'
+    # this is used to get the equipement by id
+
 class EquipementCreateView(generics.CreateAPIView):
     queryset = Equipement.objects.all()
     serializer_class = EquipementSerializer
