@@ -13,28 +13,34 @@ class StatusSerializer (serializers.ModelSerializer) :
 
 class AdminInterventionSerializer(serializers.ModelSerializer):
     # Primary Key Related Fields (Only IDs for Foreign Keys)
-    equipement = serializers.PrimaryKeyRelatedField(queryset=Equipement.objects.all() , required  = True)
-    technicien = serializers.PrimaryKeyRelatedField(queryset=Technicien.objects.all() , required  = True) 
+    equipement = serializers.PrimaryKeyRelatedField(queryset=Equipement.objects.all(), required=True)
+    technicien = serializers.PrimaryKeyRelatedField(queryset=Technicien.objects.all(), required=True)
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
-    # the id of the admin is automatically assigned to the logged in admin  
-    admin = serializers.PrimaryKeyRelatedField(read_only=True )
+    # Allow admin to be writable
+    admin = serializers.PrimaryKeyRelatedField(queryset=Admin.objects.all(), required=False, allow_null=True)
 
-    description = serializers.CharField(required=False, allow_null=True , allow_blank = True) 
-    notes = serializers.CharField(required=False, allow_null=True , allow_blank = True)
+    description = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    notes = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     statut = StatusSerializer(read_only=True)
-
 
     class Meta:
         model = Intervention
         fields = [
-            'id', 'equipement', 'technicien', 'admin', 
-            'urgence', 'date_debut', 'date_fin', 'statut' , 'description', 'notes' , 'user'
-        ]    
+            'id', 'equipement', 'technicien', 'admin',
+            'urgence', 'date_debut', 'date_fin', 'statut', 'description', 'notes', 'user'
+        ]
 
-    def create (self , validated_data) : 
-        validated_data ['admin'] = self.context ['request'].user.admin
+    def create(self, validated_data):
+        # Automatically assign the logged-in admin if not provided
+        if 'admin' not in validated_data or validated_data['admin'] is None:
+            validated_data['admin'] = self.context['request'].user.admin
         return super().create(validated_data)
 
+    def update(self, instance, validated_data):
+        # Automatically assign the logged-in admin if not provided
+        if 'admin' not in validated_data or validated_data['admin'] is None:
+            validated_data['admin'] = self.context['request'].user.admin
+        return super().update(instance, validated_data)
 
 
 class InterventionUpdateSerializer(serializers.ModelSerializer):
@@ -42,8 +48,6 @@ class InterventionUpdateSerializer(serializers.ModelSerializer):
         model = Intervention
         fields = '__all__'
         extra_kwargs = {field: {'required': False} for field in fields}
-
-
 
 
 class UserInterventionSerializer(serializers.ModelSerializer):
@@ -55,6 +59,6 @@ class UserInterventionSerializer(serializers.ModelSerializer):
 
     def create (self  , validated_data)  : 
         validated_data ['user'] = self.context ['request'].user 
-        return super().create(validated_data) 
+        return super().create(validated_data)
 
 

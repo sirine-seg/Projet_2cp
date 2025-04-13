@@ -13,6 +13,7 @@ import os
 import ssl
 from pathlib import Path
 
+
 # Disable SSL verification (temporary fix for development)
 ssl._create_default_https_context = ssl._create_unverified_context
 

@@ -11,13 +11,11 @@ from notifications_management.models import Notification
 from rest_framework import serializers
 from .permissions import CanDeclareIntervention
 
-
-
 class AdminInterventionCreateAPIView(CreateAPIView):
     """Handle creating interventions with auto-assigned status"""
     queryset = Intervention.objects.all()
     serializer_class = AdminInterventionSerializer
-    permission_classes = [IsAuth, IsAdminUser]  # Fixed typo: `permission_class` -> `permission_classes`
+    permission_classes = [IsAuth, IsAdminUser]
     
     def perform_create(self, serializer):
         # Save the intervention with the logged-in admin as the user
@@ -32,11 +30,12 @@ class AdminInterventionCreateAPIView(CreateAPIView):
         equipement.etat = maintenance_state
         equipement.save()
         
-         # Create notification with information about the intervention to the technician
+        # Create notification with information about the intervention to the technician
+        # FIX: Change id_equipement to equipement, id_technicien to technicien
         notification = Notification.objects.create(
-            recipient=intervention.technicien,  
+            recipient=intervention.technicien.user,  # Make sure to get the user from technician
             title="Nouvelle intervention assignée",
-            message=f"Vous avez été assigné à une nouvelle intervention sur l'équipement {intervention.id_equipement.nom}. "
+            message=f"Vous avez été assigné à une nouvelle intervention sur l'équipement {intervention.equipement.nom}. "
                     f"Date de début: {intervention.date_debut.strftime('%d/%m/%Y %H:%M')}",
             notification_type="assignment",
             url=f"/interventions/{intervention.id}/",
@@ -47,9 +46,6 @@ class AdminInterventionCreateAPIView(CreateAPIView):
         
         return intervention
     
-
-
-
 class UserInterventionCreateAPIView(CreateAPIView):
     queryset  = Intervention.objects.all () 
     serializer_class = UserInterventionSerializer
@@ -61,13 +57,6 @@ class UserInterventionCreateAPIView(CreateAPIView):
     #         serializer.save(personnel=personnel_instance , admin = None) 
     #     except AttributeError:
     #         raise serializers.ValidationError({"personnel": "No associated Personnel found for this user."})
-
-
-        
-    
-
-
-
 
 class InterventionListAPIView (ListAPIView) : 
     serializer_class  = AdminInterventionSerializer 
@@ -87,16 +76,14 @@ class InterventionListAPIView (ListAPIView) :
         
     #     return Intervention.objects.none () 
 
-
 class TechnicianInterventionsListAPIView(ListAPIView):
 
     """List only the interventions for the currently logged-in technician."""
     serializer_class = AdminInterventionSerializer
     permission_classes = [IsAuth, IsTechnician]
     def get_queryset(self):
-        return Intervention.objects.filter(id_technicien=self.request.user.technicien)
+        return Intervention.objects.filter(technicien=self.request.user.technicien)
     
-
 class InterventionUpdateAPIView(UpdateAPIView):
     queryset = Intervention.objects.all()
     serializer_class = AdminInterventionSerializer
@@ -117,23 +104,44 @@ class InterventionUpdateAPIView(UpdateAPIView):
         return super().update(request, *args, **kwargs)
     
     def perform_update(self, serializer):
-        old_status =  self.get_object().statut
-        
+        old_status = self.get_object().statut
+
         # Get original data before saving
-        original_data = self.get_object().__dict__.copy()
-        
-        # Save the update
+        original_intervention = self.get_object()
+        original_admin = original_intervention.admin
+
+        # Save the update while preserving the admin field if not explicitly set to null
+        if 'admin' not in serializer.validated_data or serializer.validated_data.get('admin') is None:
+            serializer.validated_data['admin'] = original_admin
+             
+        # Save the intervention with the updated data
         intervention = serializer.save()
+        
         new_status = intervention.statut
 
         # If the status changed to "Terminé"
         if old_status and new_status and old_status.id != new_status.id and new_status.name == "Terminé":
             # Update the equipment status to "En service"
-            equipement = intervention.id_equipement
+            equipement = intervention.equipement
             from equipements_management.models import EtatEquipement
             active_state, _ = EtatEquipement.objects.get_or_create(nom="En service")
             equipement.etat = active_state
             equipement.save()
+
+        notification = Notification.objects.create(
+            recipient=intervention.technicien.user,  # Make sure to get the user from technician
+            title="Nouvelle intervention assignée",
+            message=f"Vous avez été assigné à une nouvelle intervention sur l'équipement {intervention.equipement.nom}. "
+                    f"Date de début: {intervention.date_debut.strftime('%d/%m/%Y %H:%M')}",
+            notification_type="assignment",
+            url=f"/interventions/{intervention.id}/",
+        )
+        
+        # Send email notification
+        notification.send_email_notification()
+        
+        # For debugging purposes, print info about the admin
+        print(f"Intervention {intervention.id} updated with admin: {intervention.admin}")
 
         return intervention
 
@@ -142,67 +150,72 @@ class InterventionDeleteAPIView(DestroyAPIView):
     serializer_class = AdminInterventionSerializer
     permission_classes = [IsAuth, IsAdminUser]
 
-
-
 class TechnicianInterventionUpdateAPIView(UpdateAPIView):
     serializer_class = InterventionUpdateSerializer
     permission_classes = [IsAuth, IsTechnician]
-    
+
     def get_queryset(self):
         """Only allow technicians to update interventions assigned to them"""
-        return Intervention.objects.filter(technicien=self.request.user.technicien)
-    
+        print("Fetching queryset for TechnicianInterventionUpdateAPIView...")  # Debugging
+        queryset = Intervention.objects.filter(technicien=self.request.user.technicien)
+        print(f"Queryset fetched: {queryset}")  # Debugging
+        return queryset
+
     def update(self, request, *args, **kwargs):
+        print("Update method called...")  # Debugging
         if request.method == 'PATCH':
             kwargs['partial'] = True
-            
-        # No need to check if user is technician - permission class does that
-        # No need to check if intervention belongs to technician - queryset does that
+            print("Partial update enabled (PATCH request)...")  # Debugging
 
-        return super().update(request, *args, **kwargs)
+        response = super().update(request, *args, **kwargs)
+        print("Update method completed.")  # Debugging
+        return response
 
     def perform_update(self, serializer):
-        # Your existing code for status updates
-        old_status = self.get_object().statut
-        intervention = serializer.save()
-        new_status = intervention.statut
+        print("perform_update method called...")  # Debugging
 
-        if old_status and new_status and old_status.id != new_status.id and new_status.name == "Terminé":
-            equipement = intervention.id_equipement
+        old_status = self.get_object().statut
+        print(f"Old status: {old_status}")  # Debugging
+
+        intervention = serializer.save()
+        print(f"Intervention saved: {intervention}")  # Debugging
+
+        new_status = intervention.statut
+        print(f"New status: {new_status}")  # Debugging
+
+        if old_status and new_status and old_status.id != new_status.id :
+            print("Status changed to 'Terminé'. Updating equipment status...")  # Debugging
+
+            equipement = intervention.equipement
             from equipements_management.models import EtatEquipement
             active_state, _ = EtatEquipement.objects.get_or_create(nom="En service")
             equipement.etat = active_state
             equipement.save()
-            
-        # Notify admin of status change with email
-            admins = intervention.id_admin
-            if admins:
-                notification = Notification.objects.create(
-                    recipient=admins.user,
-                    title="Intervention mise à jour par technicien",
-                    message=f"Le technicien {intervention.id_technicien} a changé le statut de l'intervention sur "
-                            f"{intervention.id_equipement.nom} de '{old_status}' à '{intervention.get_statut_display_custom()}'.",
-                    notification_type="assignment",
-                    url=f"/interventions/{intervention.id}/",
-                )
-                notification.send_email_notification()    
-            
-            # Notify personnel if intervention is complete
-            if new_status in ['Termine', 'Resolu']:
-                personnel = intervention.id_personnel
-                if personnel:
+            print(f"Equipment status updated to 'En service' for equipment: {equipement}")  # Debugging
+
+            admins = intervention.admin
+            print(f"Admins: {admins}")  # Debugging
+
+            if not admins:
+                print(f"No admin found for intervention {intervention.id}")  # Debugging
+            else:
+                try:
+                    print("Creating notification...")  # Debugging
                     notification = Notification.objects.create(
-                        recipient=personnel.user,
-                        title="Intervention terminée",
-                        message=f"L'intervention sur {intervention.id_equipement.nom} a été marquée comme {intervention.get_statut_display_custom()} "
-                                f"par le technicien {intervention.id_technicien}.",
+                        recipient=admins.user,
+                        title="Intervention mise à jour par technicien",
+                        message=f"Le technicien {intervention.technicien} a changé le statut de l'intervention sur "
+                                f"{intervention.equipement.nom} de '{old_status}' à '{new_status}'.",
                         notification_type="assignment",
                         url=f"/interventions/{intervention.id}/",
                     )
-                    notification.send_email_notification()    
+                    notification.send_email_notification()
+                    print(f"Notification sent to admin {admins.user.email} for intervention {intervention.id}")  # Debugging
+                except Exception as e:
+                    print(f"Failed to send notification: {e}")  # Debugging
 
+        print("perform_update method completed.")  # Debugging
         return intervention
-
 
 class EquipementLogs (ListAPIView) : 
     queryset = Intervention.objects.all () 
@@ -217,8 +230,4 @@ class EquipementLogs (ListAPIView) :
         queryset = self.get_queryset ()
 
         serializer  = self.get_serializer (queryset , many = True) 
-        return Response (serializer.data) 
-    
-
-
-    
+        return Response (serializer.data)
