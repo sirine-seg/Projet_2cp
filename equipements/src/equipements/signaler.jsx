@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { MdSearch } from "react-icons/md";
-import logo from "./assets/logo.png";
+import logo from "../assets/logo.png";
 import { FaChevronDown } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
@@ -31,7 +31,7 @@ const CalendarComponent = () => {
   );
 };
 
-const SignalerAdmin = () => {
+const Signaler = () => {
   const { id } = useParams(); 
   const [selectedTechnicienId, setSelectedTechnicienId] = useState("");
 const [techniciensAjoutes, setTechniciensAjoutes] = useState([]);
@@ -204,54 +204,47 @@ const urgenceOptions = [
       prev.filter((_, index) => index !== indexToRemove)
     );
   };
-  const handleAddIntervention = (values) => {
-    const formatDate = (dateStr) => {
-      if (!dateStr) return null;
-      return new Date(dateStr).toISOString();
-    };
+  const handleAddIntervention = () => {
     const formData = new FormData();
   
-    if (selectedDatedebut) {
-      formData.append("date_debut", formatDate(selectedDatedebut)); // ⚠️ ici tu avais aussi une inversion date_debut/date_fin
-    }
-  
-    if (selectedDatefin) {
-      formData.append("date_fin", formatDate(selectedDatefin));
-    }
-  
+    // Vérifie et ajoute l'image si sélectionnée
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
   
-    if (techniciensAjoutes.length > 0) {
-      techniciensAjoutes.forEach(t => {
-        formData.append("technicien", t.id);
-      });
-    }
-    
+    // Description
+    formData.append("description", interventions.description || "");
   
-    formData.append("description", values.description || "");
-    formData.append("equipement", id); // OK si `id` est bien défini dans le composant
-    console.log("urgence:",selectedUrgence);
+    // ID équipement
+    formData.append("equipement", id);
   
-    if (selectedUrgence) {
-      formData.append("urgence", selectedUrgence.id);
+    // Facultatif : log des valeurs envoyées
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
     }
   
-    fetch("http://127.0.0.1:8000/intervention/Admincreate/", {
+    // Envoi de la requête
+    fetch("http://127.0.0.1:8000/intervention/Personnelcreate/", {
       method: "POST",
+      
+      credentials: "include",
       body: formData,
     })
       .then(async (response) => {
+        const text = await response.text();
+  
         let data;
+        console.log("Raw response:", text); 
         try {
-          data = await response.json();
+          data = JSON.parse(text);
         } catch (error) {
-          console.warn("Non-JSON response received:", error);
-          data = null;
+          console.warn("Réponse non JSON :", error);
+          console.warn("Texte brut reçu :", text);
+          alert("Erreur du serveur. Voir la console pour plus de détails.");
+          return;
         }
   
-        console.log("Server response:", data);
+        console.log("Réponse du serveur :", data);
   
         if (!response.ok) {
           throw new Error(data?.message || "Échec de l'ajout !");
@@ -261,10 +254,11 @@ const urgenceOptions = [
         setInterventions([...interventions, data]);
       })
       .catch((error) => {
-        console.error("Erreur lors de l'ajout:", error);
+        console.error("Erreur lors de l'ajout :", error);
         alert("Erreur lors de l'ajout !");
       });
   };
+  
   
  
 console.log("Techniciens disponibles :", techniciensDispo); // 👀
@@ -352,66 +346,8 @@ console.log("Techniciens disponibles :", techniciensDispo); // 👀
         </div>
 
         <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2">
-          <div className="flex flex-row sm:flex-col w-full mx-auto px-3.5 mt-2">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-1">
-               Date debut
-              </h2>
-              <div className="relative w-full">
-                <DatePicker
-                  selected={selectedDatedebut}
-                  onChange={(date) => setSelectedDatedebut(date)}
-                  dateFormat="dd/MM/yyyy"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm text-black bg-white"
-                  placeholderText="Choisissez une date"
-                  calendarClassName="custom-calendar"
-                />
-                <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#20599E] cursor-pointer" />
-              </div>
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-1">
-              Date fin
-              </h2>
-              <div className="relative w-full">
-                <DatePicker
-                  selected={selectedDatefin}
-                  onChange={(date) => setSelectedDatefin(date)}
-                  dateFormat="dd/MM/yyyy"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm text-black bg-white"
-                  placeholderText="Choisissez une date"
-                  calendarClassName="custom-calendar"
-                />
-                <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#20599E] cursor-pointer" />
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full">
-  <label className="block text-black font-bold mb-2">Urgence</label>
- <Select
-  options={urgenceOptions}
-  isClearable
-  isSearchable
-  placeholder="Sélectionnez ou écrivez une urgence"
-  value={selectedUrgence}
-  onChange={(selectedOption) => setSelectedUrgence(selectedOption)}
-  className="w-full text-black"
-  components={makeAnimated()}
-  getOptionValue={(option) => option.id}
-  getOptionLabel={(option) => option.label}
-  styles={{
-    control: (base) => ({
-      ...base,
-      padding: "6px",
-      borderRadius: "8px",
-      borderColor: "#ccc",
-      backgroundColor: "white",
-    }),
-  }}
-/>
-
-</div>
+         
+          
 
           <div className="w-full">
             <label className="block text-black font-bold">Description</label>
@@ -454,33 +390,8 @@ console.log("Techniciens disponibles :", techniciensDispo); // 👀
           )}
         </div>
 
-        <button
-          onClick={() => setShowPopup(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
-        >
-          Assigner un technicien
-        </button>
-        <div style={{ marginTop: "1rem" }}>
-  {techniciensAjoutes.map((tech) => (
-    <div
-    key={tech.id}
-    className="flex justify-between items-center border-b py-2"
-  >
-    <div className="flex items-center space-x-3">
-      <MdAccountCircle className="text-gray-600 w-10 h-10" />
-      <div>
-        <p className="font-bold">
-          {tech.first_name} {tech.last_name}
-        </p>
-        <p className="text-sm text-black">{tech.email}</p>
-        <p className="text-sm text-black">
-          {tech.technicien?.poste || "Aucun poste spécifié"}
-        </p>
-      </div>
-    </div>
-    </div>
-  ))}
-</div>
+       
+       
 
 <div className="flex justify-center items-center mt-2">
           <motion.button
@@ -491,54 +402,7 @@ console.log("Techniciens disponibles :", techniciensDispo); // 👀
             Ajouter
           </motion.button>
         </div>
-        {showPopup && (
-        <div className="fixed inset-0 flex justify-center items-center z-50">
-          <div className="bg-white p-4 rounded-md w-96 shadow-lg relative">
-            {/* Close Button */}
-            <button
-              className="absolute top-2 right-2 text-gray-700 text-xl"
-              onClick={() => setShowPopup(false)}
-            >
-              X
-            </button>
-
-            <h2 className="text-black font-bold mb-2">Techniciens</h2>
-            <p className="text-black mb-2">
-              Les techniciens disponibles en ce moment.
-            </p>
-
-            <div className="max-h-60 overflow-y-auto">
-              {techniciensDispo.map((tech) => (
-                <div
-                  key={tech.id}
-                  className="flex justify-between items-center border-b py-2"
-                >
-                  <div className="flex items-center space-x-3">
-                    <MdAccountCircle className="text-gray-600 w-10 h-10" />
-                    <div>
-                      <p className="font-bold">
-                        {tech.first_name} {tech.last_name}
-                      </p>
-                      <p className="text-sm text-black">{tech.email}</p>
-                      <p className="text-sm text-black">
-                        {tech.technicien?.poste || "Aucun poste spécifié"}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    className="px-3 py-1 bg-gray-400 text-black rounded-md"
-                    onClick={() => addTechnicien(tech)}
-                  >
-                    Ajouter
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-        </div>
-      )}
-     
+        
         
       </div>
 
@@ -550,5 +414,4 @@ console.log("Techniciens disponibles :", techniciensDispo); // 👀
   );
 };
 
-export default SignalerAdmin;
-
+export default Signaler;

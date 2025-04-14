@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion"; // Ajout de Framer Motion
-import logo from './assets/logo.png';
-import logoEsi from './assets/ESI_Logo.png';
+import logo from '../assets/logo.png';
+import logoEsi from '../assets/ESI_Logo.png';
 
 const Register = () => {
   const [formData, setFormData] = useState({

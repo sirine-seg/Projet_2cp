@@ -1,24 +1,40 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import logo from './assets/logo.png';
-import logoEsi from './assets/ESI_Logo.png';
+import logo from '../assets/logo.png';
+import logoEsi from '../assets/ESI_Logo.png';
 import { FaGoogle } from "react-icons/fa";
 
 const Login = () => {
- 
   const navigate = useNavigate();
 
-  
+  // State for credentials
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: "",
+  });
+
+  // Loading state
+  const [loading, setLoading] = useState(false);
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setCredentials({
+      ...credentials,
+      [e.target.name]: e.target.value
+    });
+  };
 
   return (
-    <div className="flex h-screen bg-[#F4F4F4] ">
-      <div className="relative w-1/2 h-screen shadow-lg shadow-[#20599E] bg-[#20599E] flex flex-col justify-center items-center text-white p-10 rounded-r-[20px] shadow-lg">
-        <img src={logo} alt="Logo ESI" className="mx-auto w-56 mb-30 transform -translate-y-5 translate-x- ml-12 " />
-        <p className="mt-4 text-2xl text-[#F4F4F4] font-bold ml-0 ">Bienvenue sur ESI TRACK !</p>
-        <img src={logoEsi} alt="LogoESI" className=" w-32 mx-auto mt-6 mt-5 " />
+    <div className="flex h-screen bg-[#F4F4F4]">
+      {/* Left Panel */}
+      <div className="relative w-1/2 h-screen shadow-lg shadow-[#20599E] bg-[#20599E] flex flex-col justify-center items-center text-white p-10 rounded-r-[20px]">
+        <img src={logo} alt="Logo ESI" className="mx-auto w-56 mb-6" />
+        <p className="mt-4 text-2xl text-[#F4F4F4] font-bold">Bienvenue sur ESI TRACK !</p>
+        <img src={logoEsi} alt="LogoESI" className="w-32 mx-auto mt-6" />
       </div>
 
+      {/* Right Panel */}
       <div className="w-1/2 flex flex-col justify-center items-center">
         {loading ? (
           <div className="text-center">
@@ -28,8 +44,8 @@ const Login = () => {
         ) : (
           <>
             <h2 className="text-3xl text-[#20599E] font-bold mb-9 mt-[-20px]">Se connecter</h2>
-           
-            <form className="w-72" >
+            
+            <form className="w-72">
               <input
                 type="email"
                 name="email"
@@ -50,7 +66,8 @@ const Login = () => {
               />
               <motion.button
                 whileTap={{ scale: 0.9 }}
-                className="w-40 mx-auto block bg-[#F09C0A] hover:bg-[#F09C0A] text-white font-semibold py-2 rounded-full transition duration-200 active:scale-95 focus:ring-4 focus:ring-[#F09C0A] "
+                type="submit"
+                className="w-40 mx-auto block bg-[#F09C0A] hover:bg-[#e39009] text-white font-semibold py-2 rounded-full transition duration-200 active:scale-95 focus:ring-4 focus:ring-[#F09C0A]"
               >
                 Connexion
               </motion.button>
@@ -68,7 +85,7 @@ const Login = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-80 mx-auto block flex items-center justify-center py-2 bg-[#F09C0A]  text-white font-semibold rounded-full hover:bg-[#F09C0A] transition"
+              className="w-80 mx-auto block flex items-center justify-center py-2 bg-[#F09C0A] text-white font-semibold rounded-full hover:bg-[#e39009] transition"
             >
               <FaGoogle size={20} className="mr-2" />
               Connexion avec Google @esi.dz
@@ -77,7 +94,7 @@ const Login = () => {
             <p className="mt-4 text-black">
               Pas encore de compte ?{" "}
               <motion.span whileHover={{ textDecoration: "underline" }}>
-                <Link to="/register" className="text-[#F09C0A] font-semibold hover:underline">
+                <Link to="/signup" className="text-[#F09C0A] font-semibold hover:underline">
                   Inscrivez-vous
                 </Link>
               </motion.span>
@@ -90,3 +107,4 @@ const Login = () => {
 };
 
 export default Login;
+

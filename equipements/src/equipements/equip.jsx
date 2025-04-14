@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { MdSearch } from "react-icons/md";
-import logo from './assets/logo.png';
+import logo from '../assets/logo.png';
 import { LuBuilding2 } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import './App.css'
+ import '../App.css';
+
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { motion } from "framer-motion";
@@ -27,6 +28,7 @@ const FilterSelect = ({ label, options, value, onChange }) => (
 const EquipementsPage = () => {
     
     const [equipements, setEquipements] = useState([]);
+    const [isDeletePopupVisible, setIsDeletePopupVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedEquipement, setSelectedEquipement] = useState(null); 
     const [showEditPopup, setShowEditPopup] = useState(false); 
@@ -177,8 +179,7 @@ const EquipementsPage = () => {
 
 
     const handleDelete = (equipementId) => {
-        if (window.confirm("Voulez-vous vraiment supprimer cet équipement ?")) {
-            console.log("L'utilisateur a confirmé la suppression");
+        
     
             fetch(`http://localhost:8000/equipements/delete/${equipementId}/`, {
                 method: "DELETE",
@@ -200,9 +201,7 @@ const EquipementsPage = () => {
             })
             .catch(error => console.error("Erreur lors de la requête DELETE:", error));
             
-        } else {
-            console.log("L'utilisateur a annulé la suppression");
-        }
+        
     
         setMenuOpen(null);
     };
@@ -378,6 +377,8 @@ const EquipementsPage = () => {
         console.log("🟢 Click event triggered on button!");
         console.log("Bouton supprimer cliqué pour l'équipement ID:", equipement.id_equipement);
         handleDelete(equipement.id_equipement);
+       // setIsDeletePopupVisible(true);
+        
 
     }}
 >
@@ -461,7 +462,39 @@ const EquipementsPage = () => {
   
 )}
 
+{isDeletePopupVisible && (
+  <div className="fixed inset-0 flex justify-center items-center z-999  bg-opacity-50">
+    <div className="bg-white p-6 rounded-xl shadow-xl text-center w-96 relative">
+      {/* Bouton X en haut à droite */}
+      <button
+        onClick={() => setIsDeletePopupVisible(false)}
+        className="absolute top-2 right-3 text-gray-500 hover:text-red-500 text-xl font-bold"
+      >
+        ×
+      </button>
+
+      <p className="text-lg font-bold mt-4 text-black">
+        Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+      </p>
+
+      {/* Bouton Supprimer centré */}
+      <div className="mt-6">
+        <button
+          onClick={() => {
+           // handleDelete(equipement.id_equipement);
+            setIsDeletePopupVisible(false);
+          }}
+          className="px-6 py-2 bg-[#F09C0A] text-white rounded-md"
+        >
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
             </div>
+            
             
 
         </div>

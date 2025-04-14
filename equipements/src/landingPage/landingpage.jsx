@@ -1,21 +1,24 @@
 
 
 import { useState } from 'react'
-import './App.css'
-import icon1 from './assets/icon1.png';
-import icon2 from './assets/icon2.png';
-import icon3 from './assets/icon3.png';
-import tech from './assets/tech.png';
-import logo from './assets/logo.png';
+import '../App.css'
+import icon1 from '../assets/icon1.png';
+import icon2 from '../assets/icon2.png';
+import icon3 from '../assets/icon3.png';
+import tech from '../assets/tech.png';
+import logo from '../assets/logo.png';
 import { Mail } from "lucide-react";
 import { FaAndroid, FaApple } from "react-icons/fa";
 import  FAQ  from './FAQ.jsx';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 
 
-function App() {
+function landingPage() {
   const [count, setCount] = useState(0)
+  const navigate = useNavigate();
 
   return (
     <>
@@ -23,7 +26,12 @@ function App() {
       <div className=" blue_wave   inline-flex items-center gap-[54px] bg-[#20599E] flex-wrap min-w-full h-[650px] " >
       <div className="navbar flex flex-wrap items-center justify-between w-full px-6 py-4">
   <img className="h-12" src={logo} />
-  <button className="bg-amber-500 rounded-full px-6 py-2 text-white text-xl font-semibold">Connexion</button>
+  <button
+      onClick={() => navigate("/login")}
+      className="bg-amber-500 rounded-full px-6 py-2 text-white text-xl font-semibold"
+    >
+      Connexion
+    </button>
 </div>
 
         <div className="flex relative min-w-full items-center justify-between  px-14 ">
@@ -34,7 +42,12 @@ function App() {
       <div className="ktiba2 my-9 self-stretch text-[#F4F4F4] font-[Montserrat] text-[25px] font-medium leading-[32px] opacity-70 leading-loose text-lg leading-tight">
         <p>Suivez facilement les réparations et améliorez l'efficacité de l'ESI grâce à une gestion simple et intuitive.</p>
       </div>
-      <button className="w-80 h-16 bg-amber-500 rounded-[100px] justify-start text-white text-xl font-semibold font-['Poppins'] ">commencez maintenant</button>
+      <button
+      onClick={() => navigate("/signup")}
+      className="w-80 h-16 bg-amber-500 rounded-[100px] text-white text-xl font-semibold font-['Poppins']"
+    >
+      Commencez maintenant
+    </button>
       
      </div>
      <div className="icons w-[400px] h-[400px]  ">
@@ -152,5 +165,5 @@ function App() {
   )
 }
 
-export default App
+export default landingPage
 

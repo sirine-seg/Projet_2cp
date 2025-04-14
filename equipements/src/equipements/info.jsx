@@ -1,7 +1,7 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom"; 
 import { useState, useEffect } from "react";
 import { MdSearch } from "react-icons/md";
-import logo from "./assets/logo.png";
+import logo from "../assets/logo.png";
 import { FaChevronDown } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";

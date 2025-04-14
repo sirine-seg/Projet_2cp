@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { MdSearch } from "react-icons/md";
-import logo from "./assets/logo.png";
+import logo from "../assets/logo.png";
 import { FaChevronDown } from "react-icons/fa";
 import { motion } from "framer-motion";
 
