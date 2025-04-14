@@ -8,20 +8,21 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { motion } from "framer-motion";
 
-
-// ✅ FilterSelect Component (Reusable Dropdown)
 const FilterSelect = ({ label, options, value, onChange }) => (
     <select
-        className="w-full sm:w-1/4 px-4 py-2 rounded-md border border-gray-300 bg-[#F4F4F5]"
-        value={value}
-        onChange={onChange}
+      className="w-full sm:w-1/4 px-4 py-2 rounded-md border border-gray-300 bg-[#F4F4F5]"
+      value={value}
+      onChange={onChange}
     >
-        <option value="">{label}</option>
-        {options.map((option, index) => (
-            <option key={index} value={option}>{option}</option>
-        ))}
+      <option value="">{label}</option>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
     </select>
-);
+  );
+  
 
 const EquipementsPage = () => {
     
@@ -30,7 +31,7 @@ const EquipementsPage = () => {
     const [selectedEquipement, setSelectedEquipement] = useState(null); 
     const [showEditPopup, setShowEditPopup] = useState(false); 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [statusOptions, setStatuseOptions] = useState([]);
+    const [statusOptions, setStatusOptions] = useState([]);
     const [menuOpen, setMenuOpen] = useState(null); 
     const navigate = useNavigate();
     const [filters, setFilters] = useState({
@@ -39,25 +40,26 @@ const EquipementsPage = () => {
         localisation: "",
         etat: "",
     });
-
     const etatColors = {
-        "En service": "bg-[#49A146]",
-        "En maintenance": "bg-[#F09C0A]",
-        "En panne": "bg-[#FF4423]"
+        "EN SERVICE": "bg-[#49A146]",
+        "EN MAINTENANCE": "bg-[#F09C0A]",
+        "EN PANNE": "bg-[#FF4423]"
     };
     
 
-    const [filterOptions, setFilterOptions] = useState({
-        categories: [],
-        etats: [],
-        localisations: [],
-        types: []
-    });
+   
+    const [options, setOptions] = useState({
+        localisations: {},
+        categories: {},
+        types: {},
+        etat: {},
+      });
+
 
     // ✅ Fetch Equipements (Runs when search or filters change)
     useEffect(() => {
-        const token = localStorage.getItem('authToken'); // 🔑 Get the token
-        let url = "http://127.0.0.1:8000/api/equipements/?";
+       // const token = localStorage.getItem('authToken'); // 🔑 Get the token
+        let url = "http://127.0.0.1:8000/equipements/equipements_list/?";
       
         // Add search term if present
         if (searchTerm) {
@@ -74,10 +76,10 @@ const EquipementsPage = () => {
         // Make the authenticated fetch
         fetch(url, {
           method: 'GET',
-          headers: {
+        /*  headers: {
             'Authorization': `Token ${token}`,
             'Content-Type': 'application/json'
-          }
+          }*/
         })
           .then((response) => response.json())
           .then((data) => {
@@ -91,15 +93,7 @@ const EquipementsPage = () => {
       
 
     // ✅ Fetch Filter Options from Backend
-  /*  useEffect(() => {
-        fetch("http://127.0.0.1:8000/api/filters/")
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Filter Options:", data); // ✅ Debugging
-                setFilterOptions(data);
-            })
-            .catch(error => console.error("Error fetching filter options:", error));
-    }, []);
+    
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!event.target.closest(".menu-container")) {
@@ -109,7 +103,7 @@ const EquipementsPage = () => {
         document.addEventListener("click", handleClickOutside);
         return () => document.removeEventListener("click", handleClickOutside);
     }, []);
-    */
+    
      
     const closePopup = () => {
         setShowEditPopup(false);
@@ -118,7 +112,7 @@ const EquipementsPage = () => {
 
 
     const updateEtat = (equipementId, newEtat) => {
-        fetch(`http://127.0.0.1:8000/api/equipements/${equipementId}/`, {
+        fetch(`equipements/ changerStatus/${equipementId}/`, {
             method: "PATCH", // Using PATCH to update only the 'etat' field
             headers: {
                 "Content-Type": "application/json",
@@ -186,7 +180,7 @@ const EquipementsPage = () => {
         if (window.confirm("Voulez-vous vraiment supprimer cet équipement ?")) {
             console.log("L'utilisateur a confirmé la suppression");
     
-            fetch(`http://localhost:8000/api/equipements/${equipementId}/`, {
+            fetch(`http://localhost:8000/equipements/delete/${equipementId}/`, {
                 method: "DELETE",
             })
             .then(async (response) => {
@@ -212,6 +206,57 @@ const EquipementsPage = () => {
     
         setMenuOpen(null);
     };
+     /*
+    useEffect(() => {
+        fetch("http://localhost:8000/equipements/etatoptions/")
+          .then((res) => res.json())
+          .then((data) => {
+            const options = data.map((etat) => ({
+              value: etat.id,
+              label: etat.nom
+            }));
+            setStatusOptions(options);
+          })
+          .catch((error) => {
+            console.error("Erreur lors de la récupération des états:", error);
+          });
+      }, []);*/
+
+      useEffect(() => {
+        fetch("https://127.0.0.1:8000/equipements/equipementchoices/")  // ✅ update with your real endpoint
+          .then((res) => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            return res.json();
+          })
+          .then((data) => {
+            setOptions(data);
+            console.log("Fetched choices:", data);
+          })
+          .catch((err) => {
+            console.error("Error fetching choices:", err);
+          });
+      }, []);
+
+      const etatOptions = Object.entries(options.etat).map(([value, label]) => ({
+        value,
+        label,
+      }));
+
+      const localisationOptions = Object.entries(options.localisations).map(([value, label]) => ({
+        value,
+        label,
+      }));
+
+      const categorieOptions = Object.entries(options.categories).map(([value, label]) => ({
+        value,
+        label,
+      }));
+
+      const typeOptions = Object.entries(options.types).map(([value, label]) => ({
+        value,
+        label,
+      }));
+      
     
     return (
         <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
@@ -234,6 +279,7 @@ const EquipementsPage = () => {
                             className="w-full text-black px-4 py-2 pl-10 rounded-full border border-[#20599E] bg-[#F4F4F5] shadow-md"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+
                         />
                     </div>
                 </div>
@@ -242,25 +288,30 @@ const EquipementsPage = () => {
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-xl w-full px-4 py-1 text-sm sm:text-base h-8 sm:h-10 mx-auto items-center justify-center ">
                     <FilterSelect
                         label="Catégorie"
-                        options={filterOptions.categories}
-                        value={filters.categorie}
-                        onChange={(e) => setFilters({ ...filters, categorie: e.target.value })}
+                        options={categorieOptions}
+                        //value={filters.categorie}
+                        onChange={(selected) => {
+                            if (selected) {
+                              updateEtat(selectedEquipement.id_equipement, selected.value);
+                            }
+                          }}
                     />
+                    
                     <FilterSelect
                         label="Type"
-                        options={filterOptions.types}
+                        options={typeOptions}
                         value={filters.type}
                         onChange={(e) => setFilters({ ...filters, type: e.target.value })}
                     />
                     <FilterSelect
                         label="Localisation"
-                        options={filterOptions.localisations}
+                        options={ localisationOptions}
                         value={filters.localisation}
                         onChange={(e) => setFilters({ ...filters, localisation: e.target.value })}
                     />
                     <FilterSelect
                         label="État"
-                        options={filterOptions.etats}
+                        options={etatOptions}
                         value={filters.etat}
                         onChange={(e) => setFilters({ ...filters, etat: e.target.value })}
                     />
@@ -285,8 +336,8 @@ const EquipementsPage = () => {
                                 <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
                                     <div className="flex space-x-2">
                                         {equipement.etat && (
-                                            <span className={`px-3 py-1 text-xs font-bold text-white rounded-full ${etatColors[equipement.etat] || "bg-gray-500"}`}>
-                                                {equipement.etat}
+                                            <span className={`px-3 py-1 text-xs font-bold text-white rounded-full ${etatColors[equipement.statut_label] || "bg-gray-500"}`}>
+                                                {equipement.statut_label}
                                             </span>
                                         )}
                                         {equipement.id_equipement && (
@@ -350,58 +401,64 @@ const EquipementsPage = () => {
                     )}
                 </div>
                 {isPopupOpen && selectedEquipement && (
-  <div className="fixed inset-0 flex justify-center items-center bg-zinc-100 bg-opacity-50 p-4">
-    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-      <label className="block text-black font-bold mb-2">Urgence</label>
+  <div className="fixed inset-0 flex justify-center items-center  z-[9999]">
+  <motion.div
+    initial={{ scale: 0.8, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    exit={{ scale: 0.8, opacity: 0 }}
+    className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl"
+  >
+    <h2 className="text-lg font-semibold text-gray-700 mb-4">Statut</h2>
 
-      <Select
-        options={statusOptions || []} // Ensure options exist
-        isClearable
-        isSearchable
-        placeholder="Sélectionnez ou écrivez une urgence"
-        onChange={(selected) => {
-          console.log("Selected:", selected);
-          setSelectedStatus(selected);
+    <Select
+      
+      isClearable
+      isSearchable
+      placeholder="Sélectionnez ou écrivez une urgence"
+     options={etatOptions}
+    
+      
+      onChange={(selected) => {
+        console.log("Selected:", selected);
+        setSelectedStatus(selected);
+        
+      }}
+      lassName="w-full px-4 py-2 bg-white border border-gray-300 rounded-md"
+      components={makeAnimated ? makeAnimated() : undefined}
+      styles={{
+        control: (base) => ({
+          ...base,
+          padding: "6px",
+          borderRadius: "8px",
+          borderColor: "#ccc",
+          backgroundColor: "white",
+        }),
+      }}
+    />
+
+    {/* Buttons Row */}
+    <div className="flex justify-between mt-4">
+      <button
+        className="bg-gray-500 text-white px-4 py-2 rounded-md"
+        onClick={() => {
+          console.log("Fermeture du popup !");
+          setIsPopupOpen(false)
+          setSelectedEquipement(null);
         }}
-        className="w-full text-black"
-        components={makeAnimated ? makeAnimated() : undefined}
-        styles={{
-          control: (base) => ({
-            ...base,
-            padding: "6px",
-            borderRadius: "8px",
-            borderColor: "#ccc",
-            backgroundColor: "white",
-          }),
-        }}
-      />
-
-      {/* Buttons Row */}
-      <div className="flex justify-between items-center mt-4">
-        <button
-          onClick={() => setIsPopupOpen(false)}
-          className="px-4 py-2 bg-red-500 text-white rounded-md w-1/3 text-center"
-        >
-          Annuler
-        </button>
-
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => {
-            console.log("Updating status...");
-            if (typeof updateEtat === "function") {
-              updateEtat();
-            } else {
-              console.error("updateEtat is not defined!");
-            }
-          }}
-          className="px-4 py-2 bg-[#20599E] text-white rounded-md w-1/3 text-center"
-        >
-          Ajouter
-        </motion.button>
-      </div>
+      >
+        Annuler
+      </button>
+      <button
+        className="bg-[#20599E] text-white px-4 py-2 rounded-md"
+        onClick={() => updateEtat()}
+      >
+        Terminer
+      </button>
     </div>
-  </div>
+  </motion.div>
+</div>
+
+  
 )}
 
             </div>

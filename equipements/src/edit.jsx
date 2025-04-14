@@ -50,7 +50,7 @@ const EditPage = () => {
   });
   useEffect(() => {
     if (!state?.equipement) {
-      fetch(`http://127.0.0.1:8000/api/equipements/${id}/`)
+      fetch(`http://127.0.0.1:8000/equipements/${id}/`)
         .then((response) => response.json())
         .then((data) => setEquipement(data))
         .catch((error) => console.error("Erreur lors de la récupération :", error));
@@ -94,20 +94,17 @@ const EditPage = () => {
     formData.append("codebar", equipement.codebar);
   
     if (equipement.manual instanceof File) {
-      formData.append("manual", equipement.manual);
-    } else if (typeof equipement.manual === "string") {
-      // Ajouter l'URL du manuel si ce n'est pas un fichier
-      formData.append("manual_url", equipement.manual);
-    }
+      formData.append("manuel", equipement.manuel);
+    } 
   
-    fetch(`http://127.0.0.1:8000/api/equipements/${id}/`, {
-      method: "PUT",
+    fetch(`http://127.0.0.1:8000/equipements/update/${id}/`, {
+      method: "PATCH",
       body: formData,
     })
       .then((response) => response.json())
       .then(() => {
         alert("Équipement mis à jour !");
-        navigate("/ajouter");
+       
       })
       .catch((error) => {
         console.error("Erreur lors de la mise à jour :", error);
@@ -259,28 +256,41 @@ const EditPage = () => {
 
   {/* Right Column */}
   <div className="flex justify-center items-center w-full sm:w-1/2 py-4">
-    <label
-      htmlFor="imageUpload"
-      className="w-48 h-48 bg-gray-300 flex items-center justify-center rounded border cursor-pointer"
-    >
-      {previewUrl ? (
-        <img
-          src={previewUrl}
-          alt="Preview"
-          className="w-full h-full object-cover rounded"
-        />
-      ) : (
-        <p className="text-gray-700">Image</p>
-      )}
-    </label>
-    <input
-      id="imageUpload"
-      type="file"
-      accept="image/*"
-      onChange={handleImageUpload}
-      className="hidden"
-    />
-  </div>
+  <label
+    htmlFor="imageUpload"
+    className="w-48 h-48 bg-gray-300 flex items-center justify-center rounded border cursor-pointer overflow-hidden"
+  >
+    {previewUrl ? (
+      <img
+        src={previewUrl}
+        alt="Preview"
+        className="w-full h-full object-cover rounded"
+      />
+    ) : equipement.image ? (
+      <img
+        src={
+          equipement.image.startsWith("http")
+            ? equipement.image
+            : `http://127.0.0.1:8000${equipement.image}`
+        }
+        alt="Équipement"
+        className="w-full h-full object-cover rounded"
+      />
+    ) : (
+      <p className="text-gray-700">Image</p>
+    )}
+  </label>
+
+  <input
+    id="imageUpload"
+    type="file"
+    accept="image/*"
+    onChange={handleImageUpload}
+    className="hidden"
+  />
+</div>
+
+
 </div>
 
 <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2">

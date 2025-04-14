@@ -17,12 +17,15 @@ const AjoutPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [equipements, setEquipements] = useState([]);
+  const [selectedManual, setSelectedManual] = useState(null);
   const [newEquipement, setNewEquipement] = useState({
     nom: "",
     type: "",
     categorie: "",
     localisation: "",
     codebar: "",
+    etat:"1",
+    
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [filterOptions, setFilterOptions] = useState({
@@ -40,7 +43,7 @@ const AjoutPage = () => {
     etat: "",
   });
 
-  const categories = ["Ordinateur", "Imprimante", "Projecteur"];
+  const categories = ["Ordinateur", "Imprimante", "Projecteur","ELEC"];
 
   const handleChange = (e) => {
     setNewEquipement({ ...newEquipement, [e.target.name]: e.target.value });
@@ -56,6 +59,12 @@ const AjoutPage = () => {
     }
   };
 
+  
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    setSelectedManual(file);
+  };
+
   const handleAddEquipement = () => {
     const formData = new FormData();
     formData.append("nom", newEquipement.nom);
@@ -63,12 +72,16 @@ const AjoutPage = () => {
     formData.append("categorie", newEquipement.categorie);
     formData.append("localisation", newEquipement.localisation);
     formData.append("codebar", newEquipement.codebar);
+    formData.append("etat", newEquipement.etat);
 
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
 
-    fetch("http://127.0.0.1:8000/api/equipements/", {
+    if (selectedManual) {
+      formData.append("manuel", selectedManual);
+    }
+    fetch("http://127.0.0.1:8000/equipements/create/", {
         method: "POST",
         body: formData,
       })
@@ -135,10 +148,6 @@ const AjoutPage = () => {
       .catch((error) => console.error("Error fetching filter options:", error));
   }, []);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0]; // Get the selected file
-    setNewEquipement({ ...newEquipement, manual: file });
-  };
   
 
   return (
@@ -275,6 +284,7 @@ const AjoutPage = () => {
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
+             
               className="hidden"
             />
           
@@ -287,7 +297,7 @@ const AjoutPage = () => {
               <label className="block text-black font-bold">Catégorie</label>
               <select
                 name="categorie"
-                value={newEquipement.categorie}
+                value={newEquipement.category}
                 onChange={handleChange}
                 className="w-full my-2 px-4 py-3 border rounded-md bg-white text-black"
               >
@@ -305,8 +315,10 @@ const AjoutPage = () => {
   <label className="block text-black font-bold">Manual</label>
   <input
     type="file"
-    name="manual"
+    name="manuel"
+    accept=".pdf,.doc,.docx"
     onChange={handleFileChange}
+   
     className="w-full my-2 py-3 px-4 border rounded-md bg-white text-black"
   />
 </div>

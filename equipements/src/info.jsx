@@ -33,7 +33,7 @@ const Info = () => {
   useEffect(() => {
     const fetchEquipement = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/equipements/${id}/`);
+        const response = await fetch(`http://127.0.0.1:8000/equipements/${id}/`);
         if (!response.ok) throw new Error("Équipement introuvable !");
         const data = await response.json();
         setEquipement(data);
@@ -126,8 +126,8 @@ const Info = () => {
           <h1 className="flex flex-row  judtify between text-lg font-semibold mt-6 ">Détails de l'équipement</h1>
           <div className=" ">
           <p><strong>Nom :</strong> {equipement.nom}</p>
-          <p><strong>Type :</strong> {equipement.type}</p>
-          <p><strong>Catégorie :</strong> {equipement.categorie}</p>
+          <p><strong>Type :</strong> {equipement.type_}</p>
+          <p><strong>Catégorie :</strong> {equipement.category}</p>
           </div>
           <div className=" ">
           <p><strong>Localisation :</strong> {equipement.localisation}</p>

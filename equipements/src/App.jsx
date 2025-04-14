@@ -6,6 +6,7 @@ import   AjoutPage from './ajout_page.jsx';
 import EditPage from "./edit.jsx";
 import Info from "./info.jsx"
 import Singnaler from "./signaler.jsx"
+import  SignalerAdmin from "./signalerAdmin.jsx"
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                <Route path="/equipements/:id" element={<Info />} />
                <Route path="/edit/:id" element={<EditPage />} />
                <Route path="/signaler/:id" element={<Singnaler />} />
+               <Route path="/signalerAdmin/:id" element={<SignalerAdmin />} />
 
                
             </Routes>
