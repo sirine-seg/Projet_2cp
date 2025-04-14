@@ -10,35 +10,96 @@ class StatusSerializer (serializers.ModelSerializer) :
         fields  = ['id' , 'name']
         # the id is just to make the status easy to handle 
 
+   
+
 
 class AdminInterventionSerializer(serializers.ModelSerializer):
-    # Primary Key Related Fields (Only IDs for Foreign Keys)
-    equipement = serializers.PrimaryKeyRelatedField(queryset=Equipement.objects.all() , required  = True)
-    technicien = serializers.PrimaryKeyRelatedField(queryset=Technicien.objects.all() , required  = True) 
+    # Champs de relation
+    equipement = serializers.PrimaryKeyRelatedField(queryset=Equipement.objects.all(), required=True)
+    technicien = serializers.PrimaryKeyRelatedField(queryset=Technicien.objects.all(), required=True)
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
-    # the id of the admin is automatically assigned to the logged in admin  
-    admin = serializers.PrimaryKeyRelatedField(read_only=True )
-    
+    admin = serializers.PrimaryKeyRelatedField(read_only=True)
+    date_fin = serializers.DateTimeField(required=False, allow_null=True)
 
-    description = serializers.CharField(required=False, allow_null=True , allow_blank = True) 
-    notes = serializers.CharField(required=False, allow_null=True , allow_blank = True)
-    statut = StatusSerializer(read_only=True)
+    # Champs texte
+    description = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    notes = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    urgence = serializers.ChoiceField(
+    choices=Intervention.URGENCE_CHOICES,
+    required=False
+)
 
+    # Sérialiseur imbriqué
+    statut = serializers.PrimaryKeyRelatedField(queryset=Status.objects.all(), required=False, allow_null=True)
+
+    # Champs personnalisés (affichages lisibles)
+    nom_technicien = serializers.SerializerMethodField()
+    nom_equipement = serializers.SerializerMethodField()
+    statut_label = serializers.SerializerMethodField()
+    urgence_label = serializers.SerializerMethodField()
+    nom_declarant = serializers.SerializerMethodField()
+    email_declarant = serializers.SerializerMethodField()
+    nom_admin = serializers.SerializerMethodField()
+    email_admin = serializers.SerializerMethodField()
 
     class Meta:
         model = Intervention
         fields = [
-            'id', 'equipement', 'technicien', 'admin', 
-            'urgence', 'date_debut', 'date_fin', 'statut' , 'description', 'notes' , 'user'
-        ]    
+            'id', 'equipement', 'technicien', 'admin',
+            'urgence', 'date_debut', 'date_fin', 'statut',
+            'description', 'notes', 'user', 'date_fin',
+            'nom_technicien', 'nom_equipement', 'statut_label', 'urgence_label',
+            'nom_declarant', 'email_declarant', 'nom_admin', 'email_admin'
+        ]
+
+    def create(self, validated_data):
+        validated_data['admin'] = self.context['request'].user.admin
+        return super().create(validated_data)
+
+    def get_nom_technicien(self, obj):
+        if obj.technicien and obj.technicien.user:
+            return obj.technicien.user.get_full_name()
+        return None
+
+    def get_nom_equipement(self, obj):
+        return obj.equipement.nom if obj.equipement else None
+
+    def get_statut_label(self, obj):
+        return obj.statut.name if obj.statut else None
+
+    def get_urgence_label(self, obj):
+        return dict(Intervention.URGENCE_CHOICES).get(obj.urgence)
+
+    def get_nom_declarant(self, obj):
+        if obj.user:
+            return obj.user.get_full_name()
+        return None
+
+    def get_email_declarant(self, obj):
+        if obj.user:
+            return obj.user.email
+        return None
+
+    def get_nom_admin(self, obj):
+        if obj.admin and obj.admin.user:
+            return obj.admin.user.get_full_name()
+        return None
+
+    def get_email_admin(self, obj):
+        if obj.admin and obj.admin.user:
+            return obj.admin.user.email
+        return None
 
     def create (self , validated_data) : 
         validated_data ['admin'] = self.context ['request'].user.admin
         return super().create(validated_data)
 
-
+    
+        
 
 class InterventionUpdateSerializer(serializers.ModelSerializer):
+   
+  
     class Meta:
         model = Intervention
         fields = '__all__'
@@ -57,5 +118,4 @@ class UserInterventionSerializer(serializers.ModelSerializer):
     def create (self  , validated_data)  : 
         validated_data ['user'] = self.context ['request'].user 
         return super().create(validated_data) 
-
 

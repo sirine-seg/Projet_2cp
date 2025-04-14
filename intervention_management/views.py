@@ -1,11 +1,11 @@
 from rest_framework import viewsets
-from rest_framework.generics import ListAPIView , CreateAPIView , UpdateAPIView , DestroyAPIView
+from rest_framework.generics import ListAPIView , CreateAPIView , UpdateAPIView , DestroyAPIView,RetrieveAPIView
 from rest_framework.response import Response   
 from rest_framework import status 
 from rest_framework import permissions  , filters 
 from rest_framework.permissions import IsAuthenticated as IsAuth
 from .models import Intervention, Status 
-from .serializers import AdminInterventionSerializer , UserInterventionSerializer , InterventionUpdateSerializer
+from .serializers import AdminInterventionSerializer , UserInterventionSerializer , InterventionUpdateSerializer,StatusSerializer
 from accounts_management.permissions import IsAdminUser , IsTechnician , IsPersonnel
 from rest_framework import serializers
 from .permissions import CanDeclareIntervention
@@ -20,13 +20,9 @@ class AdminInterventionCreateAPIView(CreateAPIView):
     
     def perform_create(self, serializer):
         # Save the intervention with the logged-in admin as the user
-        #intervention = serializer.save(admin=self.request.user.admin)
+        intervention = serializer.save(admin=self.request.user.admin)
         
-        if self.request.user.is_authenticated:
-            intervention = serializer.save(admin=self.request.user.admin)
-        else:
-            # Save without assigning admin (or set it to None if your model allows it)
-            intervention = serializer.save()
+       
 
     
 
@@ -47,12 +43,12 @@ class AdminInterventionCreateAPIView(CreateAPIView):
 class UserInterventionCreateAPIView(CreateAPIView):
     queryset  = Intervention.objects.all () 
     serializer_class = UserInterventionSerializer
-    def perform_create(self, serializer):
-     personnel = getattr(self.request.user, 'personnel', None)
-     if personnel:
-        serializer.save(user=personnel)
-     else:
-        serializer.save()
+   # def perform_create(self, serializer):
+    # personnel = getattr(self.request.user, 'personnel', None)
+    # if personnel:
+    #    serializer.save(user=personnel)
+    # else:
+    #    serializer.save()
 
     #permission_classes = [IsAuth]  # Use the custom permission class
 
@@ -73,7 +69,7 @@ class UserInterventionCreateAPIView(CreateAPIView):
 class InterventionListAPIView (ListAPIView) : 
     serializer_class  = AdminInterventionSerializer 
     queryset = Intervention.objects.all ()
-    permission_classes  = [permissions.IsAuthenticated , IsAdminUser]
+    #permission_classes  = [permissions.IsAuthenticated , IsAdminUser]
 
 
     # def get_queryset (self) : 
@@ -93,11 +89,10 @@ class TechnicianInterventionsListAPIView(ListAPIView):
 
     """List only the interventions for the currently logged-in technician."""
     serializer_class = AdminInterventionSerializer
-    permission_classes = [IsAuth, IsTechnician]
+    #permission_classes = [IsAuth, IsTechnician]
     def get_queryset(self):
         return Intervention.objects.filter(id_technicien=self.request.user.technicien)
     
-
 class InterventionUpdateAPIView(UpdateAPIView):
     queryset = Intervention.objects.all()
     serializer_class = AdminInterventionSerializer
@@ -127,6 +122,8 @@ class InterventionUpdateAPIView(UpdateAPIView):
         intervention = serializer.save()
         new_status = intervention.statut
 
+        
+
         # If the status changed to "Terminé"
         if old_status and new_status and old_status.id != new_status.id and new_status.name == "Terminé":
             # Update the equipment status to "En service"
@@ -141,13 +138,13 @@ class InterventionUpdateAPIView(UpdateAPIView):
 class InterventionDeleteAPIView(DestroyAPIView):
     queryset = Intervention.objects.all()
     serializer_class = AdminInterventionSerializer
-    permission_classes = [IsAuth, IsAdminUser]
+   # permission_classes = [IsAuth, IsAdminUser]
 
 
 
 class TechnicianInterventionUpdateAPIView(UpdateAPIView):
     serializer_class = InterventionUpdateSerializer
-    permission_classes = [IsAuth, IsTechnician]
+  #  permission_classes = [IsAuth, IsTechnician]
     
     def get_queryset(self):
         """Only allow technicians to update interventions assigned to them"""
@@ -195,4 +192,12 @@ class EquipementLogs (ListAPIView) :
     
 
 
-    
+class InterventionDetailAPIView(RetrieveAPIView):
+    queryset = Intervention.objects.all()
+    serializer_class = AdminInterventionSerializer    
+   # permission_classes = [IsAuth, IsAdminUser] 
+ 
+class StatusListAPIView(ListAPIView):
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+  # permission_classes = [IsAuth, IsAdminUser] 

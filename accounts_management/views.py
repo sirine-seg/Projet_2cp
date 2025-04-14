@@ -16,7 +16,7 @@ def login_success(request):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = []     
+   # permission_classes = [permissions.IsAuthenticated , IsAdminUser]     
     # filter_backends = [DjangoFilterBackend , SearchFilter]
     # filterset_fields = ['role'] 
     search_fields = ['email' , 'first_name' , 'last_name']
@@ -24,22 +24,18 @@ class UserListView(generics.ListAPIView):
 
 
 # Views for admins to create technicians
+
 class TechnicianCreationView(generics.CreateAPIView):
     """Allows admins to pre-register technicians"""
     queryset = User.objects.all()
     serializer_class = TechnicienCreationSerializer
-    permission_classes = []
+   # permission_classes = [permissions.IsAuthenticated, IsAdminUser]
     
     def perform_create(self, serializer):
         # Create technician with email, name, etc.
         user = serializer.save(role=User.TECHNICIEN)
         
         # Create technician profile
-        Technicien.objects.create(
-            user=user,
-            disponibilite=serializer.validated_data.get('disponibilite', True),
-            poste=serializer.validated_data.get('poste', '')
-        )
         
         # For technicians without Google authentication
         if serializer.validated_data.get('use_password', False):
@@ -48,6 +44,8 @@ class TechnicianCreationView(generics.CreateAPIView):
             # For Google auth technicians - set unusable password
             user.set_unusable_password()
         user.save()
+
+
         
 class UserDetailView(generics.RetrieveAPIView):
     """

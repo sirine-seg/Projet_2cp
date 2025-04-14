@@ -177,5 +177,5 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none' 
 SOCIALACCOUNT_STORE_TOKENS = True
 
-MEDIA_URL = '/equip_imges/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'equip_imges')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

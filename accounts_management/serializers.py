@@ -3,7 +3,7 @@ from .models import User, Technicien, Personnel, Admin
 
 class UserSerializer(serializers.ModelSerializer):
     technicien = serializers.SerializerMethodField(read_only=True)
-
+    photo = serializers.ImageField(use_url=True, allow_null=True, required=False)
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'role', 'numero_tel', 'photo', 'technicien']
@@ -18,24 +18,28 @@ class UserSerializer(serializers.ModelSerializer):
                 'poste': technicien.poste
             }
         except Technicien.DoesNotExist:
-            return None  # Si ce n'est pas un technicien, retourne None
-
-
+            return None  # Si ce n'est pas un technicien, retourne Non
+        
 class TechnicienCreationSerializer(serializers.ModelSerializer):
     poste = serializers.CharField(required=False , allow_blank=True)  
-    use_password = serializers.BooleanField(default=False, write_only=True)
+    use_password = serializers.BooleanField(default=True, read_only=True)
     password = serializers.CharField(write_only=True, required=False , allow_blank=True)
     
     class Meta:
         model = User 
-        fields = ['email', 'first_name', 'last_name', 'password', 'numero_tel', 'poste', 'use_password']
+        fields = ['email', 'first_name', 'last_name', 'password', 'numero_tel', 'poste' , 'use_password']
         extra_kwargs = {'password': {'write_only': True}}
     
     def create(self, validated_data):
         # Extract non-User fields
+        
+        validated_data['use_password'] = True  # ensure it is always True
+
         poste = validated_data.pop('poste', '')
-        use_password = validated_data.pop('use_password', False)
-        password = validated_data.pop('password', None)
+        use_password = validated_data.pop ('use_password' , True)
+        password     = validated_data.pop ('password' , None)
+
+        
         
         # Create user with proper role
         user = User(
@@ -58,13 +62,10 @@ class TechnicienCreationSerializer(serializers.ModelSerializer):
         Technicien.objects.create(user=user, poste=poste)
         
         # Create technician profile
-        Technicien.objects.create(
-            user=user,
-            poste=poste
-        )
         
         return user
-    
+
+
 
 
 class PersonnelCreationSerializer(serializers.ModelSerializer):
