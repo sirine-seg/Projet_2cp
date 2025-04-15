@@ -22,7 +22,7 @@ class EquipementListView(generics.ListAPIView):
     serializer_class = EquipementSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = EquipementFilter
-   # permission_classes = [IsAuthenticated , IsAdmin] 
+    permission_classes = [IsAuthenticated , IsAdmin] 
 
 class EquipementDetailView(generics.RetrieveAPIView):
     queryset = Equipement.objects.all()

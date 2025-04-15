@@ -29,7 +29,9 @@ urlpatterns = [
     path('accounts_management/', include('accounts_management.urls')),
     path('equipements/', include('equipements_management.urls')),
     path('intervention/', include('intervention_management.urls')),
-     path('api/token/', obtain_auth_token, name='api_token_auth'),
+    path('api/token/', obtain_auth_token, name='api_token_auth'),
+    path ("authentification/" , include ('simpeauthentification.urls')) 
+
    
 ] 
 
