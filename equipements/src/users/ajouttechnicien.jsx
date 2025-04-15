@@ -322,7 +322,7 @@ const AjoutPage = () => {
 
  {/* Pop-up de confirmation */}
  {isPopupVisible && (
-  <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-40 z-50">
+  <div className="fixed inset-0 flex justify-center items-center  bg-opacity-40 z-999">
     <div className="bg-white p-8 rounded-3xl shadow-2xl w-[90%] max-w-md relative text-center">
 
       {/* Icône cercle avec check */}

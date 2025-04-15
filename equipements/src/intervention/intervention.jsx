@@ -13,6 +13,8 @@ import { useParams } from "react-router-dom";
 
 
 const Userspageee= () => {
+    const token = localStorage.getItem('access_token');
+
     const [interventions, setInterventions] = useState([]);  // Stocke toutes les interventions
     const [displayedInterventions, setDisplayedInterventions] = useState([]); // Stocke les interventions affichées
     const [filter, setFilter] = useState("Tout");
@@ -42,7 +44,16 @@ const Userspageee= () => {
 useEffect(() => {
     const fetchintervention = async () => {
         try {
-            const response = await fetch("http://127.0.0.1:8000/intervention/list/");
+            const response = await fetch(
+                "http://127.0.0.1:8000/intervention/list/" , 
+                {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        //'Content-Type': 'application/json'
+                      }
+                }
+            );
             if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
 
             const data = await response.json();

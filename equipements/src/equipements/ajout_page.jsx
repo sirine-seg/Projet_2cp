@@ -43,7 +43,18 @@ const AjoutPage = () => {
     etat: "",
   });
 
-  const categories = ["Ordinateur", "Imprimante", "Projecteur","ELEC"];
+  const categories = ["ELEC",
+"MECA",
+"MED", 
+"LABO",
+"INDUS" , 
+"SECUR" , 
+"COMM",
+"OUTILS" , 
+"AUTRE"];
+const types  = ["ORDI_PORT" , "ORDI_BUR" , "IMPRIMANTE" , "SERVEUR" , "SWITCH" , "ROUTEUR" , "ONDULEUR"]
+const localisations = ['A1' , 'AP1'  , 'MC2']
+
 
   const handleChange = (e) => {
     setNewEquipement({ ...newEquipement, [e.target.name]: e.target.value });
@@ -81,34 +92,62 @@ const AjoutPage = () => {
     if (selectedManual) {
       formData.append("manuel", selectedManual);
     }
+
+    // Get the access token from localStorage
+    const token = localStorage.getItem('access_token');
+    
+    if (!token) {
+      alert("Vous devez être connecté!");
+      navigate('/login');
+      return;
+    }
+
+
+    console.log("Token:", token);
+  console.log("Token length:", token?.length);
+  console.log("Token valid format:", token?.split('.').length === 3);
+  
+  // Debug: Log FormData contents
+  console.log("FormData entries:");
+  for (let pair of formData.entries()) {
+    console.log(pair[0] + ': ' + (pair[1] instanceof File ? pair[1].name : pair[1]));
+  }
+
+
     fetch("http://127.0.0.1:8000/equipements/create/", {
         method: "POST",
+        headers: {
+            // Add Authorization header with JWT token
+            'Authorization': `Bearer ${token}` ,  
+            // Note: Don't add Content-Type for FormData - browser handles this
+            'Accept': 'application/json'
+        },
         body: formData,
-      })
-        .then(async (response) => {
-          let data;
-          try {
-            data = await response.json(); // Try parsing JSON
-          } catch (error) {
+    })
+    .then(async (response) => {
+        // Rest of your code remains the same
+        let data;
+        try {
+            data = await response.json();
+        } catch (error) {
             console.warn("Non-JSON response received:", error);
             data = null;
-          }
-      
-          console.log("Server response:", data);
-      
-          if (!response.ok) {
+        }
+        
+        console.log("Server response:", data);
+        
+        if (!response.ok) {
             throw new Error(data?.message || "Échec de l'ajout !");
-          }
-      
-          alert("Équipement ajouté !");
-          setEquipements([...equipements, data]);
-        })
-        .catch((error) => {
-          console.error("Erreur lors de l'ajout:", error);
-          alert("Erreur lors de l'ajout !");
-        });
-      
-  };
+        }
+        
+        alert("Équipement ajouté !");
+        setEquipements([...equipements, data]);
+    })
+    .catch((error) => {
+        console.error("Erreur lors de l'ajout:", error);
+        alert("Erreur lors de l'ajout !");
+    });
+};
 
   useEffect(() => {
     const filteredEquipements = equipements.filter((equipement) => {
@@ -250,15 +289,21 @@ const AjoutPage = () => {
             </div>
 
             <div className="my-2">
-              <label className="block text-black font-bold">Type</label>
-              <input
-                type="text"
-                name="type"
-                value={newEquipement.type}
-                onChange={handleChange}
-                className="w-full my-2 px-4 py-3 border rounded-md bg-white text-black"
-              />
-            </div>
+  <label className="block text-black font-bold">Type</label>
+  <select
+    name="type"
+    value={newEquipement.type}
+    onChange={handleChange}
+    className="w-full my-2 px-4 py-3 border rounded-md bg-white text-black"
+  >
+    <option value="">__</option>
+    {types.map((type) => (
+      <option key={type} value={type}>
+        {type}
+      </option>
+    ))}
+  </select>
+</div>
 
             
           </div>
@@ -326,28 +371,22 @@ const AjoutPage = () => {
           
           </div>
         {/* ✅ Bottom Row */}
-        <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2">
-          <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
-            <label className="block text-black font-bold">Localisation</label>
-            <input
-              type="text"
-              name="localisation"
-              value={newEquipement.localisation}
-              onChange={handleChange}
-              className="w-full my-2 py-3 px-4 border rounded-md bg-white text-black"
-            />
-          </div>
-          <div className="w-full sm:w-1/2 pl-0 sm:pl-2">
-            <label className="block text-black font-bold">Code-barres</label>
-            <input
-              type="text"
-              name="codebar"
-              value={newEquipement.codebar}
-              onChange={handleChange}
-              className="w-full my-2 px-4 py-3 border rounded-md bg-white text-black"
-            />
-          </div>
-        </div>
+        <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
+  <label className="block text-black font-bold">Localisation</label>
+  <select
+    name="localisation"
+    value={newEquipement.localisation}
+    onChange={handleChange}
+    className="w-full my-2 py-3 px-4 border rounded-md bg-white text-black"
+  >
+    <option value="">__</option>
+    {localisations.map((localisation) => (
+      <option key={localisation} value={localisation}>
+        {localisation}
+      </option>
+    ))}
+  </select>
+</div>
 
         {/* ✅ Error Message */}
         {errorMessage && (

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";  // Remove Router import
 import Sidebar from './sidebar.jsx';
 import './App.css';
 
@@ -31,8 +31,8 @@ import Userst from "./users/userst";
 import TechnicienDetailstt from "./users/technicientt.jsx";
 import UtilisateurDetailstt from "./users/adminpersonneltt.jsx";
 
-import LandingPage from "./landingPage/landingpage.jsx";
-import Register from "./Login/signup.jsx";
+import LandingPage from "./landingPage/Landingpage.jsx";
+import Register from "./Login/Signup.jsx";
 import Login from "./Login/Login.jsx";
 
 // AppContent separates layout logic
@@ -95,9 +95,8 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    // No Router here, it's already in the AppContent
+    <AppContent />
   );
 }
 

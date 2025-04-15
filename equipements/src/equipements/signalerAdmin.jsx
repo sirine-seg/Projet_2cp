@@ -32,6 +32,8 @@ const CalendarComponent = () => {
 };
 
 const SignalerAdmin = () => {
+  const token = localStorage.getItem('access_token');
+
   const { id } = useParams(); 
   const [selectedTechnicienId, setSelectedTechnicienId] = useState("");
 const [techniciensAjoutes, setTechniciensAjoutes] = useState([]);
@@ -241,6 +243,10 @@ const urgenceOptions = [
     fetch("http://127.0.0.1:8000/intervention/Admincreate/", {
       method: "POST",
       body: formData,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        //'Content-Type': 'application/json'
+      }
     })
       .then(async (response) => {
         let data;

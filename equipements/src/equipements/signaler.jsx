@@ -224,8 +224,8 @@ const urgenceOptions = [
     }
   
     // Envoi de la requête
-    fetch("http://127.0.0.1:8000/intervention/Personnelcreate/", {
-      method: "POST",
+    fetch("http://127.0.0.1:8000/intervention/Admincreate/", {
+      method: "POST", 
       
       credentials: "include",
       body: formData,

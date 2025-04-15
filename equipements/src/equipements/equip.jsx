@@ -26,7 +26,8 @@ const FilterSelect = ({ label, options, value, onChange }) => (
   
 
 const EquipementsPage = () => {
-    
+  const token = localStorage.getItem('access_token');
+    const [selectedStatus, setSelectedStatus] = useState(null);
     const [equipements, setEquipements] = useState([]);
     const [isDeletePopupVisible, setIsDeletePopupVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -61,7 +62,7 @@ const EquipementsPage = () => {
     // ✅ Fetch Equipements (Runs when search or filters change)
     useEffect(() => {
        // const token = localStorage.getItem('authToken'); // 🔑 Get the token
-        let url = "http://127.0.0.1:8000/equipements/equipements_list/?";
+        let url = "http://127.0.0.1:8000/equipements/equipements_list/";
       
         // Add search term if present
         if (searchTerm) {
@@ -78,10 +79,10 @@ const EquipementsPage = () => {
         // Make the authenticated fetch
         fetch(url, {
           method: 'GET',
-        /*  headers: {
-            'Authorization': `Token ${token}`,
+         headers: {
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
-          }*/
+          }
         })
           .then((response) => response.json())
           .then((data) => {
@@ -91,7 +92,7 @@ const EquipementsPage = () => {
           .catch(error => {
             console.error("Error fetching data:", error);
           });
-      }, [searchTerm, filters]);
+      }, [searchTerm, filters, token]);
       
 
     // ✅ Fetch Filter Options from Backend
@@ -117,7 +118,9 @@ const EquipementsPage = () => {
         fetch(`equipements/ changerStatus/${equipementId}/`, {
             method: "PATCH", // Using PATCH to update only the 'etat' field
             headers: {
-                "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`,
+
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ etat: newEtat }),
         })
@@ -156,9 +159,9 @@ const EquipementsPage = () => {
 
     const handlesignale = (equipement) => {
         console.log("Redirection vers la page d'édition pour l'équipement ID:", equipement.id_equipement);
-        
+         
         // Navigate to the edit page with the equipment ID
-        navigate(`/signaler/${equipement.id_equipement}`);
+        navigate(`/signalerAdmin/${equipement.id_equipement}`);
     
         // Close the menu
         setMenuOpen(null);
@@ -183,6 +186,9 @@ const EquipementsPage = () => {
     
             fetch(`http://localhost:8000/equipements/delete/${equipementId}/`, {
                 method: "DELETE",
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                }
             })
             .then(async (response) => {
                 console.log("Réponse complète:", response);
@@ -222,7 +228,12 @@ const EquipementsPage = () => {
       }, []);*/
 
       useEffect(() => {
-        fetch("https://127.0.0.1:8000/equipements/equipementchoices/")  // ✅ update with your real endpoint
+        fetch("http://127.0.0.1:8000/equipements/equipementchoices/" ,{
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+          }
+        )  // ✅ update with your real endpoint
           .then((res) => {
             if (!res.ok) throw new Error("Network response was not ok");
             return res.json();
@@ -241,10 +252,10 @@ const EquipementsPage = () => {
         label,
       }));
 
-      const localisationOptions = Object.entries(options.localisations).map(([value, label]) => ({
-        value,
-        label,
-      }));
+      // const localisationOptions = Object.entries(options.localisations).map(([value, label]) => ({
+      //   value,
+      //   label,
+      // }));
 
       const categorieOptions = Object.entries(options.categories).map(([value, label]) => ({
         value,
@@ -285,35 +296,35 @@ const EquipementsPage = () => {
 
                 {/* ✅ Filter Dropdowns */}
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-xl w-full px-4 py-1 text-sm sm:text-base h-8 sm:h-10 mx-auto items-center justify-center ">
-                    <FilterSelect
+                    {/* <FilterSelect
                         label="Catégorie"
                         options={categorieOptions}
-                        //value={filters.categorie}
+                        value={filters.categorie}
                         onChange={(selected) => {
                             if (selected) {
                               updateEtat(selectedEquipement.id_equipement, selected.value);
                             }
                           }}
-                    />
+                    /> */}
                     
-                    <FilterSelect
-                        label="Type"
-                        options={typeOptions}
-                        value={filters.type}
-                        onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-                    />
-                    <FilterSelect
-                        label="Localisation"
-                        options={ localisationOptions}
-                        value={filters.localisation}
-                        onChange={(e) => setFilters({ ...filters, localisation: e.target.value })}
-                    />
-                    <FilterSelect
-                        label="État"
-                        options={etatOptions}
-                        value={filters.etat}
-                        onChange={(e) => setFilters({ ...filters, etat: e.target.value })}
-                    />
+                      {/* <FilterSelect
+                          label="Type"
+                          options={typeOptions}
+                          value={filters.type}
+                          onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+                      />
+                      <FilterSelect
+                          label="Localisation"
+                          options={ localisationOptions}
+                          value={filters.localisation}
+                          onChange={(e) => setFilters({ ...filters, localisation: e.target.value })}
+                      />
+                      <FilterSelect
+                          label="État"
+                          options={etatOptions}
+                          value={filters.etat}
+                          onChange={(e) => setFilters({ ...filters, etat: e.target.value })}
+                      /> */}
                 </div>
 
                 {/* ✅ Results & Add Button */}
