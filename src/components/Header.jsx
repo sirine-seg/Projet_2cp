@@ -1,6 +1,6 @@
 // src/components/Header.js
 import { MdAccountCircle } from "react-icons/md";
-import logo from '../assets/logo.png'; // ajuste le chemin si besoin
+import logo from '../assets/logo.png'; 
 
 const Header = () => {
   return (
