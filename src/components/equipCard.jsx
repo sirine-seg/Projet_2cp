@@ -20,7 +20,6 @@ const equipCard = ({ nom, etat, id, localisation, onClick, moreClick }) => {
     };
 
   return (
-    <div className="bg-[#F4F4F4] h-100 p-8">
     <div className="bg-white rounded-xl shadow-md pr-5 pl-7 pt-4 pb-6 w-[353px] relative" onClick={onClick}>
     
       {/* Header avec badge et ID */}
@@ -46,7 +45,6 @@ const equipCard = ({ nom, etat, id, localisation, onClick, moreClick }) => {
         </div>
       </div>
       
-    </div>
     </div>
   );
 };
