@@ -1,19 +1,23 @@
-import { MdSearch } from "react-icons/md";
+import Searchloop from "../assets/Searchloop.svg";
 
 const SearchBar = ({
-  placeholder = "Rechercher...",
+  placeholder = "Rechercher",
   value,
   onChange,
   className = "",
 }) => {
   return (
-    <div className={`relative w-full max-w-md my-5 -mt-38 mx-auto  ${className}` }>
+    <div className={`relative w-full max-w-md my-5 mx-auto ${className}`}>
       <div className="relative">
-        <MdSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-black" />
+        <img 
+          src={Searchloop} 
+          alt="Searchloop" 
+          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" 
+        />
         <input
           type="text"
           placeholder={placeholder}
-          className="w-full text-black px-4 py-2 pl-10 rounded-full border border-gray-300 bg-[#F4F4F4] shadow-md"
+          className="w-full focus:outline-0 focus:ring-0 text-[#202124] px-4 py-2 text-[0.8125rem] pl-10 rounded-[8px] border border-[#C3D4E9] bg-[#FFFFFF] shadow-md"
           value={value}
           onChange={onChange}
         />
