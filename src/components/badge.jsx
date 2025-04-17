@@ -1,10 +1,10 @@
 const badge = ({ 
     text, 
-    bgColor = "#20599E",
+    bgColor,
   }) => {
     return (
       <span
-        className="px-4 py-2 rounded-full font-bold text-[#F4F4F4]"
+        className="px-4 py-2 rounded-full font-bold text-[10px] text-[#F4F4F4]"
         style={{
           backgroundColor: bgColor,
         }}
