@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const Button = ({
+const Buttonrec = ({
   text,
   bgColor = "#20599E",
   textColor = "white",
@@ -30,4 +30,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default Buttonrec;
