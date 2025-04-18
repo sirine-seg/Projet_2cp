@@ -53,12 +53,8 @@ class TechnicienCreationSerializer(serializers.ModelSerializer):
             user.set_unusable_password()
 
         user.save()
-        Technicien.objects.create(user=user, poste=poste)
 
-        Technicien.objects.create(
-            user=user,
-            poste=poste
-        )
+        Technicien.objects.create(user=user, poste=poste)
 
         return user
 
