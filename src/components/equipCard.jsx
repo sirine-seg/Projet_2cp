@@ -28,10 +28,13 @@ const equipCard = ({ nom, etat, id, localisation, onClick, moreClick }) => {
           <Badge text={etat} bgColor={badgeColor} />
           <Badge text={`#${id}`} bgColor="#9AA0A6" />
         </div>
-        <MoreVertical 
-          className="text-[#202124] w-5 h-5 cursor-pointer" 
-          onClick={handleMoreClick} 
-        />
+        {/* Trois points */}
+        <div className="p-1 rounded-full hover:bg-gray-100 transition-colors">
+          <MoreVertical 
+            className="text-[#202124] w-5 h-5 cursor-pointer" 
+            onClick={handleMoreClick} 
+          />
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">
