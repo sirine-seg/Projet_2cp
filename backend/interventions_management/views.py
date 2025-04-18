@@ -330,33 +330,3 @@ class AllInterventionsListView(generics.ListAPIView):
             result.append(intervention_data)
 
         return Response(result)
-
-
-class InterventionStatsView(generics.GenericAPIView):
-    """
-    View to get statistics about interventions.
-    """
-    permission_classes = [IsAdmin, IsAuthenticated]
-
-    def get(self, request):
-        """
-        Return statistics about interventions.
-        """
-        total_interventions = Intervention.objects.count()
-        preventive_count = InterventionPreventive.objects.count()
-        currative_count = InterventionCurrative.objects.count()
-        pending_count = Intervention.objects.filter(
-            statut__name='En attente').count()
-        in_progress_count = Intervention.objects.filter(
-            statut__name='En cours').count()
-        completed_count = Intervention.objects.filter(
-            statut__name='Terminé').count()
-
-        return Response({
-            'total': total_interventions,
-            'preventive': preventive_count,
-            'currative': currative_count,
-            'pending': pending_count,
-            'in_progress': in_progress_count,
-            'completed': completed_count
-        })

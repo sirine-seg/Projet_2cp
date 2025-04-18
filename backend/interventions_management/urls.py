@@ -12,7 +12,6 @@ from .views import (
     AllInterventionsListView,
     InterventionPreventiveUpdateView,
     InterventionCurrativeUpdateView,
-    InterventionStatsView,
 )
 
 urlpatterns = [
@@ -52,7 +51,4 @@ urlpatterns = [
 
     # All interventions
     path('all/', AllInterventionsListView.as_view(), name='all-interventions'),
-
-    # Statistics
-    path('stats/', InterventionStatsView.as_view(), name='intervention-stats'),
 ]
