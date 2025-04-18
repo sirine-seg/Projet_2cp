@@ -54,8 +54,6 @@ class TechnicienCreationSerializer(serializers.ModelSerializer):
 
         user.save()
 
-        Technicien.objects.create(user=user, poste=poste)
-
         return user
 
 
