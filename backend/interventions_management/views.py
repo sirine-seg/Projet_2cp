@@ -2,10 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db import transaction
-
 from accounts_management.permissions import IsAdmin, IsPersonnel, IsTechnician
-from equipements_management.models import Equipement
 from .models import (
     StatusIntervention,
     Intervention,
@@ -92,6 +89,41 @@ class InterventionPreventiveDetailView(generics.RetrieveUpdateDestroyAPIView):
         return InterventionPreventive.objects.none()
 
 
+class InterventionPreventiveUpdateView(generics.UpdateAPIView):
+    """
+    View to update preventive interventions.
+    """
+    queryset = InterventionPreventive.objects.all()
+    serializer_class = InterventionPreventiveSerializer
+    permission_classes = [IsAdmin | IsTechnician, IsAuthenticated]
+    lookup_field = 'intervention_id'
+
+    def get_queryset(self):
+        """
+        Filter queryset based on user role.
+        """
+        user = self.request.user
+        queryset = super().get_queryset()
+
+        if IsAdmin().has_permission(self.request, self):
+            return queryset
+        elif IsTechnician().has_permission(self.request, self):
+            return queryset.filter(intervention__technicien=user.technicien)
+
+        return InterventionPreventive.objects.none()
+
+    def perform_update(self, serializer):
+        """
+        Update the intervention and trigger signal processing for status changes.
+        """
+        instance = serializer.save()
+        # The post_save signal will be triggered automatically
+        # but we can manually trigger our custom signal handler if needed
+        from .signals import handle_intervention_status_and_equipement_state
+        handle_intervention_status_and_equipement_state(
+            sender=Intervention, instance=instance.intervention, created=False)
+
+
 class AdminInterventionCurrativeListCreateView(generics.ListCreateAPIView):
     """
     View for admins to list and create currative interventions.
@@ -111,6 +143,51 @@ class AdminInterventionCurrativeDetailView(generics.RetrieveUpdateDestroyAPIView
     serializer_class = AdminInterventionCurrativeSerializer
     permission_classes = [IsAdmin, IsAuthenticated]
     lookup_field = 'intervention_id'
+
+
+class InterventionCurrativeUpdateView(generics.UpdateAPIView):
+    """
+    View to update currative interventions.
+    """
+    queryset = InterventionCurrative.objects.all()
+    lookup_field = 'intervention_id'
+    permission_classes = [IsAdmin | IsPersonnel |
+                          IsTechnician, IsAuthenticated]
+
+    def get_serializer_class(self):
+        """
+        Return the appropriate serializer based on user role.
+        """
+        if IsAdmin().has_permission(self.request, self):
+            return AdminInterventionCurrativeSerializer
+        return UserInterventionCurrativeSerializer
+
+    def get_queryset(self):
+        """
+        Filter queryset based on user role.
+        """
+        user = self.request.user
+        queryset = InterventionCurrative.objects.all()
+
+        if IsAdmin().has_permission(self.request, self):
+            return queryset
+        elif IsPersonnel().has_permission(self.request, self):
+            return queryset.filter(user=user.personnel)
+        elif IsTechnician().has_permission(self.request, self):
+            return queryset.filter(intervention__technicien=user.technicien)
+
+        return InterventionCurrative.objects.none()
+
+    def perform_update(self, serializer):
+        """
+        Update the intervention and trigger signal processing for status changes.
+        """
+        instance = serializer.save()
+        # The post_save signal will be triggered automatically
+        # but we can manually trigger our custom signal handler if needed
+        from .signals import handle_intervention_status_and_equipement_state
+        handle_intervention_status_and_equipement_state(
+            sender=Intervention, instance=instance.intervention, created=False)
 
 
 class PersonnelInterventionCurrativeListView(generics.ListAPIView):
@@ -174,27 +251,27 @@ class TechnicianInterventionListView(generics.ListAPIView):
 
 class AllInterventionsListView(generics.ListAPIView):
     """
-    View to list all interventions (both preventive and currative).
+    View to list all interventions (both preventive and corrective).
     """
     permission_classes = [IsAuthenticated]
 
     def list(self, request):
         """Custom list method to combine different types of interventions."""
-        user = request.user
+        user = self.request.user
 
         # Base query for interventions
         interventions = Intervention.objects.all()
 
         # Filter based on user role
-        if hasattr(user, 'admin'):
+        if IsAdmin().has_permission(self.request, self):
             # Admin sees everything
             pass
-        elif hasattr(user, 'personnel'):
+        elif IsPersonnel().has_permission(self.request, self):
             # Personnel sees only their currative interventions
             interventions = interventions.filter(
                 currative_details__user=user.personnel
             )
-        elif hasattr(user, 'technicien'):
+        elif IsTechnician().has_permission(self.request, self):
             # Technician sees only interventions they're assigned to
             interventions = interventions.filter(
                 technicien=user.technicien
@@ -236,7 +313,7 @@ class AllInterventionsListView(generics.ListAPIView):
                     preventive = intervention.preventive_details
                     intervention_data['period'] = preventive.period
                 except InterventionPreventive.DoesNotExist:
-                    pass
+                    intervention_data['period'] = None
 
             elif intervention.type_intervention == Intervention.TYPE_CURRATIVE:
                 try:
@@ -246,7 +323,9 @@ class AllInterventionsListView(generics.ListAPIView):
                         currative.user) if currative.user else None
                     intervention_data['date_fin'] = currative.date_fin
                 except InterventionCurrative.DoesNotExist:
-                    pass
+                    intervention_data['user_id'] = None
+                    intervention_data['user'] = None
+                    intervention_data['date_fin'] = None
 
             result.append(intervention_data)
 
