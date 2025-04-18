@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import check from "../assets/check.svg"; 
+import quitter from "../assets/quitter.svg"; 
 
 const PopupMessage = ({
   title,
@@ -49,12 +50,18 @@ const PopupMessage = ({
         )}
 
         {/* Bouton de fermeture */}
-        <button
+        <img 
+          src={quitter} alt="quitter"
           onClick={() => setIsPopupVisible(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"
-        >
-          X
-        </button>
+          className="
+            absolute top-4 right-4 
+            h-8 w-8 
+            transition-all duration-200
+            hover:shadow-sm 
+            hover:rounded-lg
+            cursor-pointer
+          "
+        />
       </div>
     </div>
   );
