@@ -5,7 +5,6 @@ from .serializers import (
     InterventionPreventiveSerializer,
     AdminInterventionCurrativeSerializer,
     UserInterventionCurrativeSerializer,
-    AllInterventionsSerializer,
 )
 from .filters import InterventionPreventiveFilter, InterventionCurrativeFilter, AllInterventionsFilter
 from accounts_management.permissions import IsAdmin, IsPersonnel, IsTechnician
