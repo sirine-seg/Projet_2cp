@@ -1,9 +1,10 @@
 import React from "react";
 import attention from "../assets/attention.svg";
-import Button from "./button";
+import Button from "./Button";
+import quitter from "../assets/quitter.svg"; 
 
 const Popupdelete = ({
-  isVisible = false,
+  isVisible = true,
   onClose,
   onConfirm,
   title = "Êtes-vous sûr ?",
@@ -21,12 +22,18 @@ const Popupdelete = ({
       <div className="bg-white w-full max-w-[90%] sm:max-w-[500px] p-6 rounded-3xl shadow-2xl relative text-center">
         
         {/* Bouton de fermeture (X) */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-black text-lg"
-        >
-          X
-        </button>
+        <img 
+          src={quitter} alt="quitter"
+          onClick={() => setIsPopupVisible(false)}
+          className="
+            absolute top-4 right-4 
+            h-8 w-8 
+            transition-all duration-200
+            hover:shadow-sm 
+            hover:rounded-lg
+            cursor-pointer
+          "
+        />
 
         {/* Icône */}
         <img
