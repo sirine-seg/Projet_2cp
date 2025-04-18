@@ -16,7 +16,15 @@ class StatusIntervention(models.Model):
 
 
 class Intervention(models.Model):
-    """Model to store intervention details."""
+    """Base model to store core intervention details."""
+
+    # Intervention types
+    TYPE_PREVENTIVE = 'preventive'
+    TYPE_CURRATIVE = 'currative'
+    TYPE_CHOICES = [
+        (TYPE_PREVENTIVE, 'Intervention préventive'),
+        (TYPE_CURRATIVE, 'Intervention currative'),
+    ]
 
     # Urgency levels for interventions
     URGENCE_CHOICES = [
@@ -26,9 +34,14 @@ class Intervention(models.Model):
         (3, 'Faible urgence'),
     ]
 
-    title = models.CharField(max_length=255, verbose_name="Titre")
     id_intervention = models.AutoField(
         primary_key=True, verbose_name="ID d'intervention")
+    type_intervention = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        verbose_name="Type d'intervention"
+    )
+    title = models.CharField(max_length=255, verbose_name="Titre")
     equipement = models.ForeignKey(
         Equipement, on_delete=models.CASCADE, verbose_name="Équipement"
     )
@@ -43,7 +56,6 @@ class Intervention(models.Model):
     )
     date_debut = models.DateTimeField(
         null=True, blank=True, verbose_name="Date de début")
-
     statut = models.ForeignKey(
         StatusIntervention, on_delete=models.PROTECT, blank=True, null=True, verbose_name="Statut"
     )
@@ -53,31 +65,51 @@ class Intervention(models.Model):
     notes = models.TextField(blank=True, null=True, verbose_name="Notes")
 
     def __str__(self):
-        return f"Intervention sur {self.equipement.nom} par {self.technicien.user.email if self.technicien else 'N/A'}"
+        return f"Intervention {self.get_type_intervention_display()} sur {self.equipement.nom}"
 
     class Meta:
-        abstract = True
         verbose_name = "Intervention"
         verbose_name_plural = "Interventions"
 
 
-class InterventionPreventive(Intervention):
-    """Model to store preventive interventions."""
+class InterventionPreventive(models.Model):
+    """Extension model for preventive intervention specific fields."""
+    intervention = models.OneToOneField(
+        Intervention,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="preventive_details"
+    )
     period = models.DurationField(
-        null=True, blank=True, verbose_name="Date d'intervention préventive"
+        null=True, blank=True, verbose_name="Période d'intervention préventive"
     )
 
     def __str__(self):
-        return f"Intervention préventive sur {self.equipement.nom}"
+        return f"Détails préventifs pour {self.intervention}"
+
+    class Meta:
+        verbose_name = "Intervention préventive"
+        verbose_name_plural = "Interventions préventives"
 
 
-class InterventionCurrative(Intervention):
-    """Model to store currative interventions."""
+class InterventionCurrative(models.Model):
+    """Extension model for currative intervention specific fields."""
+    intervention = models.OneToOneField(
+        Intervention,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="currative_details"
+    )
     user = models.ForeignKey(
         Personnel, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Utilisateur"
     )
     date_fin = models.DateTimeField(
-        null=True, blank=True, verbose_name="Date de fin")
+        null=True, blank=True, verbose_name="Date de fin"
+    )
 
     def __str__(self):
-        return f"Intervention currative sur {self.equipement.nom}"
+        return f"Détails curatifs pour {self.intervention}"
+
+    class Meta:
+        verbose_name = "Intervention currative"
+        verbose_name_plural = "Interventions curratives"
