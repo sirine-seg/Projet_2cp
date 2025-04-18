@@ -7,10 +7,10 @@ import calendar from '../assets/calendar.svg';
 
 const interventionCard = ({ nom, urgence, statut, id, equipement, date, onClick, moreClick }) => {
     const urgenceColors = {
-      "Urgence vitale": "#F09C0A",
-      "Urgence élevée": "#20599E ",
-      "Urgence modérée": "#FF4423",
-      "Faible urgence": "#49A146",
+      "Vitale": "#F09C0A",
+      "Elevée": "#20599E ",
+      "Modérée": "#FF4423",
+      "Faible": "#49A146",
     };
     
     const statusColors = {
@@ -30,14 +30,14 @@ const interventionCard = ({ nom, urgence, statut, id, equipement, date, onClick,
     };
 
   return (
-    <div className="bg-white rounded-xl shadow-md pr-5 pl-7 pt-4 pb-6 max-w-[380px] relative" onClick={onClick}>
+    <div className="bg-white rounded-xl shadow-md pr-5 pl-7 pt-4 pb-6 max-w-[360px] relative" onClick={onClick}>
     
       {/* Header avec badge et ID */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Badge text={`#${id}`} bgColor="#9AA0A6" />
-          <Badge text={urgence} bgColor={urgenceColors[urgence]} />
-          <Badge text={statut} bgColor={badgeColor} />
+          <Badge text={urgence} bgColor={urgenceColors[urgence]} className="max-w-[90px] truncate" />
+          <Badge text={statut} bgColor={badgeColor} className="max-w-[90px] truncate" />
           
         </div>
         {/* Trois points */}
@@ -53,7 +53,7 @@ const interventionCard = ({ nom, urgence, statut, id, equipement, date, onClick,
         {/* Nom de l'équipement */}
         <div className="flex items-center text-gray-800 gap-3">
           <img src={interventionIcon} alt="InterventionIcon" className="h-6 w-6" />
-          <h2 className="text-[28px] font-bold text-[#202124]">{nom}</h2>
+          <h2 className="text-[28px] font-bold text-[#202124] truncate">{nom}</h2>
         </div>
 
         {/* Equipement et date */}
