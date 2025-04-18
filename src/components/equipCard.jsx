@@ -20,12 +20,12 @@ const equipCard = ({ nom, etat, id, localisation, onClick, moreClick }) => {
     };
 
   return (
-    <div className="bg-white rounded-xl shadow-md pr-5 pl-7 pt-4 pb-6 w-[353px] relative" onClick={onClick}>
+    <div className="bg-white rounded-xl shadow-md pr-5 pl-7 pt-4 pb-6 w-[360px] relative" onClick={onClick}>
     
       {/* Header avec badge et ID */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Badge text={etat} bgColor={badgeColor} />
+          <Badge text={etat} bgColor={badgeColor} className="max-w-[120px] truncate" />
           <Badge text={`#${id}`} bgColor="#9AA0A6" />
         </div>
         {/* Trois points */}
@@ -39,7 +39,7 @@ const equipCard = ({ nom, etat, id, localisation, onClick, moreClick }) => {
 
       <div className="flex flex-col gap-2">
         {/* Nom de l'équipement */}
-        <h2 className="text-[28px] font-bold text-[#202124]">{nom}</h2>
+        <h2 className="text-[28px] font-bold text-[#202124] truncate">{nom}</h2>
 
         {/* Localisation */}
         <div className="flex items-center text-gray-800 gap-2">
