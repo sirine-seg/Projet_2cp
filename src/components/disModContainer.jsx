@@ -14,7 +14,7 @@ export default function DisModContainer({ title, initialName, initialId, onSave 
   };
 
   return (
-    <div className="max-w-xs mx-auto">
+    <div className="w-full">
       <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
         {title}
       </label>
