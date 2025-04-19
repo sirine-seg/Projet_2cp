@@ -34,8 +34,6 @@ class Intervention(models.Model):
         (3, 'Faible urgence'),
     ]
 
-    id_intervention = models.AutoField(
-        primary_key=True, verbose_name="ID d'intervention")
     type_intervention = models.CharField(
         max_length=20,
         choices=TYPE_CHOICES,
@@ -72,34 +70,22 @@ class Intervention(models.Model):
         verbose_name_plural = "Interventions"
 
 
-class InterventionPreventive(models.Model):
+class InterventionPreventive(Intervention):
     """Extension model for preventive intervention specific fields."""
-    intervention = models.OneToOneField(
-        Intervention,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="preventive_details"
-    )
     period = models.DurationField(
         null=True, blank=True, verbose_name="Période d'intervention préventive"
     )
 
     def __str__(self):
-        return f"Détails préventifs pour {self.intervention}"
+        return f"Détails préventifs pour {self.title}"
 
     class Meta:
         verbose_name = "Intervention préventive"
         verbose_name_plural = "Interventions préventives"
 
 
-class InterventionCurrative(models.Model):
+class InterventionCurrative(Intervention):
     """Extension model for currative intervention specific fields."""
-    intervention = models.OneToOneField(
-        Intervention,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="currative_details"
-    )
     user = models.ForeignKey(
         Personnel, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Utilisateur"
     )
@@ -108,7 +94,7 @@ class InterventionCurrative(models.Model):
     )
 
     def __str__(self):
-        return f"Détails curatifs pour {self.intervention}"
+        return f"Détails curatifs pour {self.title}"
 
     class Meta:
         verbose_name = "Intervention currative"
