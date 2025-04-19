@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import SearchbarFilre from "./searchbarFiltre";
+import SearchbarFiltre from "./searchbarFiltre";
 import FiltreCheck from "./filtreCheck";
 
 function FiltrePopUp({
@@ -51,7 +51,7 @@ function FiltrePopUp({
   
           {/* Barre de recherche */}
           <div className="px-10 pb-1">
-            <SearchbarFilre
+            <SearchbarFiltre
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Recherche"
