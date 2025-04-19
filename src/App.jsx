@@ -3,6 +3,32 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+
+
+
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+
+
+
+
+
+import Users from "./assets/users.jsx";
+import Ajout from "./assets/ajouttt";
+import Modifie from "./assets/modifier.jsx";
+
+
+
+
+<Routes>
+<Route path="/Users" element={<Users />} />
+<Route path="/Ajout" element={<Ajout />} />
+<Route path="/Modifie/:id" element={<Modifie />} />
+</Routes>
+
+
+
+
+
 function App() {
   const [count, setCount] = useState(0)
 
