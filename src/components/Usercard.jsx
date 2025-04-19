@@ -60,17 +60,7 @@ const UserCard = ({
 </div>
 
 
-      {/* Bouton menu
-      <button
-        className="text-[#20599E] hover:text-gray-800 absolute top-3 right-3"
-        onClick={(event) => {
-          event.stopPropagation();
-          onMenuClick();
-        }}
-      >
-        ⋮
-      </button> */}
-
+      {/* Bouton menu*/}
       <div className="p-1 rounded-full hover:bg-gray-100 transition-colors">
           <MoreVertical 
             className="text-[#202124] w-5 h-5 cursor-pointer" 
