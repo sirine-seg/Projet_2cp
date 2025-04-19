@@ -1,48 +1,35 @@
 import { useState } from 'react';
-import Cube from "../assets/cube.svg";
 import ModifyPen from "../assets/modifyPen.svg";
 
-export default function DisModContainer({ title, initialName, initialId, onSave }) {
+export default function DisModContainer({ title, initialContent, onSave }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(initialName);
-  const [id, setId] = useState(initialId);
+  const [Content, setContent] = useState(initialContent);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleSave = () => {
-    onSave({ name, id });
+    onSave({ setContent });
     setIsEditing(false);
   };
 
   return (
-    <div className="w-full">
-      <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
+    <div className="w-full mx-auto">
+      <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1.5 ml-0.25rem">
         {title}
       </label>
       
       <div className="bg-white flex items-start w-full py-2 px-4 border border-white rounded-[0.5rem] font-regular font-poppins justify-between shadow-md transition-shadow duration-300 cursor-default">
         <div className="flex items-center space-x-3">
-          <span className="text-[#202124]">
-            <img src={Cube} alt="Cube" className="h-5 w-5" />
-          </span>
-          
           {isEditing ? (
             <div className="flex space-x-2">
               <input
                 type="text"
-                value={name}
+                value={Content}
                 onChange={(e) => setName(e.target.value)}
                 className="w-24 border-b border-gray-300 focus:outline-none"
               />
-              <span className="font-medium text-[#202124]">#</span>
-              <input
-                type="text"
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                className="w-16 border-b border-gray-300 focus:outline-none"
-              />
             </div>
           ) : (
-            <span className="font-medium text-[#202124]">{name}  #{id}</span>
+            <span className="font-medium text-[#202124]">{initialContent}</span>
           )}
         </div>
 
