@@ -1,332 +1,45 @@
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from accounts_management.permissions import IsAdmin, IsPersonnel, IsTechnician
-from .models import (
-    StatusIntervention,
-    Intervention,
-    InterventionPreventive,
-    InterventionCurrative
-)
-from .serializers import (
-    StatusInterventionSerializer,
-    InterventionSerializer,
-    InterventionPreventiveSerializer,
-    AdminInterventionCurrativeSerializer,
-    UserInterventionCurrativeSerializer
-)
-from .filters import (
-    InterventionPreventiveFilter,
-    InterventionCurrativeFilter
-)
+from rest_framework import generics
+from .models import StatusIntervention
+from .serializers import StatusInterventionSerializer
 
 
-class StatusInterventionListCreateView(generics.ListCreateAPIView):
+# List and Create View
+class StatusInterventionListView(generics.ListAPIView):
     """
-    View to list all intervention statuses and create new ones.
+    View to list all StatusIntervention objects.
     """
     queryset = StatusIntervention.objects.all()
     serializer_class = StatusInterventionSerializer
-    permission_classes = [IsAdmin, IsAuthenticated]
 
 
-class StatusInterventionDetailView(generics.RetrieveUpdateDestroyAPIView):
+class StatusInterventionCreateView(generics.CreateAPIView):
     """
-    View to retrieve, update or delete an intervention status.
+    View to create a new StatusIntervention object.
     """
     queryset = StatusIntervention.objects.all()
     serializer_class = StatusInterventionSerializer
-    permission_classes = [IsAdmin, IsAuthenticated]
 
 
-class InterventionPreventiveListCreateView(generics.ListCreateAPIView):
+# Retrieve, Update, and Destroy View
+class StatusInterventionRetrieveView(generics.RetrieveAPIView):
     """
-    View to list and create preventive interventions.
+    View to retrieve a specific StatusIntervention object.
     """
-    queryset = InterventionPreventive.objects.all()
-    serializer_class = InterventionPreventiveSerializer
-    permission_classes = [IsAdmin, IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = InterventionPreventiveFilter
-
-    def get_queryset(self):
-        """
-        Filter queryset based on user role.
-        """
-        user = self.request.user
-        queryset = super().get_queryset()
-
-        if IsAdmin().has_permission(self.request, self):
-            return queryset
-        elif IsTechnician().has_permission(self.request, self):
-            return queryset.filter(intervention__technicien=user.technicien)
-
-        return InterventionPreventive.objects.none()
+    queryset = StatusIntervention.objects.all()
+    serializer_class = StatusInterventionSerializer
 
 
-class InterventionPreventiveDetailView(generics.RetrieveUpdateDestroyAPIView):
+class StatusInterventionUpdateView(generics.UpdateAPIView):
     """
-    View to retrieve, update or delete a preventive intervention.
+    View to update a specific StatusIntervention object.
     """
-    queryset = InterventionPreventive.objects.all()
-    serializer_class = InterventionPreventiveSerializer
-    permission_classes = [IsAdmin, IsAuthenticated]
-    lookup_field = 'intervention_id'
-
-    def get_queryset(self):
-        """
-        Filter queryset based on user role.
-        """
-        user = self.request.user
-        queryset = super().get_queryset()
-
-        if IsAdmin().has_permission(self.request, self):
-            return queryset
-        elif IsTechnician().has_permission(self.request, self):
-            return queryset.filter(intervention__technicien=user.technicien)
-
-        return InterventionPreventive.objects.none()
+    queryset = StatusIntervention.objects.all()
+    serializer_class = StatusInterventionSerializer
 
 
-class InterventionPreventiveUpdateView(generics.UpdateAPIView):
+class StatusInterventionDestroyView(generics.DestroyAPIView):
     """
-    View to update preventive interventions.
+    View to delete a specific StatusIntervention object.
     """
-    queryset = InterventionPreventive.objects.all()
-    serializer_class = InterventionPreventiveSerializer
-    permission_classes = [IsAdmin | IsTechnician, IsAuthenticated]
-    lookup_field = 'intervention_id'
-
-    def get_queryset(self):
-        """
-        Filter queryset based on user role.
-        """
-        user = self.request.user
-        queryset = super().get_queryset()
-
-        if IsAdmin().has_permission(self.request, self):
-            return queryset
-        elif IsTechnician().has_permission(self.request, self):
-            return queryset.filter(intervention__technicien=user.technicien)
-
-        return InterventionPreventive.objects.none()
-
-    def perform_update(self, serializer):
-        """
-        Update the intervention and trigger signal processing for status changes.
-        """
-        instance = serializer.save()
-        # The post_save signal will be triggered automatically
-        # but we can manually trigger our custom signal handler if needed
-        from .signals import handle_intervention_status_and_equipement_state
-        handle_intervention_status_and_equipement_state(
-            sender=Intervention, instance=instance.intervention, created=False)
-
-
-class AdminInterventionCurrativeListCreateView(generics.ListCreateAPIView):
-    """
-    View for admins to list and create currative interventions.
-    """
-    queryset = InterventionCurrative.objects.all()
-    serializer_class = AdminInterventionCurrativeSerializer
-    permission_classes = [IsAdmin, IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = InterventionCurrativeFilter
-
-
-class AdminInterventionCurrativeDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    View for admins to retrieve, update or delete a currative intervention.
-    """
-    queryset = InterventionCurrative.objects.all()
-    serializer_class = AdminInterventionCurrativeSerializer
-    permission_classes = [IsAdmin, IsAuthenticated]
-    lookup_field = 'intervention_id'
-
-
-class InterventionCurrativeUpdateView(generics.UpdateAPIView):
-    """
-    View to update currative interventions.
-    """
-    queryset = InterventionCurrative.objects.all()
-    lookup_field = 'intervention_id'
-    permission_classes = [IsAdmin | IsPersonnel |
-                          IsTechnician, IsAuthenticated]
-
-    def get_serializer_class(self):
-        """
-        Return the appropriate serializer based on user role.
-        """
-        if IsAdmin().has_permission(self.request, self):
-            return AdminInterventionCurrativeSerializer
-        return UserInterventionCurrativeSerializer
-
-    def get_queryset(self):
-        """
-        Filter queryset based on user role.
-        """
-        user = self.request.user
-        queryset = InterventionCurrative.objects.all()
-
-        if IsAdmin().has_permission(self.request, self):
-            return queryset
-        elif IsPersonnel().has_permission(self.request, self):
-            return queryset.filter(user=user.personnel)
-        elif IsTechnician().has_permission(self.request, self):
-            return queryset.filter(intervention__technicien=user.technicien)
-
-        return InterventionCurrative.objects.none()
-
-    def perform_update(self, serializer):
-        """
-        Update the intervention and trigger signal processing for status changes.
-        """
-        instance = serializer.save()
-        # The post_save signal will be triggered automatically
-        # but we can manually trigger our custom signal handler if needed
-        from .signals import handle_intervention_status_and_equipement_state
-        handle_intervention_status_and_equipement_state(
-            sender=Intervention, instance=instance.intervention, created=False)
-
-
-class PersonnelInterventionCurrativeListView(generics.ListAPIView):
-    """
-    View for personnel to list their currative interventions.
-    """
-    serializer_class = AdminInterventionCurrativeSerializer  # Using full serializer for read
-    permission_classes = [IsPersonnel, IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = InterventionCurrativeFilter
-
-    def get_queryset(self):
-        """
-        Filter to only show interventions created by the current user.
-        """
-        return InterventionCurrative.objects.filter(user=self.request.user.personnel)
-
-
-class PersonnelInterventionCurrativeCreateView(generics.CreateAPIView):
-    """
-    View for personnel to create a currative intervention.
-    """
-    serializer_class = UserInterventionCurrativeSerializer
-    permission_classes = [IsPersonnel, IsAuthenticated]
-
-    def perform_create(self, serializer):
-        """
-        Set the user to the current user.
-        """
-        serializer.save()
-
-
-class TechnicianInterventionListView(generics.ListAPIView):
-    """
-    View for technicians to list interventions assigned to them.
-    """
-    permission_classes = [IsTechnician, IsAuthenticated]
-
-    def get_serializer_class(self):
-        intervention_type = self.request.query_params.get('type')
-        if intervention_type == Intervention.TYPE_PREVENTIVE:
-            return InterventionPreventiveSerializer
-        return AdminInterventionCurrativeSerializer
-
-    def get_queryset(self):
-        """
-        Filter to only show interventions assigned to the current technician.
-        """
-        user = self.request.user
-        intervention_type = self.request.query_params.get('type')
-
-        if intervention_type == Intervention.TYPE_PREVENTIVE:
-            return InterventionPreventive.objects.filter(
-                intervention__technicien=user.technicien
-            )
-        else:
-            return InterventionCurrative.objects.filter(
-                intervention__technicien=user.technicien
-            )
-
-
-class AllInterventionsListView(generics.ListAPIView):
-    """
-    View to list all interventions (both preventive and corrective).
-    """
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request):
-        """Custom list method to combine different types of interventions."""
-        user = self.request.user
-
-        # Base query for interventions
-        interventions = Intervention.objects.all()
-
-        # Filter based on user role
-        if IsAdmin().has_permission(self.request, self):
-            # Admin sees everything
-            pass
-        elif IsPersonnel().has_permission(self.request, self):
-            # Personnel sees only their currative interventions
-            interventions = interventions.filter(
-                currative_details__user=user.personnel
-            )
-        elif IsTechnician().has_permission(self.request, self):
-            # Technician sees only interventions they're assigned to
-            interventions = interventions.filter(
-                technicien=user.technicien
-            )
-        else:
-            return Response({"detail": "User role not identified"},
-                            status=status.HTTP_403_FORBIDDEN)
-
-        # Prepare result data
-        result = []
-        for intervention in interventions:
-            # Base intervention data
-            intervention_data = {
-                'id_intervention': intervention.id_intervention,
-                'type_intervention': intervention.type_intervention,
-                'title': intervention.title,
-                'equipement_id': intervention.equipement_id,
-                'equipement': str(intervention.equipement),
-                'technicien': [
-                    {
-                        'id': t.id,
-                        'name': f"{t.user.first_name} {t.user.last_name}"
-                    }
-                    for t in intervention.technicien.all()
-                ],
-                'admin_id': intervention.admin_id,
-                'urgence': intervention.urgence,
-                'date_debut': intervention.date_debut,
-                'statut_id': intervention.statut_id,
-                'statut': str(intervention.statut) if intervention.statut else None,
-                'blocked': intervention.blocked,
-                'description': intervention.description,
-                'notes': intervention.notes,
-            }
-
-            # Add type-specific data
-            if intervention.type_intervention == Intervention.TYPE_PREVENTIVE:
-                try:
-                    preventive = intervention.preventive_details
-                    intervention_data['period'] = preventive.period
-                except InterventionPreventive.DoesNotExist:
-                    intervention_data['period'] = None
-
-            elif intervention.type_intervention == Intervention.TYPE_CURRATIVE:
-                try:
-                    currative = intervention.currative_details
-                    intervention_data['user_id'] = currative.user_id
-                    intervention_data['user'] = str(
-                        currative.user) if currative.user else None
-                    intervention_data['date_fin'] = currative.date_fin
-                except InterventionCurrative.DoesNotExist:
-                    intervention_data['user_id'] = None
-                    intervention_data['user'] = None
-                    intervention_data['date_fin'] = None
-
-            result.append(intervention_data)
-
-        return Response(result)
+    queryset = StatusIntervention.objects.all()
+    serializer_class = StatusInterventionSerializer
