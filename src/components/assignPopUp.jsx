@@ -1,10 +1,16 @@
+//modified, used to assign techniciens but also to edit user from modifier intervention
+
+
 import { useState } from "react";
 import SearchBar from "./Searchbar";
 import TechnicienAssign from "./technicienAssign";
 import Quitter from "../assets/quitter.svg";
 
 export default function AssignPopUp({
-    technicians = [], 
+    titre,
+    description,
+    buttonTitle,
+    technicians = [],
     onClose = () => {},
     onAssign = () => {} 
   }) {
@@ -20,8 +26,8 @@ export default function AssignPopUp({
         
           <div className="flex justify-between items-center px-4 py-3">
             <div>
-              <h1 className="text-xl px-2 pt-1 text-[#202124] font-semibold">Techniciens</h1>
-              <p className="text-sm px-2 text[#202124]">Les techniciens disponibles en ce moment.</p>
+              <h1 className="text-xl px-2 pt-1 text-[#202124] font-semibold">{titre}</h1>
+              <p className="text-sm px-2 text[#202124]">{description}</p>
             </div>
             <button 
               onClick={onClose}
@@ -48,12 +54,12 @@ export default function AssignPopUp({
                   prenom={tech.prenom}
                   email={tech.email}
                   onAssign={() => onAssign(tech)}
-                  buttonTitle="Assigner"
+                  buttonTitle={buttonTitle}
                 />
               </div>
             ))}
             {filteredTechnicians.length === 0 && (
-              <p className="text-center p-4 text-[#202124]">Aucun technicien trouvé</p>
+              <p className="text-center p-4 text-[#202124]">Aucun résultat trouvé</p>
             )}
           </div>
         </div>
