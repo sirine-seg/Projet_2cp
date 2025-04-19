@@ -1,5 +1,7 @@
 import { MdEmail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
+import { MoreVertical } from "lucide-react";
+import Profil from "../assets/Profil.svg";
 
 const UserCard = ({
   firstName,
@@ -15,12 +17,12 @@ const UserCard = ({
 }) => {
   return (
     <div
-    className="w-[95vw] sm:w-[90vw] md:w-[45vw] lg:w-[50vw] xl:w-[60vw] 2xl:w-[60vw] max-w-full p-5 bg-white rounded-2xl shadow-2xl flex items-start relative"
+    className="w-[95vw] sm:w-[90vw] md:w-[45vw] lg:w-[30vw] xl:w-[30vw] 2xl:w-[20vw] max-w-full p-5 bg-white rounded-2xl shadow-2xl flex items-start relative"
 
       onClick={onClick}
     >
       {/* Avatar */}
-      <div className="w-16 h-16 rounded-full overflow-hidden bg-[#20599E] flex items-center justify-center">
+      <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center">
         {previewUrl ? (
           <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
         ) : photo ? (
@@ -30,37 +32,35 @@ const UserCard = ({
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-[#20599E] ">
-            <FaUser className="text-white w-8 h-8" />
-          </div>
+          <img src={Profil} alt="Profil" className="w-16 h-16 flex-shrink-0" />
         )}
       </div>
 
       {/* Infos */}
-      <div className="flex-1 pl-4 -mt-3 min-w-0">
+      <div className="flex-1 pl-5 min-w-0">
   <h2
     className="
       font-bold text-[#20599E]
       whitespace-nowrap overflow-hidden
-      text-[clamp(0.75rem,4vw,1.25rem)]
+      text-[clamp(0.75rem,4vw,1.3rem)]
     "
   >
     {firstName} {lastName}
   </h2>
   <p
     className="
-      flex items-center mt-1
+      flex items-center
       whitespace-nowrap overflow-hidden
       text-[clamp(0.625rem,3vw,1rem)]
     "
   >
-    <MdEmail className="h-5 w-5 text-[#20599E] mr-2 flex-shrink-0" />
+    <MdEmail className="h-5 w-5 text-[#20599E] mr-2 flex-shrink-0 relative top-[2px]" />
     {email}
   </p>
 </div>
 
 
-      {/* Bouton menu */}
+      {/* Bouton menu
       <button
         className="text-[#20599E] hover:text-gray-800 absolute top-3 right-3"
         onClick={(event) => {
@@ -69,7 +69,17 @@ const UserCard = ({
         }}
       >
         ⋮
-      </button>
+      </button> */}
+
+      <div className="p-1 rounded-full hover:bg-gray-100 transition-colors">
+          <MoreVertical 
+            className="text-[#202124] w-5 h-5 cursor-pointer" 
+            onClick={(event) => {
+              event.stopPropagation();
+              onMenuClick();
+            }}
+          />
+        </div>
 
       {/* Menu déroulant */}
       {isMenuOpen && (
