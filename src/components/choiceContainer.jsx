@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Options from "./options"
 
 export default function ChoiceContainer({
   title,
@@ -6,8 +7,6 @@ export default function ChoiceContainer({
   selectedOption = "",
   onSelect = () => {},
   placeholder = "--",
-  bgColor="bg-white",
-  maxWidth="max-w-xs",
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -17,7 +16,7 @@ export default function ChoiceContainer({
   };
 
   return (
-    <div className={`mx-auto ${maxWidth}`}>
+    <div className="max-w-xs mx-auto">
       <div className="mb-4">
         <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
           {title}
@@ -27,7 +26,7 @@ export default function ChoiceContainer({
           open={isOpen}
           onToggle={(e) => setIsOpen(e.target.open)}
         >
-          <summary className={`flex w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[0.8125rem] font-regular font-poppins justify-between ${bgColor} transition-colors duration-200 focus:outline-0 focus:ring-0`}>
+          <summary className="flex w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[0.8125rem] font-regular font-poppins justify-between bg-white transition-colors duration-200 focus:outline-0 focus:ring-0">
             <span>{selectedOption || placeholder}</span>
             <svg
               className="h-5 w-5 text-gray-400 transition-transform duration-200"
@@ -42,25 +41,7 @@ export default function ChoiceContainer({
               />
             </svg>
           </summary>
-          <div className="absolute left-0 right-0 mt-0.5 bg-white border border-gray-200 rounded-[0.5rem] shadow-xl py-1 max-h-60 overflow-auto text-[0.8125rem] font-poppins font-regular">
-            {options.map((option) => (
-              <div
-                key={option.value || option}
-                className="px-4 py-2 cursor-pointer transition-colors duration-200"
-                onClick={() => handleSelect(option.value || option)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#E1E3E4";
-                  e.currentTarget.style.color = "#202124";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "white";
-                  e.currentTarget.style.color = "#202124";
-                }}
-              >
-                {option.label || option}
-              </div>
-            ))}
-          </div>
+          <Options options={options} handleSelect={handleSelect} />
         </details>
       </div>
     </div>
