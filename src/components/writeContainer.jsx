@@ -1,17 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-export default function WriteContainer({ title, onSubmit, onChange, disabled = false, value }) {
-  const [input, setInput] = useState(value || "");
-
-  useEffect(() => {
-    if (value !== undefined) {
-      setInput(value);
-    }
-  }, [value]);
+export default function WriteContainer({ title, onSubmit }) {
+  const [input, setInput] = useState("");
 
   const handleChange = (e) => {
     setInput(e.target.value);
-    if (onChange) onChange(e.target.value); 
   };
 
   const handleBlur = () => {
@@ -19,7 +12,7 @@ export default function WriteContainer({ title, onSubmit, onChange, disabled = f
   };
 
   return (
-    <div className="w-full">
+    <div className="max-w-xs mx-auto">
       <div className="mb-4">
         <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
           {title}
@@ -31,14 +24,10 @@ export default function WriteContainer({ title, onSubmit, onChange, disabled = f
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="---"
-            disabled={disabled}
-            className={`flex flex-col items-start w-full py-3 px-4 border border-white rounded-[0.5rem] text-[0.8125rem] font-regular font-poppins bg-white resize-none focus:outline-0 focus:ring-0 ${
-              disabled ? "text-gray-600  cursor-not-allowed" : "text-[#80868B]"
-            }`}
+            className="flex flex-col items-start truncate w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[0.8125rem] font-regular font-poppins bg-white resize-none focus:outline-0 focus:ring-0"
           />
         </div>
       </div>
     </div>
   );
 }
-
