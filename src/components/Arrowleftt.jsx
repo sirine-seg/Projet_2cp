@@ -14,13 +14,12 @@ const HeaderBar = ({ title, showPen = false, className = '' , classNameTitle = '
 
 
       {/* Flèche à gauche (responsive) */}
-      <div className="block md:hidden">
-        {/* Mobile only */}
-        <ChevronLeft
-          className="w-6 h-6 text-dark cursor-pointer"
-          onClick={() => navigate(-1)}
-        />
-      </div>
+     <div className="block md:hidden z-10 relative">
+  <ChevronLeft
+    className="w-6 h-6 text-dark cursor-pointer"
+    onClick={() => navigate(-1)}
+  />
+</div>
 
       <div className="hidden md:block">
         {/* Tablet & Desktop only */}
