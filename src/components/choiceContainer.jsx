@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+ import { useState } from "react";
 import Options from "./options"
 
 export default function ChoiceContainer({
@@ -18,8 +19,7 @@ export default function ChoiceContainer({
   };
 
   return (
-  //  <div className={`mx-auto ${maxWidth}`}>
-      <div className="w-full">
+    <div className="w-full">
       <div className="mb-4">
         <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
           {title}
