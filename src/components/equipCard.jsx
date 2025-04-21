@@ -31,7 +31,7 @@ const EquipCard = ({ nom, etat, id, localisation, onClick, moreClick }) => {
       {/* Header avec badge et ID */}
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-          <Badge text={etat} bgColor={badgeColor} className="text-xs sm:text-sm max-w-[100px] sm:max-w-[120px] truncate" />
+          <Badge text={etat} bgColor={badgeColor} className="text-xs sm:text-sm max-w-[120px] sm:max-w-[140px] truncate" />
           <Badge text={`#${id}`} bgColor="#9AA0A6" className="text-xs sm:text-sm" />
         </div>
 
