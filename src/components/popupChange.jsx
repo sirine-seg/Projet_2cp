@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React from "react";
 import ChoiceContainer from "./choiceContainer";
 import Button from "./Button";
 
@@ -7,15 +7,11 @@ const PopupChange = ({
   title, 
   etatOptions, 
   setSelectedStatus, 
-  update 
-  }) => {
-
-  const [isPopupVisible, setIsPopupVisible] = useState(true); // Popup visible par défaut
-
-  if (!isPopupVisible) return null;
-
+  update, 
+  onClose 
+}) => {
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-[9999]">
+    <div className="fixed inset-0 flex justify-center items-center z-[9999]  bg-opacity-30 px-4">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -24,13 +20,12 @@ const PopupChange = ({
           bg-white 
           rounded-3xl 
           w-full 
-          max-w-xs md:max-w-md lg:max-w-lg
+          max-w-[95vw] sm:max-w-sm md:max-w-md lg:max-w-lg 
           mx-auto 
           p-6 
           shadow-2xl
         "
       >
-
         <ChoiceContainer
           title={title}
           bgColor="bg-[#F4F4F4]"
@@ -41,17 +36,17 @@ const PopupChange = ({
           }}
         />
 
-        <div className="flex justify-between mt-4">
+        <div className="flex flex-row justify-between mt-4 gap-4 flex-nowrap">
           <Button
             text="Annuler"
             bgColor="#80868B"
-            onClick={() => {
-              setIsPopupVisible(false);
-            }}
+            onClick={onClose}
+            className="min-w-[100px]"
           />
-
           <Button
+            text="Terminer"
             onClick={update}
+            className="min-w-[100px]"
           />
         </div>
       </motion.div>
