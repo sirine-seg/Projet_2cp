@@ -12,8 +12,9 @@ import Usercard from "../components/Usercard";
 import Badge from "../components/badge";
 import Popupdelete from "../components/Popupdelet";
 import UserDetailsCard from "../components/Userdetails";
-
-
+//import "../App.css";
+import useIsSmallScreen from "../hooks/useIsSmallScreen";
+import AddMobile  from "../components/addMobile";
 
 const UsersPage = () => {
     const [users, setUsers] = useState([]);  // Stocke tous les utilisateurs
@@ -32,7 +33,7 @@ const UsersPage = () => {
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
-
+    const isSmall = useIsSmallScreen();
 const technicianRoles = ["Plombier", "Électricien", "Informaticien", "Femme de ménage"];
 const roles = ["Tout", "Administrateur", "Technicien", "Personnel"];
 
@@ -267,14 +268,26 @@ useEffect(() => {
       )}
 
       {/* Bouton Ajouter */}
-      <AjouterButton onClick={() => navigate("/Ajout")} />
+      {!isSmall && (
+        <div >
+        <AjouterButton onClick={() => navigate("/Ajout")} />
+        </div>
+      )}
+      {/* Le contenu principal ici */}
+
+      {/* Bouton mobile affiché uniquement sur petits écrans */}
+     
+   
+
     </div>
   </div>
 </div>
 
                 
                     {/* Liste des utilisateurs  :les cartes   ::: gap pour espace entre les cartes et grid pour si la carte prend un colone .. ect     ;;;;.map((user) => ( ... )) permet de générer une carte pour chaque utilisateur. */}
-                    <div className="flex flex-wrap  gap-4 px-2 mt-6 w-full max-w-7xl mx-auto ">
+                    {/* </div> <div className="flex flex-wrap  gap-4 px-2 mt-6 w-full max-w-7xl mx-auto justify-center  ">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4"> */}
+                   <div className=" flex flex-wrap  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4 ">
   {displayedUsers.map((user) => (
     <div key={user.id} className="relative w-full sm:w-1/2 md:w-[360px]">
       {/* Carte sans rôle */}
@@ -307,9 +320,9 @@ useEffect(() => {
         text={user.role}
         bgColor={roleColors[user.role]}
         className="
-          text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs
+          text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
           px-2 sm:px-2.5 md:px-3
-          py-[2px] sm:py-[3px] md:py-[5px]
+          py-[8px] sm:py-[3px] md:py-[5px]
           rounded-full
           max-w-full
           whitespace-nowrap
@@ -324,6 +337,15 @@ useEffect(() => {
   ))}
 </div>
 
+
+{isSmall && (
+  <div className="mt-4 flex justify-end pr-4">
+    <AddMobile onClick={() => navigate("/Ajout")} />
+ 
+  </div>
+)}
+      
+
         
                   {/* Afficher plus */}
                   {visibleCount < filteredUsers.length && (
@@ -334,7 +356,9 @@ useEffect(() => {
                             Afficher plus 
                         </h3>
                     )}
-       
+
+
+ 
   {/* Popup des techniciens disponibles */}
   {showPopup && (
                 <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
@@ -375,7 +399,7 @@ useEffect(() => {
   onClose={() => setIsDeletePopupVisible(false)}
   // onConfirm={handleDelete}
    userId={selectedUserId}
-  title="ETES VOUS SUR QUE VOUS VOULEZ BLOQUE CE UTILISATEUR "
+  title="Etes vous sur que vous voulez bloque l'utilisateur  "
   message=""
 />
 
