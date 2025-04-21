@@ -1,6 +1,8 @@
 export default function Options({options = [], handleSelect , className = "" }){
     return (
-    className={`absolute w-full z-10 bg-white border border-gray-200 rounded-[0.5rem] shadow-xl py-1 max-h-60 overflow-auto text-[0.8125rem] font-poppins font-regular ${className}`}
+   <div
+      className={`absolute w-full z-10 bg-white border border-gray-200 rounded-[0.5rem] shadow-xl py-1 max-h-60 overflow-auto text-[0.8125rem] font-poppins font-regular ${className}`}
+    >
             {options.map((option) => (
               <div
                 key={option.value || option}
