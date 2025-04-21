@@ -2,9 +2,9 @@
 import React from "react";
 import Badge from "./badge";
 import { MoreVertical } from "lucide-react";
-import interventionIcon from '../assets/interventionIcon.svg';
-import equipementIcon from '../assets/equipementIcon.svg';
-import calendar from '../assets/calendar.svg';
+import interventionIcon from '../pages/interventionIcon.svg';
+import equipementIcon from '../pages/equipementIcon.svg';
+import calendar from '../pages/calendar.svg';
 
 const InterventionCard = ({ nom, urgence, statut, id, equipement, date, onClick, moreClick }) => {
   const urgenceColors = {
@@ -43,20 +43,41 @@ const InterventionCard = ({ nom, urgence, statut, id, equipement, date, onClick,
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
         <Badge
-      text={`#${id}`}
-      bgColor="#9AA0A6"
-      className="text-[clamp(0.5rem,2vw,0.7rem)] px-2 py-1 whitespace-nowrap truncate"
-    />
-         <Badge
-      text={urgence}
-      bgColor={urgenceColors[urgence]}
-      className="text-[clamp(0.5rem,2vw,0.7rem)] px-2 py-1 whitespace-nowrap truncate max-w-[80px]"
-    />
-          <Badge
-      text={statut}
-      bgColor={statusColors[statut] || "#9AA0A6"}
-      className="text-[clamp(0.5rem,2vw,0.7rem)] px-2 py-1 whitespace-nowrap truncate max-w-[80px]"
-    />
+    text={`#${id}`}
+    bgColor="#9AA0A6"
+    className="
+      text-[10px] sm:text-[11px] md:text-xs
+      px-2 sm:px-2.5 md:px-3
+      py-[4px]
+      rounded-full
+      max-w-[60px] sm:max-w-[80px] md:max-w-[100px]
+      whitespace-nowrap truncate
+    "
+  />
+  <Badge
+    text={urgence}
+    bgColor={urgenceColors[urgence]}
+    className="
+      text-[10px] sm:text-[11px] md:text-xs
+      px-2 sm:px-2.5 md:px-3
+      py-[4px]
+      rounded-full
+      max-w-[80px] sm:max-w-[100px] md:max-w-[120px]
+      whitespace-nowrap truncate
+    "
+  />
+  <Badge
+    text={statut}
+    bgColor={statusColors[statut] || "#9AA0A6"}
+    className="
+      text-[10px] sm:text-[11px] md:text-xs
+      px-2 sm:px-2.5 md:px-3
+      py-[4px]
+      rounded-full
+      max-w-[80px] sm:max-w-[100px] md:max-w-[120px]
+      whitespace-nowrap truncate
+    "
+  />
         </div>
                 
         {/* Trois points */}
@@ -99,17 +120,18 @@ const InterventionCard = ({ nom, urgence, statut, id, equipement, date, onClick,
             </span>
           </div>
 
-          {/* Date */}
-          <div className="flex items-center text-gray-800 gap-1 sm:gap-2">
-            <img 
-              src={calendar} 
-              alt="Date" 
-              className="h-4 w-4 sm:h-5 sm:w-5" 
-            />
-            <span className="font-semibold text-xs sm:text-sm">
-              {date}
-            </span>
-          </div>
+      {/* Date - 100% responsive */}
+<div className="flex items-center gap-1 sm:gap-2 min-w-0 max-w-full overflow-hidden">
+  <img 
+    src={calendar} 
+    alt="Date" 
+    className="h-[14px] w-[14px] sm:h-[16px] sm:w-[16px] md:h-[18px] md:w-[18px] lg:h-[20px] lg:w-[20px] shrink-0" 
+  />
+  <span className="font-semibold text-[clamp(0.625rem, 2.5vw, 0.875rem)] truncate">
+    {date}
+  </span>
+</div>
+
         </div>
       </div>
     </div>
