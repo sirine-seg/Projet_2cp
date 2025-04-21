@@ -1,3 +1,4 @@
+
 import React from "react";
 import Badge from "./badge";
 import { MoreVertical } from "lucide-react";
@@ -7,11 +8,13 @@ import calendar from '../assets/calendar.svg';
 
 const InterventionCard = ({ nom, urgence, statut, id, equipement, date, onClick, moreClick }) => {
   const urgenceColors = {
-    "Vitale": "#F09C0A",
-    "Elevée": "#20599E",
-    "Modérée": "#FF4423",
-    "Faible": "#49A146",
+    "Urgence vitale": "#F09C0A",
+    "Urgence élevée": "#20599E ",
+    "Urgence modérée": "#FF4423",
+    "Faible urgence": "#49A146",
   };
+
+
     
   const statusColors = {
     "Affecte": "#F09C0A",
@@ -39,18 +42,30 @@ const InterventionCard = ({ nom, urgence, statut, id, equipement, date, onClick,
       {/* Header avec badge et ID */}
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-          <Badge text={`#${id}`} bgColor="#9AA0A6" className="text-xs sm:text-sm" />
-          <Badge text={urgence} bgColor={urgenceColors[urgence]} className="text-xs sm:text-sm max-w-[100px] sm:max-w-[100px] truncate" />
-          <Badge text={statut} bgColor={statusColors[statut] || "#9AA0A6"} className="text-xs sm:text-sm max-w-[100px] sm:max-w-[100px] truncate" />
+        <Badge
+      text={`#${id}`}
+      bgColor="#9AA0A6"
+      className="text-[clamp(0.5rem,2vw,0.7rem)] px-2 py-1 whitespace-nowrap truncate"
+    />
+         <Badge
+      text={urgence}
+      bgColor={urgenceColors[urgence]}
+      className="text-[clamp(0.5rem,2vw,0.7rem)] px-2 py-1 whitespace-nowrap truncate max-w-[80px]"
+    />
+          <Badge
+      text={statut}
+      bgColor={statusColors[statut] || "#9AA0A6"}
+      className="text-[clamp(0.5rem,2vw,0.7rem)] px-2 py-1 whitespace-nowrap truncate max-w-[80px]"
+    />
         </div>
                 
         {/* Trois points */}
-        <div className="p-1 rounded-full hover:bg-gray-100 transition-colors">
-          <MoreVertical 
-            className="text-[#202124] w-4 h-4 sm:w-5 sm:h-5 cursor-pointer" 
-            onClick={handleMoreClick} 
-          />
-        </div>
+        <div
+    className="p-1 shrink-0 rounded-full hover:bg-gray-100 transition-colors"
+    onClick={handleMoreClick}
+  >
+    <MoreVertical className="text-[#202124] w-5 h-5 cursor-pointer" />
+  </div>
       </div>
 
       <div className="flex flex-col gap-2 sm:gap-3">
