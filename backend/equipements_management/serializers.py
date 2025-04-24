@@ -47,6 +47,7 @@ class EquipementSerializer(serializers.ModelSerializer):
         model = Equipement
         fields = [
             'id_equipement',
+            'code',
             'nom',
             'categorie',
             'typee',
