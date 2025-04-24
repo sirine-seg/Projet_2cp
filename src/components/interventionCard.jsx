@@ -2,19 +2,17 @@
 import React from "react";
 import Badge from "./badge";
 import { MoreVertical } from "lucide-react";
-import interventionIcon from '../pages/interventionIcon.svg';
-import equipementIcon from '../pages/equipementIcon.svg';
-import calendar from '../pages/calendar.svg';
+import interventionIcon from '../assets/interventionIcon.svg';
+import equipementIcon from '../assets/equipementIcon.svg';
+import calendar from '../assets/calendar.svg';
 
 const InterventionCard = ({ nom, urgence, statut, id, equipement, date, onClick, moreClick }) => {
   const urgenceColors = {
     "Urgence vitale": "#F09C0A",
-    "Urgence élevée": "#20599E ",
+    "Urgence élevée": "#20599E",
     "Urgence modérée": "#FF4423",
     "Faible urgence": "#49A146",
   };
-
-
     
   const statusColors = {
     "Affecte": "#F09C0A",
