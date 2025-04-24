@@ -1,10 +1,12 @@
 const CustomCheckbox = ({ 
   checked, 
+  onChange,
   color = "#F09C0A", // Couleur par défaut bleue
   uncheckedColor = "white" // Couleur quand non coché
 }) => {
     return (
       <div
+      onClick={onChange}
         className={`w-5 h-5 flex items-center justify-center rounded-md transition-colors duration-200 cursor-pointer ${
           checked 
             ? `bg-[${color}]` 
