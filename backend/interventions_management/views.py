@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from accounts_management.permissions import IsAdmin, IsTechnician, IsPersonnel
 from .models import StatusIntervention, InterventionPreventive, InterventionCurrative
 from .serializers import (
@@ -11,6 +12,8 @@ from .serializers import (
     InterventionCurrativeUpdateSerializer,
 )
 
+
+# -------------------- StatusIntervention Views --------------------
 
 class StatusInterventionListView(generics.ListAPIView):
     """
@@ -57,6 +60,8 @@ class StatusInterventionDestroyView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
 
+# -------------------- InterventionPreventive Views --------------------
+
 class InterventionPreventiveListView(generics.ListAPIView):
     """
     View to list all InterventionPreventive objects.
@@ -102,6 +107,8 @@ class InterventionPreventiveDestroyView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
 
+# -------------------- AdminInterventionCurrative Views --------------------
+
 class AdminInterventionCurrativeListView(generics.ListAPIView):
     """
     View to list all InterventionCurrative objects.
@@ -120,24 +127,6 @@ class AdminInterventionCurrativeCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
 
-class PersonnelInterventionCurrativeListView(generics.ListAPIView):
-    """
-    View to list all InterventionCurrative objects.
-    """
-    queryset = InterventionCurrative.objects.all()
-    serializer_class = PersonnelInterventionCurrativeSerializer
-    permission_classes = [IsAuthenticated, IsPersonnel]
-
-
-class AdminInterventionCurrativeCreateView(generics.CreateAPIView):
-    """
-    View to create a new InterventionCurrative object.
-    """
-    queryset = InterventionCurrative.objects.all()
-    serializer_class = AdminInterventionCurrativeSerializer
-    permission_classes = [IsAuthenticated, IsPersonnel]
-
-
 class InterventionCurrativeRetrieveView(generics.RetrieveAPIView):
     """
     View to retrieve a specific InterventionCurrative object.
@@ -145,6 +134,16 @@ class InterventionCurrativeRetrieveView(generics.RetrieveAPIView):
     queryset = InterventionCurrative.objects.all()
     serializer_class = AdminInterventionCurrativeSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get_object(self):
+        """
+        Override the get_object method to check if the intervention is active.
+        """
+        obj = super().get_object()
+        if not obj.blocked:
+            # If the intervention is not blocked, it is considered active
+            raise PermissionDenied("This intervention is no longer active.")
+        return obj
 
 
 class InterventionCurrativeUpdateView(generics.UpdateAPIView):
@@ -163,3 +162,29 @@ class InterventionCurrativeDestroyView(generics.DestroyAPIView):
     queryset = InterventionCurrative.objects.all()
     serializer_class = AdminInterventionCurrativeSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
+
+
+# -------------------- PersonnelInterventionCurrative Views --------------------
+
+class PersonnelInterventionCurrativeListView(generics.ListAPIView):
+    """
+    View to list all InterventionCurrative objects signaled by the authenticated personnel.
+    """
+    serializer_class = PersonnelInterventionCurrativeSerializer
+    permission_classes = [IsAuthenticated, IsPersonnel]
+
+    def get_queryset(self):
+        """
+        Return only the interventions signaled by the authenticated personnel.
+        """
+        user = self.request.user
+        return InterventionCurrative.objects.filter(user=user)
+
+
+class PersonnelInterventionCurrativeCreateView(generics.CreateAPIView):
+    """
+    View to create a new InterventionCurrative object.
+    """
+    queryset = InterventionCurrative.objects.all()
+    serializer_class = PersonnelInterventionCurrativeSerializer
+    permission_classes = [IsAuthenticated, IsPersonnel]
