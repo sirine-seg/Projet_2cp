@@ -16,7 +16,7 @@ export default function AssignPopUp({
   }) {
     const [searchQuery, setSearchQuery] = useState('');
   
-    const filteredTechnicians = technicians.filter(tech =>
+    const filtered = technicians.filter(tech =>
       `${tech.name} ${tech.email}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
   
@@ -47,7 +47,7 @@ export default function AssignPopUp({
           </div>
   
           <div className="flex-1 overflow-y-auto px-4">
-            {filteredTechnicians.map((tech) => (
+            {filtered.map((tech) => (
               <div key={tech.email}>
                 <TechnicienAssign
                   nom={tech.nom}
@@ -58,7 +58,7 @@ export default function AssignPopUp({
                 />
               </div>
             ))}
-            {filteredTechnicians.length === 0 && (
+            {filtered.length === 0 && (
               <p className="text-center p-4 text-[#202124]">Aucun résultat trouvé</p>
             )}
           </div>
