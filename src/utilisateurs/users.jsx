@@ -11,10 +11,14 @@ import Buttonrec from "../components/buttonrectangle";
 import Usercard from "../components/Usercard";
 import Badge from "../components/badge";
 import Popupdelete from "../components/Popupdelet";
-import UserDetailsCard from "../components/Userdetails";
+//import UserDetailsCard from "../components/Userdetails";
 //import "../App.css";
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import AddMobile  from "../components/addMobile";
+import SelectionToolbar from "../components/selectionToolBar";
+import UserList from "../components/userList";
+import ViewToggle from "../components/viewToggle";
+import UserListHeader from "../components/userListHeader"
 
 const UsersPage = () => {
     const [users, setUsers] = useState([]);  // Stocke tous les utilisateurs
@@ -36,6 +40,32 @@ const UsersPage = () => {
     const isSmall = useIsSmallScreen();
 const technicianRoles = ["Plombier", "Électricien", "Informaticien", "Femme de ménage"];
 const roles = ["Tout", "Administrateur", "Technicien", "Personnel"];
+const [currentView, setCurrentView] = useState("grid"); // "list" ou "grid"
+
+
+// List view
+
+const handleUserToggle = (id) => {
+  setUsers(users.map(user =>
+    user.id === id ? { ...user, checked: !user.checked } : user
+  ));
+};
+
+const handleSelectAllUsers = () => {
+  setUsers(users.map(user => ({ ...user, checked: true })));
+};
+
+const handleDeselectAllUsers = () => {
+  setUsers(users.map(user => ({ ...user, checked: false })));
+};
+
+const handleUserActionClick = () => {
+  const selected = users.filter(u => u.checked);
+  alert(`Action sur ${selected.length} utilisateur(s)`);
+};
+
+const selectedUserCount = users.filter(u => u.checked).length;
+const allUsersSelected = selectedUserCount === users.length && users.length > 0;
 
 useEffect(() => {
     const fetchUsers = async () => {
@@ -267,13 +297,17 @@ useEffect(() => {
      
       )}
 
-      {/* Bouton Ajouter */}
-      {!isSmall && (
-        <div >
-        <AjouterButton onClick={() => navigate("/Ajout")} />
-        </div>
-      )}
-      {/* Le contenu principal ici */}
+      <div className="flex items-center gap-2 h-9">
+      <div className="h-9 flex items-center">
+    <ViewToggle onChange={(view) => setCurrentView(view)} />
+  </div>
+
+        {/* Bouton Ajouter */}
+        {!isSmall && (
+          <AjouterButton onClick={() => navigate("/Ajout")} />
+        )}
+        {/* Le contenu principal ici */}
+      </div>
 
       {/* Bouton mobile affiché uniquement sur petits écrans */}
      
@@ -287,54 +321,81 @@ useEffect(() => {
                     {/* Liste des utilisateurs  :les cartes   ::: gap pour espace entre les cartes et grid pour si la carte prend un colone .. ect     ;;;;.map((user) => ( ... )) permet de générer une carte pour chaque utilisateur. */}
                     {/* </div> <div className="flex flex-wrap  gap-4 px-2 mt-6 w-full max-w-7xl mx-auto justify-center  ">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4"> */}
-                   <div className=" flex flex-wrap  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4 ">
-  {displayedUsers.map((user) => (
-    <div key={user.id} className="relative w-full sm:w-1/2 md:w-[360px]">
-      {/* Carte sans rôle */}
-      <Usercard
-        firstName={user.first_name}
-        lastName={user.last_name}
-        email={user.email}
-        photo={user.photo}
-        previewUrl={previewUrl}
-        onClick={() => handleClick(user)}
-        onMenuClick={() => setMenuOpen(menuOpen === user.id ? null : user.id)}
-        isMenuOpen={menuOpen === user.id}
-        onEditClick={() => handleEdit(user)}
-        onDeleteClick={() => {
-          setMenuOpen(null);
-          setSelectedUserId(user.id);
-          setIsDeletePopupVisible(true);
-        }}
-      />
 
 
- 
-
-      {/* Badge de rôle – affiché seulement si le filtre est “Tout” */}
- 
-      {filter === "Tout" && (
-  <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
-    <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
-      <Badge
-        text={user.role}
-        bgColor={roleColors[user.role]}
-        className="
-          text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
-          px-2 sm:px-2.5 md:px-3
-          py-[8px] sm:py-[3px] md:py-[5px]
-          rounded-full
-          max-w-full
-          whitespace-nowrap
-        "
-      />
+        <div className=" flex flex-wrap space-y-4 p-4 ">
+        
+          <div className="flex justify-between items-center w-full">
+    {currentView === "list" && (
+      <div className="sm:py-2 w-full">
+        <SelectionToolbar
+          selectedCount={selectedUserCount}
+          allSelected={allUsersSelected}
+          onSelectAll={handleSelectAllUsers}
+          onDeselectAll={handleDeselectAllUsers}
+          onActionClick={handleUserActionClick}
+        />
+      </div>
+    )}
     </div>
-  </div>
-)}
 
 
+    {currentView === "list" ? (
+    /* Vue liste */
+    <div className="w-full space-y-2">
+      <UserListHeader />
+      {displayedUsers.map((user) => (
+        <div key={user.id} className="relative w-full">
+          
+          <UserList
+            nom={user.first_name}
+            prenom={user.last_name}
+            email={user.email}
+            role={user.role}
+            imageUrl={user.imageUrl}
+            checked={user.checked}
+            onToggle={() => handleUserToggle(user.id)}
+            moreClick={() => console.log("Plus d'infos sur", user.last_name)}
+          />
+        </div>
+      ))}
     </div>
-  ))}
+  ) : (
+    /* Vue grille */
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+      {displayedUsers.map((user) => (
+        <div key={user.id} className="relative w-full">
+          <Usercard
+            firstName={user.first_name}
+            lastName={user.last_name}
+            email={user.email}
+            photo={user.photo}
+            previewUrl={previewUrl}
+            onClick={() => handleClick(user)}
+            onMenuClick={() => setMenuOpen(menuOpen === user.id ? null : user.id)}
+            isMenuOpen={menuOpen === user.id}
+            onEditClick={() => handleEdit(user)}
+            onDeleteClick={() => {
+              setMenuOpen(null);
+              setSelectedUserId(user.id);
+              setIsDeletePopupVisible(true);
+            }}
+          />
+          
+          {/* Badge de rôle - affiché seulement en vue carte */}
+          {filter === "Tout" && (
+            <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
+              <Badge
+                text={user.role}
+                bgColor={roleColors[user.role]}
+                className="text-xs px-3 py-1 rounded-full max-w-full whitespace-nowrap"
+              />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )}
 </div>
 
 
