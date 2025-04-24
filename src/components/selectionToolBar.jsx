@@ -13,7 +13,7 @@ const SelectionToolbar = ({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex items-center justify-between px-8 py-2 bg-[#DDDEDF] rounded-full shadow-sm">
+    <div className="flex items-center justify-between px-4 sm:px-8 py-2 bg-[#DDDEDF] rounded-full shadow-sm">
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
           <button
@@ -44,7 +44,7 @@ const SelectionToolbar = ({
             }}
           />
           <label htmlFor="selectAll" className="text-sm font-medium">
-            Sélectionner Tout
+          <span className="hidden sm:inline">Sélectionner </span>Tout
           </label>
         </div>
       </div>
