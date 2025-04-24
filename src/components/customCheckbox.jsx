@@ -1,8 +1,14 @@
-const CustomCheckbox = ({ checked }) => {
+const CustomCheckbox = ({ 
+  checked, 
+  color = "#F09C0A", // Couleur par défaut bleue
+  uncheckedColor = "white" // Couleur quand non coché
+}) => {
     return (
       <div
-        className={`w-5 h-5 flex items-center justify-center rounded-md transition-colors duration-200 ${
-          checked ? "bg-[#F09C0A]" : "bg-white border border-gray-400"
+        className={`w-5 h-5 flex items-center justify-center rounded-md transition-colors duration-200 cursor-pointer ${
+          checked 
+            ? `bg-[${color}]` 
+            : `bg-${uncheckedColor} border border-gray-400`
         }`}
       >
         {checked && (
@@ -18,7 +24,6 @@ const CustomCheckbox = ({ checked }) => {
         )}
       </div>
     );
-  };
+};
   
-  export default CustomCheckbox;
-  
+export default CustomCheckbox;
