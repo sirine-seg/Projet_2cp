@@ -66,9 +66,3 @@ class InterventionCurrativeUpdateSerializer(serializers.ModelSerializer):
             'description', 'notes', 'user', 'date_fin'
         ]
         read_only_fields = ['id']  # Prevent updating the ID
-
-    def validate(self, data):
-        if data.get('date_fin') and data.get('date_debut') and data['date_fin'] < data['date_debut']:
-            raise serializers.ValidationError(
-                "The end date must be after the start date.")
-        return data

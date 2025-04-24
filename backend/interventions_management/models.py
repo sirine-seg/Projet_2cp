@@ -1,5 +1,6 @@
 from django.db import models
 from accounts_management.models import Technicien, Personnel, Admin
+from django.utils import timezone
 from equipements_management.models import Equipement
 
 
@@ -69,6 +70,14 @@ class Intervention(models.Model):
         verbose_name = "Intervention"
         verbose_name_plural = "Interventions"
 
+    def check_date(self):
+        """
+        Ensure that the date_debut is always greater than the current time.
+        """
+        if self.date_debut and self.date_debut <= timezone.now():
+            raise ValueError(
+                "La date de début doit être supérieure à l'heure actuelle.")
+
 
 class InterventionPreventive(Intervention):
     """Extension model for preventive intervention specific fields."""
@@ -82,6 +91,30 @@ class InterventionPreventive(Intervention):
     class Meta:
         verbose_name = "Intervention préventive"
         verbose_name_plural = "Interventions préventives"
+
+    def check_and_recreate(self):
+        """
+        Check if the intervention needs to be recreated and create a new one if necessary.
+        """
+        if self.date_debut and self.period:
+            next_date = self.date_debut + self.period
+            if next_date <= timezone.now():
+                new_intervention = InterventionPreventive.objects.create(
+                    type_intervention=self.type_intervention,
+                    title=self.title,
+                    equipement=self.equipement,
+                    technicien=self.technicien.all(),
+                    admin=self.admin,
+                    urgence=self.urgence,
+                    date_debut=next_date,
+                    statut=self.statut,
+                    blocked=self.blocked,
+                    description=self.description,
+                    notes=self.notes,
+                    period=self.period
+                )
+                return new_intervention
+        return None
 
 
 class InterventionCurrative(Intervention):
@@ -99,3 +132,11 @@ class InterventionCurrative(Intervention):
     class Meta:
         verbose_name = "Intervention currative"
         verbose_name_plural = "Interventions curratives"
+
+    def check_date(self):
+        """
+        Ensure that the date_fin is always greater than the date_debut.
+        """
+        if self.date_fin and self.date_fin <= self.date_debut:
+            raise ValueError(
+                "La date de fin doit être supérieure à la date de début.")
