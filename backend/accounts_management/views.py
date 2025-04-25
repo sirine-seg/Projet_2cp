@@ -4,12 +4,13 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Admin, Technicien, Personnel, User
-from .serializers import AdminSerializer, TechnicienSerializer, PersonnelSerializer, UserSerializer
+from .models import Admin, Technicien, Personnel, User, Poste
+from .serializers import AdminSerializer, TechnicienSerializer, PersonnelSerializer, UserSerializer, PosteSerializer
 from .filters import UserFilter, AdminFilter, TechnicienFilter, PersonnelFilter
 from accounts_management.permissions import IsAdmin
 
 
+# User Views
 class UserListView(generics.ListAPIView):
     """
     API view to list all User accounts with filtering options.
@@ -32,6 +33,7 @@ class UserDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAdmin, IsAuthenticated]
 
 
+# Admin Views
 class AdminListView(generics.ListAPIView):
     """
     API view to list all Admin accounts with filtering options.
@@ -53,20 +55,26 @@ class AdminDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAdmin, IsAuthenticated]
 
 
-class AdminCreateView(APIView):
+class AdminCreateView(generics.CreateAPIView):
     """
     API view to create an Admin account.
     """
+    queryset = Admin.objects.all()
+    serializer_class = AdminSerializer
     permission_classes = [IsAdmin, IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        serializer = AdminSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AdminUpdateView(generics.UpdateAPIView):
+    """
+    API view to update an Admin account.
+    """
+    queryset = Admin.objects.all()
+    serializer_class = AdminSerializer
+    lookup_field = 'id'
+    permission_classes = [IsAdmin, IsAuthenticated]
 
 
+# Technicien Views
 class TechnicienListView(generics.ListAPIView):
     """
     API view to list all Technicien accounts with filtering options.
@@ -88,20 +96,26 @@ class TechnicienDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAdmin, IsAuthenticated]
 
 
-class TechnicienCreateView(APIView):
+class TechnicienCreateView(generics.CreateAPIView):
     """
     API view to create a Technicien account.
     """
+    queryset = Technicien.objects.all()
+    serializer_class = TechnicienSerializer
     permission_classes = [IsAdmin, IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        serializer = TechnicienSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TechnicienUpdateView(generics.UpdateAPIView):
+    """
+    API view to update a Technicien account.
+    """
+    queryset = Technicien.objects.all()
+    serializer_class = TechnicienSerializer
+    lookup_field = 'id'
+    permission_classes = [IsAdmin, IsAuthenticated]
 
 
+# Personnel Views
 class PersonnelListView(generics.ListAPIView):
     """
     API view to list all Personnel accounts with filtering options.
@@ -123,15 +137,30 @@ class PersonnelDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAdmin, IsAuthenticated]
 
 
-class PersonnelCreateView(APIView):
+class PersonnelCreateView(generics.CreateAPIView):
     """
     API view to create a Personnel account.
     """
+    queryset = Personnel.objects.all()
+    serializer_class = PersonnelSerializer
     permission_classes = [IsAdmin, IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        serializer = PersonnelSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PersonnelUpdateView(generics.UpdateAPIView):
+    """
+    API view to update a Personnel account.
+    """
+    queryset = Personnel.objects.all()
+    serializer_class = PersonnelSerializer
+    lookup_field = 'id'
+    permission_classes = [IsAdmin, IsAuthenticated]
+
+
+# Poste Views
+class PosteCreateView(generics.CreateAPIView):
+    """
+    API view to create a new Poste.
+    """
+    queryset = Poste.objects.all()
+    serializer_class = PosteSerializer
+    permission_classes = [IsAdmin, IsAuthenticated]

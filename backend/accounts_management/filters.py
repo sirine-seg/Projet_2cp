@@ -1,5 +1,5 @@
 import django_filters
-from .models import User, Admin, Technicien, Personnel
+from .models import User, Admin, Technicien, Personnel, Poste
 
 
 class UserFilter(django_filters.FilterSet):
@@ -29,7 +29,7 @@ class TechnicienFilter(django_filters.FilterSet):
     user__first_name = django_filters.CharFilter(lookup_expr='icontains')
     user__last_name = django_filters.CharFilter(lookup_expr='icontains')
     disponibilite = django_filters.BooleanFilter()
-    poste = django_filters.CharFilter(lookup_expr='icontains')
+    poste = django_filters.ModelChoiceFilter(queryset=Poste.objects.all())
 
     class Meta:
         model = Technicien

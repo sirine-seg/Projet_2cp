@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Admin, Technicien, Personnel
+from .models import User, Admin, Technicien, Personnel, Poste
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,6 +30,15 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class PosteSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Poste model.
+    """
+    class Meta:
+        model = Poste
+        fields = ['id', 'nom']
+
+
 class AdminSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
@@ -45,6 +54,7 @@ class AdminSerializer(serializers.ModelSerializer):
 
 class TechnicienSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    poste = PosteSerializer()
 
     class Meta:
         model = Technicien
@@ -52,8 +62,15 @@ class TechnicienSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
+        poste_data = validated_data.pop('poste', None)
+
         user = User.objects.create(**user_data)
-        return Technicien.objects.create(user=user, **validated_data)
+
+        poste = None
+        if poste_data:
+            poste, _ = Poste.objects.get_or_create(**poste_data)
+
+        return Technicien.objects.create(user=user, poste=poste, **validated_data)
 
 
 class PersonnelSerializer(serializers.ModelSerializer):

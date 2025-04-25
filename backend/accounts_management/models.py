@@ -70,12 +70,22 @@ class Admin(models.Model):
         return f"Admin: {self.user.email}"
 
 
+class Poste(models.Model):
+
+    nom = models.CharField(max_length=100, unique=True,
+                           verbose_name="Nom du poste")
+
+    def __str__(self):
+        return self.nom
+
+
 class Technicien(models.Model):
 
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True)
     disponibilite = models.BooleanField(default=True)
-    poste = models.CharField(max_length=100, null=True, blank=True)
+    poste = models.ForeignKey(
+        Poste, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Poste")
 
     def __str__(self):
         return f"Technicien: {self.user.email}"
