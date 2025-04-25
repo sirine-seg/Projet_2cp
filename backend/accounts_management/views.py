@@ -1,13 +1,11 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Admin, Technicien, Personnel, User, Poste
 from .serializers import AdminSerializer, TechnicienSerializer, PersonnelSerializer, UserSerializer, PosteSerializer
-from .filters import UserFilter, AdminFilter, TechnicienFilter, PersonnelFilter
-from accounts_management.permissions import IsAdmin
+from .filters import UserFilter, TechnicienFilter
+from accounts_management.permissions import IsAdmin, IsTechnician, IsPersonnel
 
 
 # User Views
@@ -40,8 +38,6 @@ class AdminListView(generics.ListAPIView):
     """
     queryset = Admin.objects.all()
     serializer_class = AdminSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = AdminFilter
     permission_classes = [IsAdmin, IsAuthenticated]
 
 
@@ -93,7 +89,7 @@ class TechnicienDetailView(generics.RetrieveAPIView):
     queryset = Technicien.objects.all()
     serializer_class = TechnicienSerializer
     lookup_field = 'id'
-    permission_classes = [IsAdmin, IsAuthenticated]
+    permission_classes = [IsTechnician | IsAdmin, IsAuthenticated]
 
 
 class TechnicienCreateView(generics.CreateAPIView):
@@ -112,7 +108,7 @@ class TechnicienUpdateView(generics.UpdateAPIView):
     queryset = Technicien.objects.all()
     serializer_class = TechnicienSerializer
     lookup_field = 'id'
-    permission_classes = [IsAdmin, IsAuthenticated]
+    permission_classes = [IsTechnician | IsAdmin, IsAuthenticated]
 
 
 # Personnel Views
@@ -122,8 +118,6 @@ class PersonnelListView(generics.ListAPIView):
     """
     queryset = Personnel.objects.all()
     serializer_class = PersonnelSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = PersonnelFilter
     permission_classes = [IsAdmin, IsAuthenticated]
 
 
@@ -134,7 +128,7 @@ class PersonnelDetailView(generics.RetrieveAPIView):
     queryset = Personnel.objects.all()
     serializer_class = PersonnelSerializer
     lookup_field = 'id'
-    permission_classes = [IsAdmin, IsAuthenticated]
+    permission_classes = [IsPersonnel | IsAdmin, IsAuthenticated]
 
 
 class PersonnelCreateView(generics.CreateAPIView):
@@ -153,7 +147,7 @@ class PersonnelUpdateView(generics.UpdateAPIView):
     queryset = Personnel.objects.all()
     serializer_class = PersonnelSerializer
     lookup_field = 'id'
-    permission_classes = [IsAdmin, IsAuthenticated]
+    permission_classes = [IsPersonnel | IsAdmin, IsAuthenticated]
 
 
 # Poste Views
