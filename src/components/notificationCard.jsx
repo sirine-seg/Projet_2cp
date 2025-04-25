@@ -11,7 +11,7 @@ export default function NotificationCard({
   unread,
 }) {
   return (
-    <div className="p-1.5 flex justify-center">
+    <div className="flex justify-center">
       <div className="rounded-lg w-full max-w-[900px] flex justify-between items-start border-b border-[#E0E0E0] overflow-hidden">
         <div className="p-3 flex gap-3 w-full min-w-0">
           <div className="flex-shrink-0 w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#E8EAED] flex items-center justify-center text-xs font-medium text-[#80868B] mr-2 mt-4">
