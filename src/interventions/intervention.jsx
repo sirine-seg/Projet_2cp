@@ -12,11 +12,15 @@ import AjouterButton from "../components/Ajouterbutton";
 import Buttonrec from "../components/buttonrectangle";
 import Popupdelete from "../components/Popupdelet";
 import Options from "../components/options";
-import InterventionCard from "../components/InterventionCard"; 
+import InterventionCard from "../components/interventionCard"; 
 import PopupMessage from "../components/Popupcheck";
-import PopupChange from "../components/popchange"; // casse correcte
+import PopupChange from "../components/PopupChange"; // casse correcte
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import AddMobile  from "../components/addMobile";
+import InterventionList from "../components/interventionList";
+import InterventionListHeader from "../components/interventionListHeader";
+import ViewToggle from "../components/viewToggle";
+import SelectionToolbar from "../components/selectionToolBar";
 
 
 const Userspageee= () => {
@@ -54,6 +58,44 @@ const etatOptions = [
   { label: "En cours", value: "En cours" },
   { label: "Terminé", value: "Terminé" }
 ];
+
+    // State et handlers pour la sélection des interventions
+    const [currentView, setCurrentView] = useState("grid"); // "list" ou "grid"
+    const [selectedInterventions, setSelectedInterventions] = useState([]);
+    
+    // Toggle sélection d'une intervention
+    const handleInterventionToggle = (id) => {
+      setInterventions(interventions.map(intervention =>
+        intervention.id === id 
+          ? { ...intervention, checked: !intervention.checked } 
+          : intervention
+      ));
+    };
+    
+    // Sélectionner toutes les interventions
+    const handleSelectAllInterventions = () => {
+      setInterventions(interventions.map(intervention => ({
+        ...intervention,
+        checked: true
+      })));
+    };
+    
+    // Désélectionner toutes les interventions
+    const handleDeselectAllInterventions = () => {
+      setInterventions(interventions.map(intervention => ({
+        ...intervention,
+        checked: false
+      })));
+    };
+    
+    // Action groupée sur les interventions sélectionnées
+    const handleInterventionActionClick = () => {
+      const selected = interventions.filter(i => i.checked);
+      alert(`Action sur ${selected.length} interventions(s)`);
+    };
+
+    const selectedInterventionCount = interventions.filter(i => i.checked).length;
+const allInterventionsSelected = selectedInterventionCount === interventions.length && interventions.length > 0;
 
         
 useEffect(() => {
@@ -306,6 +348,11 @@ useEffect(() => {
     </div>
 
     {/* Conteneur des boutons */}
+    <div className="flex items-center gap-2 h-9">
+      <div className="h-9 flex items-center">
+        <ViewToggle onChange={(view) => setCurrentView(view)} />
+      </div>
+
     <div className="flex space-x-2 mt-2 sm:mt-0">
       {/* Bouton Disponible (s'affiche seulement si "Technicien" est sélectionné) */}
       <Buttonrec
@@ -313,14 +360,18 @@ useEffect(() => {
       bgColor="#D1D5DB"
       textColor="black"
       onClick={handleDisponibleClick}
-     className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
-    />
+      className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
+      />
  {/* Bouton Ajouter */}
- {!isSmall && (
-        <div >
-        <AjouterButton onClick={() => navigate("/Ajoutintervention")} />
-        </div>
-      )}
+ 
+      
+
+        {/* Bouton Ajouter */}
+        {!isSmall && (
+          <AjouterButton onClick={() => navigate("/Ajout")} />
+        )}
+        {/* Le contenu principal ici */}
+      </div>
 
    
     </div>
@@ -337,8 +388,58 @@ useEffect(() => {
                         </h3>
                     )}
                        
-                       <div className="grid grid-cols-1  relative overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4">
-                        
+                       <div className="flex flex-wrap space-y-4 p-4">
+
+                       <div className="flex justify-between items-center w-full">
+
+ {currentView === "list" && (
+  <div className="sm:py-2 w-full">
+    <SelectionToolbar
+      selectedCount={selectedInterventionCount}
+      allSelected={allInterventionsSelected}
+      onSelectAll={handleSelectAllInterventions}
+      onDeselectAll={handleDeselectAllInterventions}
+      onActionClick={handleInterventionActionClick}
+    />
+  </div>
+  )}
+  </div>
+
+
+  {currentView === 'list' ? (
+    /* Vue liste */
+    <div className="w-full space-y-2">
+      <InterventionListHeader />
+      
+      {interventions.map((intervention) => (
+        <div key={intervention.id} className="relative">
+          <InterventionList
+            nom={intervention.nom_equipement}
+            equipement={intervention.equipement}
+            urgence={intervention.urgence_label}
+            statut={intervention.statut_label}
+            moreClick={() => setMenuOpenId(menuOpenId === intervention.id ? null : intervention.id)}
+            checked={intervention.checked}
+            onToggle={() => handleInterventionToggle(intervention.id)}
+          />
+
+          {menuOpenId === intervention.id && (
+            <div className="absolute right-6 top-6 z-50">
+              <Options
+                options={statusOptions}
+                handleSelect={(value) => handleOptionSelect(value, intervention.id)}
+                className="bg-white shadow-xl rounded-lg text-black w-48 sm:w-56 border"
+                setMenuOpen={setMenuOpenId}
+                isActive={!isPopupVisible}
+              />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  ) : (
+    /* Vue grille */
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 w-full">
       {interventions.map((intervention) => (
         <div key={intervention.id} className="relative">
           <InterventionCard
@@ -349,26 +450,25 @@ useEffect(() => {
             equipement={intervention.equipement}
             date={new Date(intervention.date_fin).toLocaleDateString("fr-FR")}
             onClick={() => navigate(`/Interventioninfo/${intervention.id}`)}
-            moreClick={() =>
-              setMenuOpenId(
-                menuOpenId === intervention.id ? null : intervention.id
-              )
-            }
+            moreClick={() => setMenuOpenId(menuOpenId === intervention.id ? null : intervention.id)}
           />
-         {menuOpenId === intervention.id && (
-  <div className="menu-container  ">
-    <Options
-      options={statusOptions}
-      handleSelect={(value) => handleOptionSelect(value, intervention.id)}
-      className="absolute top-12 right-3 bg-white shadow-xl rounded-lg text-black w-48 sm:w-56 z-50 border"
-      setMenuOpen={setMenuOpenId}
-      isActive={!isPopupVisible} // Le menu est actif seulement si le PopupChange n'est pas visible
-    />
-  </div>
-)}
+
+          {menuOpenId === intervention.id && (
+            <div className="absolute right-6 top-10 z-50">
+              <Options
+                options={statusOptions}
+                handleSelect={(value) => handleOptionSelect(value, intervention.id)}
+                className="bg-white shadow-xl rounded-lg text-black w-48 sm:w-56 border"
+                setMenuOpen={setMenuOpenId}
+                isActive={!isPopupVisible}
+              />
+            </div>
+          )}
         </div>
       ))}
     </div>
+  )}
+</div>
             
     {isPopupVisible && (
   <PopupChange
