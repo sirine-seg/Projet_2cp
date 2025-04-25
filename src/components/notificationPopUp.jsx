@@ -7,9 +7,17 @@ export default function NotificationPopUp({
   activeTab = "Tout",
   setActiveTab,
 }) {
-  const filteredNotifications = notifications.filter(
-    (n) => activeTab === "Tout" || n.unread
-  );
+
+  const filteredNotifications = activeTab === "Non lus"
+  ? notifications.filter((notif) => notif.unread)
+  : notifications;
+
+  const unreadCount = notifications.filter(notif => notif.unread).length;
+
+  const options = [
+    { label: "Tout" },
+    { label: "Non lus", count: unreadCount },
+  ];
 
   return (
     <div className="bg-white rounded-xl shadow-md w-full max-w-sm mx-auto overflow-hidden flex flex-col">
@@ -19,18 +27,19 @@ export default function NotificationPopUp({
 
       <div className="px-4 ml-2 flex justify-start">
         <TabSelector
-          options={["Tout", "Non lu"]}
+          options={options}
           activeOption={activeTab}
           setActiveOption={setActiveTab}
-          activeColor="#20599E"
-          compact
+          activeColor="#202124"
+          inactiveColor="#5F6368"
+          underlineColor="#20599E"
         />
       </div>
 
       <div className="flex flex-col gap-0 h-100 overflow-y-auto">
         {filteredNotifications.length > 0 ? (
           filteredNotifications.map((notif, index) => (
-            <NotificationCard key={index} {...notif} />
+            <NotificationCard key={index} {...notif} buttonTitle="Voir" />
           ))
         ) : (
           <div className="h-full flex items-center justify-center text-gray-500 text-sm">
