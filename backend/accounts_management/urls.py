@@ -3,12 +3,14 @@ from .views import (
     UserListView, UserDetailView,
     AdminListView, AdminDetailView, AdminCreateView,
     TechnicienListView, TechnicienDetailView, TechnicienCreateView,
-    PersonnelListView, PersonnelDetailView, PersonnelCreateView
+    PersonnelListView, PersonnelDetailView, PersonnelCreateView, PosteCreateView
 )
 
 urlpatterns = [
     path('users/', UserListView.as_view(), name='user-list'),
     path('users/<int:id>/', UserDetailView.as_view(), name='user-detail'),
+
+    path('postes/create/', PosteCreateView.as_view(), name='poste-create'),
 
     path('admins/', AdminListView.as_view(), name='admin-list'),
     path('admins/<int:id>/', AdminDetailView.as_view(), name='admin-detail'),

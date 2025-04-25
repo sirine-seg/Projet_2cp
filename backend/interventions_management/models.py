@@ -58,7 +58,6 @@ class Intervention(models.Model):
     statut = models.ForeignKey(
         StatusIntervention, on_delete=models.PROTECT, blank=True, null=True, verbose_name="Statut"
     )
-    blocked = models.BooleanField(default=False, verbose_name="Bloqué")
     description = models.TextField(
         blank=True, null=True, verbose_name="Description")
     notes = models.TextField(blank=True, null=True, verbose_name="Notes")

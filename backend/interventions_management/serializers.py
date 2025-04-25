@@ -17,22 +17,8 @@ class InterventionPreventiveSerializer(serializers.ModelSerializer):
         model = InterventionPreventive
         fields = [
             'id', 'type_intervention', 'title', 'equipement', 'technicien',
-            'admin', 'urgence', 'date_debut', 'statut', 'blocked',
-            'description', 'notes', 'period'
+            'admin', 'urgence', 'date_debut', 'statut', 'description', 'notes', 'period'
         ]
-
-
-class InterventionPreventiveUpdateSerializer(serializers.ModelSerializer):
-    """Serializer for updating InterventionPreventive models."""
-
-    class Meta:
-        model = InterventionPreventive
-        fields = [
-            'id', 'type_intervention', 'title', 'equipement', 'technicien',
-            'admin', 'urgence', 'date_debut', 'statut', 'blocked',
-            'description', 'notes', 'period'
-        ]
-        read_only_fields = ['id']  # Prevent updating the ID
 
 
 class AdminInterventionCurrativeSerializer(serializers.ModelSerializer):
@@ -42,8 +28,7 @@ class AdminInterventionCurrativeSerializer(serializers.ModelSerializer):
         model = InterventionCurrative
         fields = [
             'id', 'type_intervention', 'title', 'equipement', 'technicien',
-            'admin', 'urgence', 'date_debut', 'statut', 'blocked',
-            'description', 'notes', 'user', 'date_fin'
+            'admin', 'urgence', 'date_debut', 'statut', 'description', 'notes', 'user', 'date_fin'
         ]
 
 
@@ -53,16 +38,3 @@ class PersonnelInterventionCurrativeSerializer(serializers.ModelSerializer):
     class Meta:
         model = InterventionCurrative
         fields = ['id', 'equipement', 'user', 'description']
-
-
-class InterventionCurrativeUpdateSerializer(serializers.ModelSerializer):
-    """Serializer for updating all fields of the InterventionCurrative model."""
-
-    class Meta:
-        model = InterventionCurrative
-        fields = [
-            'id', 'type_intervention', 'title', 'equipement', 'technicien',
-            'admin', 'urgence', 'date_debut', 'statut', 'blocked',
-            'description', 'notes', 'user', 'date_fin'
-        ]
-        read_only_fields = ['id']  # Prevent updating the ID

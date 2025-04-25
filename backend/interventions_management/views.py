@@ -6,10 +6,8 @@ from .models import StatusIntervention, InterventionPreventive, InterventionCurr
 from .serializers import (
     StatusInterventionSerializer,
     InterventionPreventiveSerializer,
-    InterventionPreventiveUpdateSerializer,
     AdminInterventionCurrativeSerializer,
     PersonnelInterventionCurrativeSerializer,
-    InterventionCurrativeUpdateSerializer,
 )
 
 
@@ -94,8 +92,9 @@ class InterventionPreventiveUpdateView(generics.UpdateAPIView):
     View to update a specific InterventionPreventive object.
     """
     queryset = InterventionPreventive.objects.all()
-    serializer_class = InterventionPreventiveUpdateSerializer
+    serializer_class = InterventionPreventiveSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
+    lookup_field = 'id'
 
 
 class InterventionPreventiveDestroyView(generics.DestroyAPIView):
@@ -151,7 +150,7 @@ class InterventionCurrativeUpdateView(generics.UpdateAPIView):
     View to update a specific InterventionCurrative object.
     """
     queryset = InterventionCurrative.objects.all()
-    serializer_class = InterventionCurrativeUpdateSerializer
+    serializer_class = AdminInterventionCurrativeSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
 

@@ -48,13 +48,23 @@ class AdminSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
+        user_data['role'] = 'Admin'  # Explicitly set the role to 'Admin'
+
+        # Create the user and hash the password
+        password = user_data.pop('password', None)
         user = User.objects.create(**user_data)
+        if password:
+            user.set_password(password)  # Hash the password
+            user.save()
+
+        # Create the admin
         return Admin.objects.create(user=user)
 
 
 class TechnicienSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    poste = PosteSerializer()
+    poste = serializers.PrimaryKeyRelatedField(
+        queryset=Poste.objects.all(), required=False)
 
     class Meta:
         model = Technicien
@@ -62,14 +72,19 @@ class TechnicienSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        poste_data = validated_data.pop('poste', None)
+        poste = validated_data.pop('poste', None)
 
+        # Explicitly set the role to 'Technicien'
+        user_data['role'] = 'Technicien'
+
+        # Create the user and hash the password
+        password = user_data.pop('password', None)
         user = User.objects.create(**user_data)
+        if password:
+            user.set_password(password)  # Hash the password
+            user.save()
 
-        poste = None
-        if poste_data:
-            poste, _ = Poste.objects.get_or_create(**poste_data)
-
+        # Create the technicien
         return Technicien.objects.create(user=user, poste=poste, **validated_data)
 
 
@@ -82,5 +97,13 @@ class PersonnelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
+
+        # Create the user and hash the password
+        password = user_data.pop('password', None)
         user = User.objects.create(**user_data)
+        if password:
+            user.set_password(password)  # Hash the password
+            user.save()
+
+        # Create the personnel
         return Personnel.objects.create(user=user)
