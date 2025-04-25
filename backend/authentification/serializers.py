@@ -20,7 +20,6 @@ class UserRegisterSerializer (serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
 
-        # Import at function level to avoid circular imports
         personnel = Personnel(user=user,)
         personnel.save()
 

@@ -57,7 +57,7 @@ class Equipement(models.Model):
     """Model to store equipment details"""
     id_equipement = models.AutoField(primary_key=True)
     code = models.CharField(max_length=100, unique=True,
-                            verbose_name="Code inventaire", null=False)
+                            verbose_name="Code inventaire", null=False, required=False)
     nom = models.CharField(max_length=100)
     categorie = models.ForeignKey(
         CategorieEquipement, on_delete=models.CASCADE, null=True, blank=True
