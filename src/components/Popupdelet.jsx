@@ -43,7 +43,7 @@ const Popupdelete = ({
            w-12 h-12        /* 64px par défaut (mobile) */
     sm:w-16 sm:h-16     /* 80px sur petit écran */
     md:w-20 md:h-20    /* 96px sur tablette */
-    lg:w-22 lg:h-22    /* 112px sur ordinateur */
+    lg:w-24 lg:h-24    /* 112px sur ordinateur */
     xl:w-28 xl:h-28     /* 128px sur grand écran */
     mx-auto mb-6   
         "
