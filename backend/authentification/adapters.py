@@ -4,7 +4,6 @@ from accounts_management.models import User, Personnel
 from allauth.account.utils import perform_login , user_field
 
 
-
 class ESIDZAccountAdapter(DefaultAccountAdapter):
     """Custom account adapter for ESIDZ"""
 
@@ -33,11 +32,20 @@ class ESIDZSocialAccountAdapter(DefaultSocialAccountAdapter):
                 # Connect the social account to the existing user
                 sociallogin.connect(request, user)
 
+                try:
+                    picture_url = sociallogin.account.extra_data['picture']
+                    user_field(user, "photo", picture_url)
+                    user.save ()
+                except (KeyError, AttributeError):
+                    pass
+
+
+
                 # Set state to avoid the intermediate confirmation page
                 sociallogin.state['process'] = 'login'
 
                 # Ensure the account gets saved
-                sociallogin.save(request)
+                #   sociallogin.save(request)
 
                 # Optional: force login immediately
 
@@ -47,17 +55,16 @@ class ESIDZSocialAccountAdapter(DefaultSocialAccountAdapter):
                 # New user - will be created in save_user
                 pass
 
-
     def populate_user(self, request, sociallogin, data):
+        print("populate_user method called")  # Add this
+
         user = super().populate_user(request, sociallogin, data)
         try:
-            picture = sociallogin.account.extra_data['picture']
-            user_field(user, "photo", picture)
-            print (f"User photo set to {picture}")
+            picture_url = sociallogin.account.extra_data['picture']
+            user_field(user, "photo", picture_url)
         except (KeyError, AttributeError):
             pass
         return user
-
 
 
     def save_user(self, request, sociallogin, form=None):  # Fixed socialllogin → sociallogin

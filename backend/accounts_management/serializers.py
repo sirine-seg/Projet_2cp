@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Admin, Technicien, Personnel, Poste
+from django.db import transaction
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -107,3 +108,103 @@ class PersonnelSerializer(serializers.ModelSerializer):
 
         # Create the personnel
         return Personnel.objects.create(user=user)
+
+
+### seriializers for the creation of a new user
+
+
+class TechnicienCreationSerializer(serializers.ModelSerializer):
+    poste = serializers.CharField(required=False, allow_blank=True)
+    password = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=False,  # or True if you want to accept "" explicitly
+        help_text="Optional: if provided, will be set as the user’s password"
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'email', 'first_name', 'last_name',
+            'numero_tel', 'poste', 'password'
+        ]
+
+    def create(self, validated_data):
+        # Pull off our extra bits
+        poste = validated_data.pop('poste', '')
+        pwd = validated_data.pop('password', None)
+
+        with transaction.atomic():
+            user = User.objects.create_user(
+                password=pwd,
+                role=User.TECHNICIEN,
+                **validated_data
+            )
+            Technicien.objects.create(user=user, poste=poste)
+
+        return user
+
+
+# the serializer for creating a new Admin
+class AdminCreationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=False,  # or True if you want to accept "" explicitly
+        help_text="Optional: if provided, will be set as the user’s password"
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'email', 'first_name', 'last_name',
+            'numero_tel', 'password',
+        ]
+
+    def create(self, validated_data):
+        # Pull off our extra bits
+
+        pwd = validated_data.pop('password', None)
+
+        with transaction.atomic():
+            user = User.objects.create_user(
+                password=pwd,
+                role=User.ADMIN,
+                **validated_data
+            )
+            Admin.objects.create(user=user)
+
+        return user
+
+
+# the serilizer for creating a new Personnel  :
+class PersonnelCreationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=False,  # or True if you want to accept "" explicitly
+        help_text="Optional: if provided, will be set as the user’s password"
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'email', 'first_name', 'last_name',
+            'numero_tel', 'password'
+        ]
+
+    def create(self, validated_data):
+        # Pull off our extra bits
+
+        pwd = validated_data.pop('password', None)
+
+        with transaction.atomic():
+            user = User.objects.create_user(
+                password=pwd,
+                role=User.PERSONNEL,
+                **validated_data
+            )
+            Personnel.objects.create(user=user)
+
+        return user
+

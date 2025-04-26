@@ -1,119 +1,44 @@
-from accounts_management.models import User
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+from rest_framework.permissions import AllowAny
+from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from .serializers import UserRegisterSerializer
-from accounts_management.serializers import UserSerializer
-from datetime import datetime, timedelta
+from rest_framework.views import APIView
+from dj_rest_auth.jwt_auth import set_jwt_access_cookie, set_jwt_refresh_cookie
+
+import requests
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "postmessage"  # postmessage if using auth-code with @react-oauth/google
+    client_class = OAuth2Client
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def register(request):
-    serializer = UserRegisterSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors)
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    def post(self, request, *args, **kwargs):
-        try:
-            response = super().post(request, *args, **kwargs)
-            tokens = response.data
+class GoogleCodeExchangeView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):  # ✅ Use lowercase `post` not `POST`
+        code = request.data.get('code')
+        print(f"Received code: {code}")
 
-            access_token = tokens['access']
-            refresh_token = tokens['refresh']
+        url = "http://127.0.0.1:8000/api/auth/dj-rest-auth/google/"
 
-            seriliazer = UserSerializer(request.user, many=False)
-
-            res = Response()
-
-            res.data = {'success': True}
-
-            res.set_cookie(
-                key='access_token',
-                value=str(access_token),
-                httponly=True,
-                secure=True,
-                samesite='None',
-                path='/'
+        google_res = requests.post (url , json  = {'code' : code})
+        if google_res.status_code == status.HTTP_200_OK :
+            access_token  = google_res.json()["access"]
+            refresh_token = google_res.json()["refresh"]
+            print (access_token)
+            print (refresh_token)
+            res = Response (
+                {
+                    "access_token": access_token,
+                    "refresh_token"  : refresh_token,
+                    "detail" : "able to get the token"
+                } ,
+                status=status.HTTP_200_OK
             )
-
-            res.set_cookie(
-                key='refresh_token',
-                value=str(refresh_token),
-                httponly=True,
-                secure=True,
-                samesite='None',
-                path='/'
-            )
-            res.data.update(tokens)
+            set_jwt_access_cookie (res , access_token)
+            set_jwt_refresh_cookie (res , refresh_token)
             return res
-
-        except Exception as e:
-            print(e)
-            return Response({'success': False})
-
-
-class CustomTokenRefreshView(TokenRefreshView):
-    def post(self, request, *args, **kwargs):
-        try:
-            refresh_token = request.COOKIES.get('refresh_token')
-
-            request.data['refresh'] = refresh_token
-
-            response = super().post(request, *args, **kwargs)
-
-            tokens = response.data
-            access_token = tokens['access']
-
-            res = Response()
-
-            res.data = {'refreshed': True}
-
-            res.set_cookie(
-                key='access_token',
-                value=access_token,
-                httponly=True,
-                secure=False,
-                samesite='None',
-                path='/'
-            )
-            return res
-
-        except Exception as e:
-            print(e)
-            return Response({'refreshed': False})
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def logout(request):
-
-    try:
-
-        res = Response()
-        res.data = {'success': True}
-        res.delete_cookie('access_token', path='/', samesite='None')
-        res.delete_cookie('response_token', path='/', samesite='None')
-
-        return res
-
-    except Exception as e:
-        print(e)
-        return Response({'success': False})
-
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([AllowAny])
-def is_logged_in(request):
-    if request.user.is_authenticated:
-        serializer = UserSerializer(request.user, many=False)
-        return Response(serializer.data)
-    return Response({'detail': 'Not authenticated'}, status=401)

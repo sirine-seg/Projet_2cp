@@ -24,9 +24,9 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'prjp',
+        'NAME': 'basededoneedetestfinale',
         'USER': 'postgres',
-        'PASSWORD': '123456',
+        'PASSWORD': '31454602',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
@@ -55,7 +56,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    "corsheaders"
+    "corsheaders" ,
+    'dj_rest_auth',
+    'dj_rest_auth.registration'
 ]
 
 SPAGHETTI_SAUCE = {
@@ -63,6 +66,8 @@ SPAGHETTI_SAUCE = {
     'show_fields': False,
     'exclude': {'auth': ['user']}
 }
+
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -79,20 +84,29 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backend.urls'
 
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
-    "UPDATE_LAST_LOGIN": False,
-    'AUTH_COOKIE': 'access_token',  # Cookie name for the access token
-    'AUTH_COOKIE_REFRESH': 'refresh_token',  # Cookie name for the refresh token
-    'AUTH_COOKIE_SECURE': False,  # Set to True if using HTTPS
-    'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HTTP only
-    'AUTH_COOKIE_PATH': '/',  # Root path for the cookie
-    'AUTH_COOKIE_SAMESITE': 'Lax',  # Adjust according to your needs
+# jwt settings
+REST_USE_JWT = True # enable the use of JWT
+#SIMPLE_JWT = {
+    #"ACCESS_TOKEN_LIFETIME": timedelta(days=5),
+    #"REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    #"ROTATE_REFRESH_TOKENS": False,
+    #"BLACKLIST_AFTER_ROTATION": False,
+    #"UPDATE_LAST_LOGIN": False,
+    # 'AUTH_COOKIE': 'access_token',  # Cookie name for the access token
+    # 'AUTH_COOKIE_REFRESH': 'refresh_token',  # Cookie name for the refresh token
+    # 'AUTH_COOKIE_SECURE': False,  # Set to True if using HTTPS
+    # 'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HTTP only
+    # 'AUTH_COOKIE_PATH': '/',  # Root path for the cookie
+    # 'AUTH_COOKIE_SAMESITE': 'Lax',  # Adjust according to your needs
 
+#}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=120) ,
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Use 'Bearer' in the Authorization header
 }
+
 
 
 TEMPLATES = [
@@ -145,29 +159,50 @@ AUTH_USER_MODEL = 'accounts_management.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
+        'accounts_management.permissions.IsNotBlockedUser',
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP': {
-            'client_id': '746021296567-ps7a99uvjgduiic1536edgo26tajha98.apps.googleusercontent.com',
-            'secret': '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',
-        },
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
+
+# cors settings
+ROOT_URLCONF = 'backend.urls'
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:5174",# frontend dev server
+]
+CORS_ALLOW_CREDENTIALS = True
+
+REST_AUTH = {
+    'USE_JWT' : True  ,
+    'JWT_AUTH_COOKIE' : 'my-app-auth' ,
+    'JWT_AUTH_REFRESH_COOKIE' : 'my-refresh-token' ,
+    'JWT_AUTH_SAMESITE ' : "None" ,
+    'JWT_AUTH_SECURE' : True  ,
+    'JWT_AUTH_HTTPONLY':False
+
+
 }
+
+#SOCIALACCOUNT_PROVIDERS = {
+#    'google': {
+#        'APP': {
+#            'client_id': '746021296567-ps7a99uvjgduiic1536edgo26tajha98.apps.googleusercontent.com',
+#            'secret': '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',
+#        },
+#        'SCOPE': [
+#            'profile',
+#            'email',
+#        ],
+#        'AUTH_PARAMS': {
+#            'access_type': 'online',
+#        }
+#    }
+#}
 
 SITE_ID = 1
 
@@ -175,9 +210,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-SOCIALACCOUNT_ADAPTER = 'accounts_management.adapters.ESIDZSocialAccountAdapter'
-LOGIN_REDIRECT_URL = 'login_success'
-LOGIN_URL = 'account_login'
+
+# social account settings
+SOCIALACCOUNT_ADAPTER = 'authentification.adapters.ESIDZSocialAccountAdapter'
+#LOGIN_REDIRECT_URL = 'login_success'
+#LOGIN_URL = 'account_login'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -187,5 +224,9 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
-SOCIALACCOUNT_STORE_TOKENS = TrueMEDIA_URL = '/equipements_pics/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'equipements_pics')
+SOCIALACCOUNT_STORE_TOKENS = False
+
+MEDIA_URL = '/equip_imges/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'equip_imges')
+# used to enable atomic requests   used in `account_management.views`
+ATOMIC_REQUESTS = True

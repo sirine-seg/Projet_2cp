@@ -48,8 +48,8 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, verbose_name='Nom')
     password = models.CharField(
         max_length=100, verbose_name='Mot de passe', null=True, blank=True)
-    photo = models.ImageField(
-        upload_to='profile_pics/', verbose_name='Photo de profil', null=True, blank=True)
+    photo = models.URLField(verbose_name='Photo de profil', null=True, blank=True)
+    is_blocked = models.BooleanField(default=False)
 
     username = None
     USERNAME_FIELD = 'email'
