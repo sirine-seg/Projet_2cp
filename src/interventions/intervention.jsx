@@ -298,7 +298,7 @@ useEffect(() => {
                
                
                                    {/* En-tête */}
-                                   <div className="w-full bg-[#20599E] text-white py-16 text-center">
+                                   <div className="w-full bg-[#20599E] text-white pb-16 text-center">
                                   
                                    <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
                                   Intervention
