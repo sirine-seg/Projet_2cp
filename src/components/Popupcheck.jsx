@@ -13,7 +13,7 @@ const PopupMessage = ({
   if (!isPopupVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-999 flex items-center justify-center  bg-opacity-40 px-2 sm:px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-40 px-2 sm:px-4">
   <div className="bg-white w-full max-w-[75%] sm:max-w-[90%] md:max-w-[70%] lg:max-w-[500px] lg:max-h-[500px] p-3 sm:p-6 rounded-3xl shadow-2xl relative text-center overflow-hidden break-words min-w-0">
         {/*  icône */}
         <img
