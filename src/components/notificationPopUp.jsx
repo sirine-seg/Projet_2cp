@@ -20,7 +20,7 @@ export default function NotificationPopUp({
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-md w-full max-w-sm mx-auto overflow-hidden flex flex-col">
+    <div className="bg-white rounded-xl shadow-md w-full max-w-sm min-w-xs max-h-[450px] overflow-hidden flex flex-col">
       <div className="text-center font-bold text-lg pt-5 pb-4">
         Notifications
       </div>
