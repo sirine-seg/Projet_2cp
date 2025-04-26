@@ -40,12 +40,12 @@ const Popupdelete = ({
           src={iconSrc}
           alt="Icon"
           className="
-          w-6 h-6            
-          sm:w-8 sm:h-8      
-          md:w-10 md:h-10    
-          lg:w-12 lg:h-12     
-          xl:w-14 xl:h-14    
-          mx-auto mb-4
+           w-12 h-12        /* 64px par défaut (mobile) */
+    sm:w-16 sm:h-16     /* 80px sur petit écran */
+    md:w-20 md:h-20    /* 96px sur tablette */
+    lg:w-22 lg:h-22    /* 112px sur ordinateur */
+    xl:w-28 xl:h-28     /* 128px sur grand écran */
+    mx-auto mb-6   
         "
         />
 
