@@ -14,7 +14,7 @@ export default function ProfilePage() {
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E]">
       <Header />
-      <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] mt-20 md:mt-28">
+      <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] mt-8 md:mt-10">
         <Headerbar title="Mon profile" profilOrNotif="true" />
 
         {/* Profil */}
