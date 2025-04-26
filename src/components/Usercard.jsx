@@ -1,7 +1,7 @@
 import { MdEmail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
-import { MoreVertical } from "lucide-react";
 import Profil from "../assets/Profil.svg";
+import { MoreVertical } from "lucide-react";
 
 const UserCard = ({
   firstName,
@@ -14,10 +14,13 @@ const UserCard = ({
   isMenuOpen,
   onEditClick,
   onDeleteClick,
+  is_blocked,
+  onBlockClick,
+onUnblockClick,
 }) => {
   return (
     <div
-    className="w-[95vw] sm:w-[90vw] md:w-[45vw] lg:w-[30vw] xl:w-[30vw] 2xl:w-[20vw] max-w-full p-5 bg-white rounded-2xl shadow-2xl flex items-start relative"
+    className="w-[95vw] sm:w-[90vw] md:w-[45vw] lg:w-[50vw] xl:w-[60vw] 2xl:w-[60vw] max-w-full p-5 bg-white rounded-2xl shadow-2xl flex items-start relative"
 
       onClick={onClick}
     >
@@ -37,30 +40,30 @@ const UserCard = ({
       </div>
 
       {/* Infos */}
-      <div className="flex-1 pl-5 min-w-0">
+      <div className="flex-1 pl-4 -mt-3 min-w-0">
   <h2
     className="
       font-bold text-[#20599E]
       whitespace-nowrap overflow-hidden
-      text-[clamp(0.75rem,4vw,1.3rem)]
+      text-[clamp(0.75rem,4vw,1.25rem)]
     "
   >
     {firstName} {lastName}
   </h2>
   <p
     className="
-      flex items-center
+      flex items-center mt-1
       whitespace-nowrap overflow-hidden
       text-[clamp(0.625rem,3vw,1rem)]
     "
   >
-    <MdEmail className="h-5 w-5 text-[#20599E] mr-2 flex-shrink-0 relative top-[2px]" />
+    <MdEmail className="h-5 w-5 text-[#20599E] mr-2 flex-shrink-0" />
     {email}
   </p>
 </div>
 
 
-      {/* Bouton menu*/}
+      {/* Bouton menu */}
       <div className="p-1 rounded-full hover:bg-gray-100 transition-colors">
           <MoreVertical 
             className="text-[#202124] w-5 h-5 cursor-pointer" 
@@ -70,35 +73,42 @@ const UserCard = ({
             }}
           />
         </div>
-
       {/* Menu déroulant */}
       {isMenuOpen && (
-        <div
-          className="absolute top-12 right-3 bg-white shadow-xl rounded-lg text-black w-48 sm:w-64 z-50 border"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button
-            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEditClick();
-            }}
-          >
-            Modifier
-          </button>
-          <button
-            className="block w-full text-left px-4 py-2  hover:bg-gray-100"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDeleteClick();
-            }}
-          >
-            Supprimer
-          </button>
-        </div>
-      )}
+  <div
+    className="absolute top-12 right-3 bg-white shadow-xl rounded-lg text-black w-48 sm:w-64 z-50 border"
+    onClick={(e) => e.stopPropagation()}
+  >
+    <button
+      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+      onClick={(e) => {
+        e.stopPropagation();
+        onEditClick();
+      }}
+    >
+      Modifier
+    </button>
+
+    {/* Bouton Bloquer ou Débloquer selon isBlocked */}
+    <button
+      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+      onClick={(e) => {
+        e.stopPropagation();
+        if (is_blocked) {
+          onUnblockClick(); // ici tu appelles débloquer
+        } else {
+          onBlockClick(); // ici tu appelles bloquer
+        }
+      }}
+    >
+      {is_blocked ? "Débloquer" : "Bloquer"}
+    </button>
+  </div>
+)}
+
     </div>
   );
 };
 
 export default UserCard;
+
