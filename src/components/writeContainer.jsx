@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function WriteContainer({ title, onSubmit, onChange , value }) {
+export default function WriteContainer({ title, onSubmit, onChange , value, bgColor="bg-[#FFFFFF]" }) {
   const [input, setInput] = useState("");
 
 
@@ -33,7 +33,7 @@ export default function WriteContainer({ title, onSubmit, onChange , value }) {
             onBlur={handleBlur}
             placeholder="---"
            
-            className=" flex flex-col items-start w-full py-3 px-4 border border-white rounded-[0.5rem] text-[0.8125rem] font-regular font-poppins bg-white resize-none focus:outline-0 focus:ring-0 "
+            className={`flex flex-col items-start w-full py-3 px-4 border border-white rounded-[0.5rem] text-[0.8125rem] font-regular font-poppins ${bgColor} resize-none focus:outline-0 focus:ring-0`}
            
             
           />
