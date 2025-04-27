@@ -5,12 +5,14 @@ import logoBlue from '../assets/logo_bleu.svg';
 import notif from '../assets/notif.svg';
 import menu from '../assets/menu.svg';
 import menuBlue from '../assets/menu_bleu.svg';
-import ProfilPopUp from "../components/profilPopUp";
-import NotificationPopUp from "../components/notificationPopUp";
+import ProfilPopUp from "./profilPopUp";
+import NotificationPopUp from "./notificationPopUp";
+import SideBar from "./sideBar";
 
 const Header = ({ bleu = false }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const profileRef = useRef(null);
   const notifRef = useRef(null);
@@ -45,10 +47,11 @@ const Header = ({ bleu = false }) => {
   }, []);
 
   return (
+    <>
     <header className="flex items-center justify-between pl-4 pr-4 sm:pr-10 py-3 h-12 sm:h-16 w-full">
       {/* Partie gauche : Menu + Logo */}
       <div className="flex items-center space-x-1 sm:space-x-2">
-        <button>
+        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
           <img 
             src={bleu ? menuBlue : menu} 
             alt="Menu"
@@ -102,6 +105,17 @@ const Header = ({ bleu = false }) => {
         </div>
       </div>
     </header>
+    {isSidebarOpen && (
+      <div className="fixed inset-0 z-40">
+        <SideBar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+        
+        <div 
+          className="fixed inset-0 bg-black opacity-25" 
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      </div>
+    )}
+    </>
   );
 };
 
