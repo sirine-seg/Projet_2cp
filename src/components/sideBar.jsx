@@ -13,8 +13,7 @@ import {
 } from "lucide-react";
 import logo_bleu from "../assets/logo_bleu.svg";
 
-export default function SideBar() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function SideBar({ isOpen, setIsOpen }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activePage, setActivePage] = useState("Accueil"); // <<< HERE
 
