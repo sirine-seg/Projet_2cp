@@ -31,8 +31,7 @@ export default function WriteContainer({ title, onSubmit, onChange , value, bgCo
             value={input}
             onChange={handleChange}
             onBlur={handleBlur}
-            placeholder="---"
-           
+            placeholder="---"           
             className={`flex flex-col items-start w-full py-3 px-4 border border-white rounded-[0.5rem] text-[0.8125rem] font-regular font-poppins ${bgColor} resize-none focus:outline-0 focus:ring-0`}
            
             
