@@ -3,7 +3,7 @@ import Badge from "./badge";
 import { MoreVertical } from "lucide-react";
 import localisationIcon from '../assets/localisationIcon.svg';
 
-const EquipCard = ({ nom, etat, id, localisation, onClick, moreClick }) => {
+const EquipCard = ({ nom, etat, code, localisation, onClick, moreClick }) => {
 
 
   const etatColors = {
@@ -35,7 +35,7 @@ const EquipCard = ({ nom, etat, id, localisation, onClick, moreClick }) => {
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
           <Badge text={etat} bgColor={badgeColor} className="text-xs sm:text-sm max-w-[120px] sm:max-w-[140px] truncate" />
-          <Badge text={`#${id}`} bgColor="#9AA0A6" className="text-xs sm:text-sm" />
+          <Badge text={`#${code}`} bgColor="#9AA0A6" className="text-xs sm:text-sm" />
         </div>
 
         {/* Trois points */}

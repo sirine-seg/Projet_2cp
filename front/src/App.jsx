@@ -10,12 +10,15 @@ import Info from "./equipements/info.jsx";
 import Signaler from "./equipements/signaler.jsx"
 import SignalerAdmin from "./equipements/signalerAdmin.jsx";
 import DashboardPage from "./dashboard/maindash.jsx";
+import Login from "./equipements/login.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/Users" element={<Users />} />
+        <Route path="/login" element={<Login />} />
+      
      
         <Route path="/Modifie/:id" element={<Modifie />} />
         <Route path="/equip" element={<EquipementsPage />} />
@@ -25,6 +28,7 @@ function App() {
         <Route path="/signaler/:id" element={<Signaler />} />
         <Route path="/signalerAdmin/:id" element={<SignalerAdmin />} />
         <Route path="/dashboard" element={< DashboardPage/>} />
+
       </Routes>
     </Router>
   );

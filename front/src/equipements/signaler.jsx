@@ -151,7 +151,7 @@ const urgenceOptions = [
       ))}
     </select>
   );
-
+/*
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/filters/")
       .then((response) => response.json())
@@ -163,7 +163,7 @@ const urgenceOptions = [
         console.error("Error fetching filter options:", error)
       );
   }, []);
-
+*/
   const fileInputRef = useRef(null);
 
   const handleButtonClick = () => {
@@ -224,9 +224,14 @@ const urgenceOptions = [
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
-  
+
+    
+    if (selectedUrgence) {
+      formData.append("urgence", selectedUrgence.id);
+    }
+    formData.append("title", newIntervention.title);
     // Description
-    formData.append("description", interventions.description || "");
+    formData.append("description", newIntervention.description);
   
     // ID équipement
     formData.append("equipement", id);
@@ -237,7 +242,7 @@ const urgenceOptions = [
     }
   
     // Envoi de la requête
-    fetch("http://127.0.0.1:8000/intervention/Personnelcreate/", {
+    fetch("http://127.0.0.1:8000/api/interventions/personnel/intervention-curratives/create/", {
       method: "POST",
       
       credentials: "include",
@@ -345,12 +350,21 @@ onClick={() => {
 
         <div className="flex flex-col w-full mx-auto px-3.5 mt-2">
          
-        <SelectableInput
+        <WriteContainer
         title="Problem"
-        options={["Option 1", "Option 2", "Option 3"]}
-        selectedOption={selected}
-        onSelect={setSelected}
+    value={newIntervention.title}
+    onChange={(val) =>setNewIntervention({ ...newIntervention, title: val })}
       />
+<div className="w-full">
+   <SelectableInput
+          title="Urgence"
+          options={urgenceOptions}
+          selectedOption={selectedUrgence}
+          onSelect={(selectedOption) => setSelectedUrgence(selectedOption)}
+        /> 
+</div>
+
+      
 
           <div className="w-full mt-4">
           <AutoGrowTextarea onChange={handleChange} />

@@ -23,7 +23,8 @@ import Headerbar from "../components/Arrowleftt";
 import Filtre from "../components/filtre";
 
 const EditPage = () => {
-    const { id } = useParams(); 
+    const { id } = useParams();
+     
     const [displayedEquipements, setDisplayedEquipements] = useState([]);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [filter, setFilter] = useState("Tout");
@@ -36,6 +37,11 @@ const EditPage = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [equipements, setEquipements] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [categories, setCategories] = useState([]);
+  const token = localStorage.getItem("access_token");
+  const [types, setTypes] = useState([]);
+  const [localisations, setLocalisations] = useState([]);
+  
 
   const [filterOptions, setFilterOptions] = useState({
     categories: [],
@@ -52,7 +58,34 @@ const EditPage = () => {
     etat: "",
   });
 
-  const categories = ["Ordinateur", "Imprimante", "Projecteur"];
+
+  useEffect(() => {
+    const fetchEquipementData = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/equipements/equipement/${id}/`);
+        const data = await response.json();
+        if (response.ok) {
+          setEquipement({
+            nom: data.nom,
+            code: data.code,
+            categorie: data.categorie,
+            type: data.typee,
+            localisation: data.localisation,
+            manuel: data.manuel, 
+            image:data.image,
+          });
+        } else {
+          setErrorMessage("Erreur lors de la récupération des données.");
+        }
+      } catch (error) {
+        setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
+      }
+    };
+    fetchEquipementData();
+  }, [id]);
+  
+
+
   const { state } = useLocation();
   
   const navigate = useNavigate();
@@ -63,6 +96,7 @@ const EditPage = () => {
     categorie: "",
     localisation: "",
     codebar: "",
+    code:""
   });
   useEffect(() => {
     if (!state?.equipement) {
@@ -78,7 +112,11 @@ const EditPage = () => {
     setEquipement({ ...equipement, [e.target.name]: e.target.value });
   };
   
-
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file);
+  };
+  
   
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -108,19 +146,27 @@ const EditPage = () => {
     formData.append("categorie", equipement.categorie);
     formData.append("localisation", equipement.localisation);
     formData.append("codebar", equipement.codebar);
-  
-    if (equipement.manual instanceof File) {
+    formData.append("code", equipement.code);
+    formData.append("image", equipement.image);
+    if (equipement.manuel instanceof File) {
       formData.append("manuel", equipement.manuel);
     } 
   
-    fetch(`http://127.0.0.1:8000/equipements/update/${id}/`, {
+    fetch(`http://127.0.0.1:8000/api/equipements/equipement/${id}/update/`, {
       method: "PATCH",
       body: formData,
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          // Server returned an error, let's read it as text
+          return response.text().then(text => {
+            throw new Error(`Server Error: ${response.status} - ${text}`);
+          });
+        }
+        return response.json(); // only try to parse JSON if OK
+      })
       .then(() => {
         alert("Équipement mis à jour !");
-       
       })
       .catch((error) => {
         console.error("Erreur lors de la mise à jour :", error);
@@ -128,6 +174,99 @@ const EditPage = () => {
       });
   };
   
+  
+
+   
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/equipements/type/",
+      {
+      
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json'
+        }
+
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        const types = data.map((etat) => ({
+          value: etat.id,
+          label: etat.nom
+        }));
+        setTypes(types);
+        console.log("types:",types);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des états:", error);
+      });
+  }, []);
+
+  const typeOptions = Object.entries(types).map(([value, label]) => ({
+    value,
+    label,
+  }));
+
+
+
+ 
+
+useEffect(() => {
+  fetch("http://127.0.0.1:8000/api/equipements/categorie/", {
+    headers: {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      const categories = data.map((cat) => ({
+        value: cat.id,
+        label: cat.nom,
+      }));
+      setCategories(categories);
+      console.log("categories:", categories);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la récupération des catégories:", error);
+    });
+}, []);
+
+
+const categoryOptions = Object.entries(categories).map(([value, label]) => ({
+  value,
+  label,
+}));
+
+
+useEffect(() => {
+  fetch("http://127.0.0.1:8000/api/equipements/localisation/", {
+    headers: {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      const localisations = data.map((loc) => ({
+        value: loc.id,
+        label: loc.nom,
+      }));
+      setLocalisations(localisations);
+      console.log("localisations:", localisations);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la récupération des localisations:", error);
+    });
+}, []);
+
+
+const localisationOptions = Object.entries(localisations).map(([value, label]) => ({
+  value,
+  label,
+}));
+
+
+
   useEffect(() => {
     const filteredEquipements = equipements.filter((equipement) => {
       const matchesFilter = filter === "Tout" || equipement.categorie === filter;
@@ -232,10 +371,11 @@ const EditPage = () => {
     <div className="my-2">
     <WriteContainer
   title="Nom"
-  value={equipement.nom}
-
-  onChange={(val) => setNewUser({ ...equipement, nom: val })}
+  value={equipement.nom || ""}
+  onChange={(val) => setEquipement(prev => ({ ...prev, nom: String(val) }))}
+  //                force val to be string 👆
 />
+
     </div>
 
     <div className="my-2">
@@ -244,7 +384,7 @@ const EditPage = () => {
   title="Code Bar"
   value={equipement.codebar}
 
-  onChange={(val) => setNewUser({ ...equipement, codebar: val })}
+  onChange={(val) =>setEquipement({ ...equipement, codebar: val })}
 />
     </div>
 
@@ -252,16 +392,17 @@ const EditPage = () => {
      
      <WriteContainer
  title="Code Inventaire"
- value={equipement.codeInventaire}
+ value={equipement.code|| ""}
 
- onChange={(val) => setNewUser({ ...equipement, codeInventaire: val })}
+ onChange={(val) => setEquipement(prev => ({ ...prev, code: String(val) }))}
 />
    </div>
   </div>
 
   {/* Right Column */}
   <div className="flex justify-center items-center w-full sm:w-1/2 py-4">
-<PicField />
+  <PicField selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
+
 </div>
 
 
@@ -271,10 +412,12 @@ const EditPage = () => {
   <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
   <ChoiceContainer
       title="Catégorie"
-      options={categories.map((cat) => ({ label: cat, value: cat }))}
-      selectedOption={equipement.categorie}
+      options={categories}
+      selectedOption={
+        categories.find((cat) => cat.value === equipement.categorie)?.label || ""
+      }
       onSelect={(value) =>
-        setEquipement({ ...equipement, category: value })
+        setEquipement({ ...equipement, categorie: value })
       }
     />
   </div>
@@ -282,11 +425,11 @@ const EditPage = () => {
   <label className="block text-black font-bold">Manuel</label>
   
   {/* Show previous file if exists */}
-  {equipement.manual && typeof equipement.manual === "string" && (
+  {equipement.manuel&& typeof equipement.manuel === "string" && (
     <p className="text-gray-700 mb-2">
       Fichier actuel :{" "}
       <a
-        href={equipement.manual} // If it's a URL
+        href={equipement.manuel} // If it's a URL
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 underline"
@@ -315,33 +458,34 @@ const EditPage = () => {
 <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2">
 
 <div className="w-full sm:w-1/2 pl-0 sm:pl-2">
-  <ChoiceContainer
+<ChoiceContainer
   title="Type"
-  options={filterOptions.types.map((type) => ({ label: type, value: type }))}
+  options={types}
   selectedOption={
-    filterOptions.types
-      .map((type) => ({ label: type, value: type }))
-      .find((opt) => opt.value === equipement.type)
+    types.find((t) => t.value === equipement.type)?.label || ""
   }
-  onSelect={(option) =>
-    setEquipement({ ...equipement, type: option.value })
-  }
+  onSelect={(value) => setEquipement({ ...equipement, type: value })}
 />
+
+
+
+
 
   </div>
   <div className="w-full sm:w-1/2 pl-0 sm:pl-2">
-  <ChoiceContainer
+
+<ChoiceContainer
   title="Localisation"
-  options={filterOptions.localisations.map((loc) => ({ label: loc, value: loc }))}
+  options={localisations}
   selectedOption={
-    filterOptions.localisations
-      .map((loc) => ({ label: loc, value: loc }))
-      .find((opt) => opt.value === equipement.localisation)
+    localisations.find((loc) => loc.value === equipement.localisation)?.label || ""
   }
-  onSelect={(option) =>
-    setEquipement({ ...equipement, localisation: option.value })
+  
+  onSelect={(value) =>
+    setEquipement({ ...equipement, localisation: value })
   }
 />
+
 
   </div>
 

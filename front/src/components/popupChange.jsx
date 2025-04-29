@@ -1,5 +1,4 @@
-
- import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 import React, { useState } from "react";
 import ChoiceContainer from "./choiceContainer";
 import Button from "./Button";
@@ -11,12 +10,15 @@ const PopupChange = ({
   update, 
   onClose 
 }) => {
-  const [selectedStatus, setSelectedStatusState] = useState(""); // Ajouter l'état pour la sélection
+  const [selectedStatus, setSelectedStatusState] = useState(""); // State for selected status ID
 
   const handleStatusSelect = (selected) => {
-    setSelectedStatusState(selected); // Met à jour le statut sélectionné
-    setSelectedStatus(selected); // Appelle la fonction du parent
+    setSelectedStatusState(selected); // Update the local state with the selected status ID
+    setSelectedStatus(selected); // Call the function passed from parent to update selected status
   };
+
+  // Find the 'nom' corresponding to the selected 'id' in etatOptions
+  const selectedStatusNom = etatOptions.find((etat) => etat.id === selectedStatus)?.nom;
 
   return (
     <div className="fixed inset-0 flex justify-center items-center z-[9999]  bg-opacity-30 px-4">
@@ -31,9 +33,12 @@ const PopupChange = ({
           bgColor="bg-[#F4F4F4]"
           maxWidth="max-w-full"
           options={etatOptions}
-          selectedOption={selectedStatus} // Passer la valeur de `selectedStatus`
-          onSelect={handleStatusSelect} // Passer la fonction de mise à jour
+          selectedOption={selectedStatus} // Pass the ID of the selected status
+          onSelect={handleStatusSelect} // Handle the selection
         />
+        
+        {/* Display the selected status name */}
+        {selectedStatusNom && <p className="text-center mt-4">Selected status: {selectedStatusNom}</p>}
 
         <div className="flex flex-row justify-between mt-4 gap-4 flex-nowrap">
           <Button
@@ -54,3 +59,4 @@ const PopupChange = ({
 };
 
 export default PopupChange;
+

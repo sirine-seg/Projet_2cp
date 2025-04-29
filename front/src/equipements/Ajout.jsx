@@ -22,8 +22,12 @@ import WriteContainer from "../components/writeContainer";
 import Headerbar from "../components/Arrowleftt";  
 import PicField from "../components/picfield.jsx";
 
+
 const AjoutPage = () => {
+  
   const [displayedEquipements, setDisplayedEquipements] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const token = localStorage.getItem("access_token");
   const [filter, setFilter] = useState("Tout");
   const [visibleCount, setVisibleCount] = useState(6);
   const [selectedEquipement, setSelectedEquipement] = useState(null);
@@ -44,7 +48,7 @@ const [localisations, setLocalisations] = useState([]);
     categorie: "",
     localisation: "",
     codebar: "",
-    codeInventaire: "", // Add this line
+    code: "", // Add this line
     etat: "1",
   });
   
@@ -64,74 +68,163 @@ const [localisations, setLocalisations] = useState([]);
     etat: "",
   });
 
-  const categories = ["Ordinateur", "Imprimante", "Projecteur","ELEC"];
+  
 
   const handleChange = (e) => {
     setNewEquipement({ ...newEquipement, [e.target.name]: e.target.value });
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedImage(file);
-      // Generate a preview URL
-      const preview = URL.createObjectURL(file);
-      setPreviewUrl(preview);
-    }
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file);
   };
-
   
   const handleFileChange = (event) => {
     const file = event.target.files[0]; // Get the selected file
     setSelectedManual(file);
   };
-
   const handleAddEquipement = () => {
     const formData = new FormData();
     formData.append("nom", newEquipement.nom);
-    formData.append("type", newEquipement.type);
+ 
+    formData.append("typee", newEquipement.type);
+    formData.append("code", newEquipement.code);
+    console.log("code:", newEquipement.codeInventaire);
     formData.append("categorie", newEquipement.categorie);
     formData.append("localisation", newEquipement.localisation);
     formData.append("codebar", newEquipement.codebar);
     formData.append("etat", newEquipement.etat);
     formData.append("codeInventaire", newEquipement.codeInventaire);
-
-
+  
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
-
+  
     if (selectedManual) {
       formData.append("manuel", selectedManual);
     }
-    fetch("http://127.0.0.1:8000/equipements/create/", {
-        method: "POST",
-        body: formData,
+  
+    fetch("http://127.0.0.1:8000/api/equipements/equipement/create/", {
+      method: "POST",
+      body: formData,
+      headers: {
+        'Authorization': `Token ${token}`,
+        // NE PAS mettre 'Content-Type': 'application/json'
+        // Le navigateur ajoute automatiquement multipart/form-data avec les bonnes frontières
+      },
+    })
+      .then(async (response) => {
+        let data;
+        try {
+          data = await response.json(); // Essayez d'analyser en JSON
+        } catch (error) {
+          console.warn("Non-JSON response received:", error);
+          data = null;
+        }
+  
+        console.log("Server response:", data);
+  
+        if (!response.ok) {
+          throw new Error(data?.message || "Échec de l'ajout !");
+        }
+  
+        alert("Équipement ajouté !");
+        setEquipements([...equipements, data]);
       })
-        .then(async (response) => {
-          let data;
-          try {
-            data = await response.json(); // Try parsing JSON
-          } catch (error) {
-            console.warn("Non-JSON response received:", error);
-            data = null;
-          }
-      
-          console.log("Server response:", data);
-      
-          if (!response.ok) {
-            throw new Error(data?.message || "Échec de l'ajout !");
-          }
-      
-          alert("Équipement ajouté !");
-          setEquipements([...equipements, data]);
-        })
-        .catch((error) => {
-          console.error("Erreur lors de l'ajout:", error);
-          alert("Erreur lors de l'ajout !");
-        });
-      
+      .catch((error) => {
+        console.error("Erreur lors de l'ajout:", error);
+        alert("Erreur lors de l'ajout !");
+      });
   };
+  
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/equipements/type/",
+      {
+      
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json'
+        }
+
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        const types = data.map((etat) => ({
+          value: etat.id,
+          label: etat.nom
+        }));
+        setTypes(types);
+        console.log("types:",types);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des états:", error);
+      });
+  }, []);
+
+  const typeOptions = Object.entries(types).map(([value, label]) => ({
+    value,
+    label,
+  }));
+
+
+
+ 
+
+useEffect(() => {
+  fetch("http://127.0.0.1:8000/api/equipements/categorie/", {
+    headers: {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      const categories = data.map((cat) => ({
+        value: cat.id,
+        label: cat.nom,
+      }));
+      setCategories(categories);
+      console.log("categories:", categories);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la récupération des catégories:", error);
+    });
+}, []);
+
+
+const categoryOptions = Object.entries(categories).map(([value, label]) => ({
+  value,
+  label,
+}));
+
+
+useEffect(() => {
+  fetch("http://127.0.0.1:8000/api/equipements/localisation/", {
+    headers: {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      const localisations = data.map((loc) => ({
+        value: loc.id,
+        label: loc.nom,
+      }));
+      setLocalisations(localisations);
+      console.log("localisations:", localisations);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la récupération des localisations:", error);
+    });
+}, []);
+
+
+const localisationOptions = Object.entries(localisations).map(([value, label]) => ({
+  value,
+  label,
+}));
+
 
   /*useEffect(() => {
     const filteredEquipements = equipements.filter((equipement) => {
@@ -246,23 +339,36 @@ const [localisations, setLocalisations] = useState([]);
           <div className="w-full sm:w-1/2 px-1">
 
 
-            <WriteContainer
-    title="Nom"
-    value={newEquipement.nom}
-    onChange={handleChange}
-  />
+          <WriteContainer
+  name="nom"
+  title="Nom"
+  value={newEquipement.nom || ""}
+  onChange={(val) =>
+    setNewEquipement((prev) => ({
+      ...prev,
+      nom: val,    // Directly updating the field!
+    }))
+  }
+/>
 
 <WriteContainer
+
     title="code Bar"
     value={newEquipement.codebar}
     onChange={handleChange}
   />
-
 <WriteContainer
-    title="code d'inventaire"
-    value={newEquipement.codeInventaire}
-    onChange={handleChange}
-  />
+  name="code"
+  title="Code d'inventaire"
+  value={newEquipement.code || ""}
+  onChange={(val) =>
+    setNewEquipement((prev) => ({
+      ...prev,
+      code: val, // Directly updating the field
+    }))
+  }
+/>
+
 
 
             
@@ -272,7 +378,7 @@ const [localisations, setLocalisations] = useState([]);
 
           {/* Right Column */}
           <div className="flex justify-center items-center w-full sm:w-1/2 py-4">
-          <PicField />
+          <PicField selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
           
           </div>
         </div>
@@ -280,15 +386,15 @@ const [localisations, setLocalisations] = useState([]);
 
           <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2 gap-1">
           <div className="w-full sm:w-1/2 px-1">
-
           <ChoiceContainer
   title="Catégorie"
-  options={categories.map((cat) => ({ label: cat, value: cat }))}
+  options={categories}
   selectedOption={newEquipement.categorie}
   onSelect={(value) =>
-    setNewEquipement({ ...newEquipement, category: value })
+    setNewEquipement({ ...newEquipement, categorie: value }) // careful spelling: 'categorie'
   }
 />
+
 
               
 
@@ -313,17 +419,23 @@ const [localisations, setLocalisations] = useState([]);
           <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
           <ChoiceContainer
   title="Localisation"
-  options={localisations.map((loc) => ({ label: loc, value: loc }))}
+  options={localisations}
   selectedOption={newEquipement.localisation}
-  onSelect={(value) =>
-    setNewEquipement({ ...newEquipement, localisation: value })
-  }
+  onSelect={(value) => {
+    const selected = localisations.find((loc) => loc.id === value);
+    setNewEquipement({
+      ...newEquipement,
+      localisation: value,
+      localisation_nom: selected?.nom || "",
+    });
+  }}
 />
+
           </div>
           <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
           <ChoiceContainer
   title="Type"
-  options={types.map((type) => ({ label: type, value: type }))}
+  options={types}
   selectedOption={newEquipement.type}
   onSelect={(value) =>
     setNewEquipement({ ...newEquipement, type: value })

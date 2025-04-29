@@ -1,6 +1,6 @@
 import Profil from "../assets/Profil.svg";
 
-export default function UserProfilMail({ nom, prenom, email, imageUrl }) {
+export default function UserProfilMail({ nom, prenom, email, imageUrl,poste ,role }) {
   return (
     <div className="flex items-center gap-4">
   {imageUrl ? (
@@ -17,6 +17,22 @@ export default function UserProfilMail({ nom, prenom, email, imageUrl }) {
       {nom} {prenom}
     </h3>
     <p className="text-[#80868B] text-xs truncate">{email}</p>
+
+
+    {poste && (
+          <p className="text-[#80868B] text-xs truncate">
+            {poste}
+          </p>
+        )}
+
+
+{role && (
+    <p className="text-[#80868B] text-xs truncate">
+      {role}
+    </p>
+  )}
+
+
   </div>
 </div>
   );

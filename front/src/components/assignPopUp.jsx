@@ -1,68 +1,84 @@
-//modified, used to assign techniciens but also to edit user from modifier intervention
-
-
 import { useState } from "react";
 import SearchBar from "./Searchbar";
 import TechnicienAssign from "./technicienAssign";
 import Quitter from "../assets/quitter.svg";
-
 export default function AssignPopUp({
-    titre,
-    description,
-    buttonTitle,
-    technicians = [],
-    onClose = () => {},
-    onAssign = () => {} 
-  }) {
-    const [searchQuery, setSearchQuery] = useState('');
+  titre,
+  description,
+  buttonTitle,
+  technicians = [],  // ici ce sont des objets { first_name, last_name, email, technicien… }
+  onClose = () => {},
+  onAssign = () => {},
+}) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const filtered = technicians.filter((tech) => {
+    const query = searchQuery.toLowerCase().trim();
   
-    const filteredTechnicians = technicians.filter(tech =>
-      `${tech.name} ${tech.email}`.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Construction du nom complet et autres champs
+    const fullName = `${tech.nom} ${tech.prenom}`.toLowerCase();
+    const fullNameReverse = `${tech.prenom} ${tech.nom}`.toLowerCase();
+    const email = tech.email?.toLowerCase() || "";
+    const poste = tech.poste?.toLowerCase() || "";
+    const role = tech.rolee?.toLowerCase() || "";
   
+    // Filtrage selon la recherche
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-[1rem] shadow-xl max-w-xl max-h-[62vh] flex flex-col overflow-hidden lg:min-w-[30rem]">
-        
-          <div className="flex justify-between items-center px-4 py-3">
-            <div>
-              <h1 className="text-xl px-2 pt-1 text-[#202124] font-semibold">{titre}</h1>
-              <p className="text-sm px-2 text[#202124]">{description}</p>
-            </div>
-            <button 
-              onClick={onClose}
-              className="text-[#202124] hover:text[#202124] text-xl pr-4"
-            >
+      fullName.includes(query) ||
+      fullNameReverse.includes(query) ||
+      email.includes(query) ||
+      poste.includes(query) ||
+      role.includes(query)
+    );
+  });
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-[1rem] shadow-xl max-w-xl max-h-[62vh] flex flex-col overflow-hidden lg:min-w-[30rem] relative z-50">
+        {/* header */}
+        <div className="flex justify-between items-center px-4 py-3">
+          <div>
+            <h1 className="text-xl font-semibold text-[#202124]">{titre}</h1>
+            <p className="text-sm text-[#202124]">{description}</p>
+          </div>
+          <button onClick={onClose} className="p-2">
             <img src={Quitter} alt="Quitter" className="h-5 w-5" />
-            </button>
-          </div>
-  
-          <div className="px-4">
-            <SearchBar 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Recherche"
-              className="w-full"
+          </button>
+        </div>
+
+        {/* recherche */}
+        <div className="px-4">
+          <SearchBar
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Recherche"
+            className="w-full"
+          />
+        </div>
+
+        {/* liste */}
+        <div className="flex-1 overflow-y-auto px-4 space-y-3">
+          {filtered.map((tech) => (
+            <TechnicienAssign
+           
+            key={tech.id}
+            nom={tech.nom} 
+            prenom={tech.prenom} 
+            poste={tech.poste}
+            role={tech.rolee} 
+              email={tech.email}
+              imageUrl={tech.photo}
+            
+              buttonTitle={buttonTitle}
+              onAssign={() => onAssign(tech)}
             />
-          </div>
-  
-          <div className="flex-1 overflow-y-auto px-4">
-            {filteredTechnicians.map((tech) => (
-              <div key={tech.email}>
-                <TechnicienAssign
-                  nom={tech.nom}
-                  prenom={tech.prenom}
-                  email={tech.email}
-                  onAssign={() => onAssign(tech)}
-                  buttonTitle={buttonTitle}
-                />
-              </div>
-            ))}
-            {filteredTechnicians.length === 0 && (
-              <p className="text-center p-4 text-[#202124]">Aucun résultat trouvé</p>
-            )}
-          </div>
+          ))}
+          {filtered.length === 0 && (
+            <p className="text-center text-[#202124] p-4">
+              Aucun résultat trouvé
+            </p>
+          )}
         </div>
       </div>
-    );
+    </div>
+  );
 }

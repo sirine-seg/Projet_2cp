@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Pic from "../assets/Pic.svg";
 
-export default function PicField() {
-  const [selectedImage, setSelectedImage] = useState(null);
+export default function PicField({selectedImage, setSelectedImage}) {
+ 
   const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleImageUpload = (e) => {

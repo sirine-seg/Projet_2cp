@@ -49,9 +49,10 @@ const Info = () => {
   useEffect(() => {
     const fetchEquipement = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/equipements/${id}/`);
+        const response = await fetch(`http://127.0.0.1:8000/api/equipements/equipement/${id}/`);
         if (!response.ok) throw new Error("Équipement introuvable !");
         const data = await response.json();
+        console.log("data",data);
         setEquipement(data);
       } catch (err) {
         setError(err.message);
@@ -63,22 +64,7 @@ const Info = () => {
     fetchEquipement();
   }, [id]);
 
-  useEffect(() => {
-    const fetchFilters = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/filters/");
-        const data = await response.json();
-        setFilterOptions(data);
-      } catch (error) {
-        console.error("Error fetching filter options:", error);
-      }
-    };
-
-    fetchFilters();
-  }, []);
-
-  if (loading) return <p>Chargement...</p>;
-  if (error) return <p>Erreur : {error}</p>;
+  
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md  overflow-hidden">
@@ -137,61 +123,56 @@ const Info = () => {
           
 
           <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
-                    <div className="w-full ">
-  <Headerbar title={`${equipement.nom} # ${equipement.id_equipement}`}/>
-</div>
+          {equipement && (
+  <div className="w-full">
+    <Headerbar title={`${equipement.nom} # ${equipement.id_equipement}`} />
 
-<h1 className="text-lg font-semibold mb-4">Détails de l'équipement</h1>
-      
-        {/* ✅ Equipment Details */}
-    {/* ✅ Equipment Details Section */}
+    <h1 className="text-lg font-semibold mb-4">Détails de l'équipement</h1>
+
     <div className="flex flex-col-reverse sm:flex-row w-full mx-auto px-3.5 mt-12 gap-4">
+      {/* Left Column */}
+      <div className="w-full sm:w-1/2 px-1">
+        <DisplayContainer title="Code Inventaire" content={equipement.code} />
+        <DisplayContainer title="Nom" content={equipement.nom} />
+        <DisplayContainer title="Code-barres" content={equipement.codebar} />
 
-{/* Left Column */}
-<div className="w-full sm:w-1/2 px-1">
+        {equipement.manual && (
+          <p className="mt-2">
+            <strong>Manuel :</strong>{' '}
+            <a href={equipement.manual} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+              Voir le manuel
+            </a>
+          </p>
+        )}
+      </div>
 
-  <DisplayContainer title="Code Inventaire" content={equipement.codeInventaire} />
-  <DisplayContainer title="Nom" content={equipement.nom} />
-  <DisplayContainer title="Code-barres" content={equipement.codebar} />
+      {/* Right Column (Image Display) */}
+      <div className="flex justify-center items-center w-full sm:w-1/2 py-4">
+        <PicView equipement={equipement} />
+      </div>
+    </div>
 
- 
- 
-  
+    <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 gap-1">
+      <div className="w-full sm:w-1/2 px-1">
+        <DisplayContainer title="Etat" content={equipement.etat_nom} />
+      </div>
+      <div className="w-full sm:w-1/2 px-1">
+        <DisplayContainer title="Localisation" content={equipement.localisation_nom} />
+      </div>
+    </div>
 
-  
+    <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5">
+      <div className="w-full sm:w-1/2 px-1">
+        <DisplayContainer title="Catégorie" content={equipement.categorie_nom} />
+      </div>
+      <div className="w-full sm:w-1/2 px-1">
+        <DisplayContainer title="Type" content={equipement.typee_nom} />
+      </div>
+      
+    </div>
+  </div>
+)}
 
-  {equipement.manual && (
-    <p className="mt-2">
-      <strong>Manuel :</strong>{' '}
-      <a href={equipement.manual} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-        Voir le manuel
-      </a>
-    </p>
-  )}
-</div>
-
-{/* Right Column (Image Display) */}
-<div className="flex justify-center items-center w-full sm:w-1/2 py-4">
-<PicView equipement={equipement} />
-
-</div>
-</div>
-<div className="flex flex-col sm:flex-row w-full mx-auto px-3.5  gap-1">
-<div className="w-full sm:w-1/2 px-1">
-<DisplayContainer title="Etat" content={equipement.etat} />
-</div>
-<div className="w-full sm:w-1/2 px-1">
-<DisplayContainer title="Localisation" content={equipement.localisation} />
-</div>
-</div>
-<div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 ">
-<div className="w-full sm:w-1/2 px-1">
-<DisplayContainer title="Catégorie" content={equipement.category} />
-</div>
-<div className="w-full sm:w-1/2 px-1">
-<DisplayContainer title="Type" content={equipement.type} />
-</div>
-</div>
 
       </div>
     </div>

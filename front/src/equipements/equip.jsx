@@ -35,9 +35,11 @@ const FilterSelect = ({ label, options, value, onChange }) => (
   
 
 const EquipementsPage = () => {
-  const [selectedStatus, setSelectedStatus] = useState({ value: 'active', label: 'Active' });
 
+  const [displayedEquipements, setDisplayedEquipements] = useState([]);
+  const [cachedEquipements, setCachedEquipements] = useState({});
     const [equipements, setEquipements] = useState([]);
+    const [etats, setEtats] = useState([]);
     const [isDeletePopupVisible, setIsDeletePopupVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedEquipement, setSelectedEquipement] = useState(null); 
@@ -46,6 +48,10 @@ const EquipementsPage = () => {
     const [filteredEquipements, setFilteredEquipements] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [statusOptions, setStatusOptions] = useState([]);
+    const token = localStorage.getItem("access_token");
+    const [etat, setEtat] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState(null);
+
   
     const [menuOpen, setMenuOpen] = useState(null); 
     const [filter, setFilter] = useState(""); // ou "Catégorie", etc. selon ce que tu veux par défaut
@@ -70,54 +76,188 @@ const isSmall = useIsSmallScreen();
       });
 
 
-    // ✅ Fetch Equipements (Runs when search or filters change)
-    useEffect(() => {
-       // const token = localStorage.getItem('authToken'); // 🔑 Get the token
-        let url = "http://127.0.0.1:8000/equipements/equipements_list/?";
+      useEffect(() => {
+        fetchEquipements();
+      }, [searchTerm, filters, visibleCount]);
       
-        // Add search term if present
-        if (searchTerm) {
-          url += `search=${searchTerm}&`;
+      async function fetchEquipements() {
+        const cacheKey = `${searchTerm}_${JSON.stringify(filters)}`;
+      
+        if (cachedEquipements[cacheKey]) {
+          console.log("Utilisation du cache pour :", cacheKey);
+          const cached = cachedEquipements[cacheKey];
+          setEquipements(cached);
+          setDisplayedEquipements(cached.slice(0, visibleCount));
+          return;
         }
       
-        // Add filters if any
-        Object.keys(filters).forEach((key) => {
-          if (filters[key]) {
-            url += `${key}=${filters[key]}&`;
-          }
-        });
+        try {
+          const token = localStorage.getItem("authToken");
+          let url = "http://127.0.0.1:8000/api/equipements/equipement/?";
       
-        // Make the authenticated fetch
-        fetch(url, {
-          method: 'GET',
-        /*  headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json'
-          }*/
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Filtered Equipments:", data);
-            setEquipements(data);
-          })
-          .catch(error => {
-            console.error("Error fetching data:", error);
+          const params = [];
+      
+          if (searchTerm.trim() !== "") {
+            params.push(`search=${encodeURIComponent(searchTerm.trim())}`);
+          }
+      
+          Object.entries(filters).forEach(([key, value]) => {
+            if (value) {
+              params.push(`${key}=${encodeURIComponent(value)}`);
+            }
           });
-      }, [searchTerm, filters]);
+      
+          if (params.length > 0) {
+            url += params.join("&");
+          }
+      
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+      
+          if (!response.ok) {
+            throw new Error(`Erreur HTTP! statut: ${response.status}`);
+          }
+      
+          const data = await response.json();
+          console.log("Fetch depuis le serveur pour :", cacheKey);
+      
+          setCachedEquipements((prev) => ({ ...prev, [cacheKey]: data }));
+          setEquipements(data);
+          setDisplayedEquipements(data.slice(0, visibleCount));
+        } catch (error) {
+          console.error("Erreur lors de la récupération des équipements:", error);
+        }
+      }
+
+    
       
 
+      /*
+      useEffect(() => {
+        const fetchEquipements = async () => {
+          try {
+            
+            let url = "http://127.0.0.1:8000/api/equipements/equipement/?";
+      
+            const params = [];
+      
+            if (searchTerm.trim() !== "") {
+              params.push(`search=${encodeURIComponent(searchTerm.trim())}`);
+            }
+      
+            Object.entries(filters).forEach(([key, value]) => {
+              if (value) {
+                params.push(`${key}=${encodeURIComponent(value)}`);
+              }
+            });
+      
+            if (params.length > 0) {
+              url += params.join("&");
+            }
+      
+            const response = await fetch(url, {
+              method: "GET",
+              headers: {
+                Authorization: `Token ${token}`,
+                "Content-Type": "application/json",
+              },
+            });
+      
+            if (!response.ok) {
+              throw new Error(`Erreur HTTP! statut: ${response.status}`);
+            }
+      
+            const data = await response.json();
+      
+            const searchTermLower = searchTerm.toLowerCase();
+            const filtered = data.filter((item) => {
+              const nomMatch = item.nom?.toLowerCase().includes(searchTermLower);
+              const refMatch = item.reference?.toLowerCase().includes(searchTermLower);
+              const typeMatch = item.type?.toLowerCase().includes(searchTermLower);
+              const statusMatch = item.statut?.toLowerCase().includes(searchTermLower);
+      
+              return nomMatch || refMatch || typeMatch || statusMatch;
+            });
+      
+            setEquipements(filtered);
+            setFilteredEquipements(filtered.slice(0, visibleCount));
+          } catch (error) {
+            console.error("Erreur lors de la récupération des équipements:", error);
+          }
+        };
+      
+        fetchEquipements();
+      }, [searchTerm, filters, visibleCount]); */
+      useEffect(() => {
+        fetch("http://127.0.0.1:8000/api/equipements/etat/",
+          {
+          
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json'
+            }
+  
+          })
+          .then((res) => res.json())
+          .then((data) => {
+            const etats = data.map((etat) => ({
+              value: etat.id,
+              label: etat.nom
+            }));
+            setEtats(etats);
+            console.log("etats:",etats);
+          })
+          .catch((error) => {
+            console.error("Erreur lors de la récupération des états:", error);
+          });
+      }, []);
+
+      const etatOptions = Object.entries(etats).map(([value, label]) => ({
+        value,
+        label,
+      }));
+
+
+
+
+      const handlePreviousEtat = async (id_equipement) => {
+        const status = await previousEtat(id_equipement);
+        setSelectedStatus(status);  // Set the status once fetched
+      };
+      
+      useEffect(() => {
+        if (selectedEquipement?.id_equipement) {
+          handlePreviousEtat(selectedEquipement.id_equipement);  // Fetch and set status when selectedEquipement changes
+        }
+      }, [selectedEquipement]);
+
+
+
+
+
+
+      
       useEffect(() => {
         const filtered = equipements.filter(eq => {
-          const matchesFilter = filter === "Tout" || eq.categorie === filter;
           const q = searchTerm.toLowerCase().trim();
           const name = (eq.nom || "").toLowerCase();
           const matchesSearch = q === "" || name.includes(q);
-          return matchesFilter && matchesSearch;
+      
+          const matchesCategorie = !filters.categorie || eq.categorie === filters.categorie;
+          const matchesType = !filters.type || eq.type === filters.type;
+          const matchesLocalisation = !filters.localisation || eq.localisation === filters.localisation;
+          const matchesEtat = !filters.etat || eq.etat === filters.etat;
+      
+          return matchesSearch && matchesCategorie && matchesType && matchesLocalisation && matchesEtat;
         });
         setFilteredEquipements(filtered);
-      }, [equipements, filter, searchTerm]);
+      }, [equipements, searchTerm, filters]);
       
-
     // ✅ Fetch Filter Options from Backend
     
     useEffect(() => {
@@ -131,56 +271,100 @@ const isSmall = useIsSmallScreen();
     }, []);
     
      
+
     const closePopup = () => {
         setShowEditPopup(false);
         setSelectedEquipement(null);
     };
 
-
-    const updateEtat = (equipementId, newEtat) => {
+    const updateEtat = async (equipementId, newEtat) => {
       if (!newEtat) {
-          console.log("State is invalid:", newEtat);
-          return;
+        console.error("State is invalid:", newEtat);
+        return;
       }
-  
-      console.log("Sending PATCH request for equipement:", equipementId, "with new state:", newEtat);
-  
-      fetch(`equipements/changerStatus/${equipementId}/`, {
-          method: "POST",
+    
+      try {
+        console.log("Sending PATCH request for equipement:", equipementId, "with new state:", newEtat);
+    
+        const patchResponse = await fetch(`http://127.0.0.1:8000/api/equipements/equipement/${equipementId}/change-etat/`, {
+          method: "PATCH",
           headers: {
-              "Content-Type": "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ etat: newEtat }),
-      })
-      .then(response => {
-          console.log("Response status:", response.status);
-          if (!response.ok) {
-              console.error("Failed to update state. Response status:", response.status);
-              return;
-          }
-          // Check if the response is empty
+        });
+    
+        if (!patchResponse.ok) {
+          console.error("Failed to update state. Response status:", patchResponse.status);
+          return;
+        }
+    
+        // 🔄 Fetch the updated equipment with fresh data including etat_nom
+        const getResponse = await fetch(`http://127.0.0.1:8000/api/equipements/equipement/${equipementId}/`);
+        const updatedEquipement = await getResponse.json();
+    
+        // ✅ Update in state
+        setEquipements(prevEquipements =>
+          prevEquipements.map(equip =>
+            equip.id_equipement === equipementId ? updatedEquipement : equip
+          )
+        );
+    
+        // ✅ Update selectedEquipement if it's the same one
+        if (selectedEquipement?.id_equipement === equipementId) {
+          setSelectedEquipement(updatedEquipement);
+        }
+    
+      } catch (error) {
+        console.error("Error occurred during API request:", error);
+      }
+    };
+    
+  /* 
+  const updateEtat = (equipementId, newEtat) => {
+    const formData = new FormData();
+    formData.append("etat", newEtat);
+   
+  
+    fetch(`http://127.0.0.1:8000/api/equipements/equipement/${equipementId}/update/`, {
+      method: "PATCH",
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          // Server returned an error, let's read it as text
           return response.text().then(text => {
-              if (text) {
-                  return JSON.parse(text);  // Manually parse the text if it's valid JSON
-              }
-              console.error("Response body is empty.");
-              return null;
+            throw new Error(`Server Error: ${response.status} - ${text}`);
           });
+        }
+        return response.json(); // only try to parse JSON if OK
       })
-      .then(updatedEquipement => {
-          if (updatedEquipement) {
-              console.log("Updated equipement data:", updatedEquipement);
-              setEquipements(prevEquipements =>
-                  prevEquipements.map(equip =>
-                      equip.id_equipement === equipementId ? { ...equip, etat: newEtat } : equip
-                  )
-              );
-          }
+      .then(() => {
+        alert("Équipement mis à jour !");
       })
-      .catch(error => {
-          console.error("Error occurred during API request:", error);
+      .catch((error) => {
+        console.error("Erreur lors de la mise à jour :", error);
+        alert("Échec de la mise à jour !");
       });
-  };
+  };*/
+
+    const previousEtat = async (id_equipement, setEtat) => {
+      if (!id_equipement) return;
+    
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/equipements/equipement/${id_equipement}/`);
+        const data = await response.json();
+        if (response.ok) {
+          setEtat(data.etat);
+        } else {
+          console.error("Erreur lors de la récupération de l'état.");
+        }
+      } catch (error) {
+        console.error("Erreur réseau. Vérifiez votre connexion.");
+      }
+    };
+   
+
   
     const handleEdit = (equipement) => {
         console.log("Redirection vers la page d'édition pour l'équipement ID:", equipement.id_equipement);
@@ -253,23 +437,10 @@ const isSmall = useIsSmallScreen();
     
         setMenuOpen(null);
     };
-     /*
-    useEffect(() => {
-        fetch("http://localhost:8000/equipements/etatoptions/")
-          .then((res) => res.json())
-          .then((data) => {
-            const options = data.map((etat) => ({
-              value: etat.id,
-              label: etat.nom
-            }));
-            setStatusOptions(options);
-          })
-          .catch((error) => {
-            console.error("Erreur lors de la récupération des états:", error);
-          });
-      }, []);*/
+     
+   
 
-      useEffect(() => {
+    /*  useEffect(() => {
         fetch("http://127.0.0.1:8000/equipements/equipementchoices/")  // ✅ update with your real endpoint
           .then((res) => {
             if (!res.ok) throw new Error("Network response was not ok");
@@ -282,13 +453,10 @@ const isSmall = useIsSmallScreen();
           .catch((err) => {
             console.error("Error fetching choices:", err);
           });
-      }, []);
+      }, []);*/
 
-      const etatOptions = Object.entries(options.etat).map(([value, label]) => ({
-        value,
-        label,
-      }));
-
+     
+/*
       const categorieOptions = options.categories
   ? Object.entries(options.categories).map(([value, label]) => ({
       value,
@@ -309,13 +477,17 @@ const typeOptions = options.types
       label,
   }))
   : [];  // Fallback to an empty array if options.types is undefined
-
+*/
   const handleChangeStatus = (selectedOption) => {
     setSelectedStatus(selectedOption);
 };
 
 // Vérifier si selectedStatus est correctement défini
-console.log("Selected status:", selectedStatus);
+
+useEffect(() => {
+  console.log("Selected status changed:", selectedStatus);
+}, [selectedStatus]);
+
 
     
     return (
@@ -402,13 +574,16 @@ console.log("Selected status:", selectedStatus);
                 {/* ✅ Equipements Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4">
   {equipements.length > 0 ? (
-    equipements.map((equipement) => (
+    displayedEquipements.map((equipement) => (
       <div key={equipement.id_equipement} className="relative">
         <EquipCard
           nom={equipement.nom}
-          etat={equipement.statut_label}
-          id={equipement.id_equipement}
-          localisation={equipement.localisation}
+          etat={
+            equipement.etat_nom
+          }
+          
+          code={equipement.code}
+          localisation={equipement.localisation_nom}
           onClick={() => navigate(`/equipements/${equipement.id_equipement}`)}
           moreClick={() => {
             setMenuOpen(equipement.id_equipement === menuOpen ? null : equipement.id_equipement);
@@ -465,7 +640,7 @@ console.log("Selected status:", selectedStatus);
 {visibleCount < equipements.length && (
                         <h3
                             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
-                            onClick={() => setVisibleCount(visibleCount + 4)}
+                            onClick={() => setVisibleCount(visibleCount + 6)}
                         >
                             Afficher plus 
                         </h3>
@@ -476,10 +651,15 @@ console.log("Selected status:", selectedStatus);
 {isPopupOpen && selectedEquipement && (
   <PopupChange
     title="Statut"
-    etatOptions={etatOptions}
-    setSelectedStatus={(selected) => setSelectedStatus(selected)}
+    etatOptions={etats}
+    selectedStatus= {selectedStatus}
+    setSelectedStatus={(selected) => {
+      console.log("Selected status:", selected);
+      setSelectedStatus(selected);
+    }}
     update={() => {
-      updateEtat(selectedEquipement.id_equipement, selectedStatus.value);
+
+      updateEtat(selectedEquipement.id_equipement, selectedStatus);
       setIsPopupOpen(false);
       setSelectedEquipement(null);
     }}
@@ -489,6 +669,7 @@ console.log("Selected status:", selectedStatus);
     }}
   />
 )}
+
 
 <Popupdelete
   isVisible={isDeletePopupVisible}

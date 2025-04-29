@@ -1,0 +1,63 @@
+.custom-calendar {
+    border-radius: 12px !important;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: "Poppins", sans-serif;
+    padding: 10px;
+    width: 100%;
+    max-width: 300px; /* Prevents overflow on small screens */
+    padding-right: 5px;
+    text-align: center; 
+  }
+  
+  /* Calendar Header */
+  .react-datepicker__header {
+    background-color: #20599E !important;
+    color: white !important;
+    border-bottom: none !important;
+    padding: 12px !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+  
+  /* Days Styling */
+  .react-datepicker__day {
+    width: 36px !important;
+    height: 36px !important;
+    line-height: 36px !important;
+    font-size: 14px !important;
+    padding: auto;
+  }
+  
+  /* Selected Day */
+  .react-datepicker__day--selected {
+    background-color: #20599E !important;
+    color: white !important;
+    border-radius: 50% !important;
+  }
+  
+  /* Hover Effect */
+  .react-datepicker__day:hover {
+    background-color: rgba(32, 89, 158, 0.2) !important;
+    border-radius: 50% !important;
+  }
+  
+  /* Today Highlight */
+  .react-datepicker__day--today {
+    font-weight: bold;
+    color: #20599E !important;
+  }
+  
+  /* Responsive Calendar Size */
+  @media (max-width: 640px) {
+    .custom-calendar {
+      max-width: 250px; /* Slightly smaller for small screens */
+    }
+  
+    .react-datepicker__day {
+      width: 32px !important;
+      height: 32px !important;
+      font-size: 13px !important;
+    }
+  }
+  
