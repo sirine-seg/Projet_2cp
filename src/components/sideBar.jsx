@@ -20,14 +20,15 @@ export default function SideBar({ isOpen, setIsOpen }) {
   return (
     <>
       <div
-        className={`fixed top-0 left-0 h-screen w-68 bg-white shadow-lg p-6 z-50 transition-transform duration-300 transform 
+        className={`fixed top-0 left-0 h-screen w-68 bg-white shadow-lg p-6 z-50 transform transition-transform duration-300 ease-in-out 
           ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-          md:translate-x-0 md:relative md:flex md:flex-col md:justify-between`}
+          md:relative md:flex md:flex-col md:justify-between
+          `}
         style={{ height: "100vh" }}
       >
         {/* Top content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="hidden md:flex mb-6 justify-center">
+          <div className="flex mb-6 justify-center">
             <img src={logo_bleu} alt="ESITRACK Logo" className="w-30 h-auto" />
           </div>
 
