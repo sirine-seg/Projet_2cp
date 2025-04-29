@@ -1,0 +1,7 @@
+[
+    { "name": "En service", "value": 60 },
+    { "name": "En maintenance", "value": 30 },
+    { "name": "En panne", "value": 8 },
+    { "name": "Autres", "value": 2 }
+  ]
+   
