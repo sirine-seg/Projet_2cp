@@ -16,7 +16,7 @@ import Button from  "../components/button";
 import TechnicienAssign from  "../components/technicienAssign"; 
 import AssignPopUp from "../components/assignPopUp"
 import DisModContainerEquip from "../components/disModContainerEquip";
-import Profil from "../pages/Profil.svg";
+import Profil from "../assets/Profil.svg";
 import InfoIntervUserr from "../components/infoIntervUser"
 import EditIntervUser from "../components/editIntervUser";
 import WriteContainer from "../components/writeContainer";
