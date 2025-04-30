@@ -6,6 +6,11 @@ import Ajout from './assets/ajouttt.jsx';
 import TechnicienDetails from "./assets/technicien.jsx";
 import Modifie from "./assets/modifier.jsx";
 import Intervention from "./assets/intervention.jsx";
+import Interventioninfo from "./assets/interventioninfo";
+import Interventionenattente from "./assets/interventionenattente";
+import Affecterintervention from "./assets/affecterintervention";
+import Ajoutintervention from "./assets/ajouterintervention";
+
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +21,10 @@ function App() {
           <Route path="/Ajout" element={< Ajout />} />
          <Route path="/TechnicienDetails/:id" element={< TechnicienDetails />} />
           <Route path="/Intervention" element={< Intervention />} />
+         <Route path="/Interventionenattente" element={< Interventionenattente/>} />
+         <Route path="/Ajoutintervention" element={< Ajoutintervention/>} />
+           <Route path="/Modifierintervention/:id" element={< Modifierintervention />} />
+            <Route path="/Affecterintervention/:id" element={< Affecterintervention />} />
       </Routes>
     </BrowserRouter>
   );
