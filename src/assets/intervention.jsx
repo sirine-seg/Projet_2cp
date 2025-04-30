@@ -17,7 +17,7 @@ import PopupMessage from "../components/Popupcheck";
 import PopupChange from "../components/popchange"; // casse correcte
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import AddMobile  from "../components/addMobile";
-
+import TabSelector from "../components/tabSelector";
 
 const Userspageee= () => {
     const [interventions, setInterventions] = useState([]);  // Stocke toutes les interventions
@@ -38,12 +38,13 @@ const Userspageee= () => {
     const [isSuccessPopupVisible, setIsSuccessPopupVisible] = useState(false);
     const bgColor = isDisponibleActive ? "#F09C0A" : "#D1D5DB"; // jaune sinon gris clair
     const hoverStyle = isDisponibleActive ? "" : "hover:bg-gray-400"; // hover si non actif
-   
+    const [interventionsCuratives, setInterventionsCuratives] = useState([]);
     const isSmall = useIsSmallScreen();
-   
+    const [interventionsPreventives, setInterventionsPreventives] = useState([]);
    
     const [selectedStatus, setSelectedStatus] = useState("En attente");
     const safeTrim = (val) => typeof val === "string" ? val.trim() : "";
+    const [isCancelPopupVisible, setIsCancelPopupVisible] = useState(false);
 
     const handleChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -56,24 +57,92 @@ const etatOptions = [
 ];
 
         
+const handleCancelClick = () => {
+  setIsCancelPopupVisible(true);
+  console.log("Bouton Annuler cliqué, isCancelPopupVisible:", isCancelPopupVisible); // Ajout de console.log pour le débogage
+};
+
 useEffect(() => {
-    const fetchintervention = async () => {
-        try {
-            const response = await fetch("http://127.0.0.1:8000/intervention/list/");
-            if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
+  const fetchInterventions = async () => {
+      try { 
 
-            const data = await response.json();
-            const filtered = data.filter((item) => item.statut_label?.trim() !== "pending");
+          let apiUrl = "http://127.0.0.1:8000/api/interventions/interventions";
 
-            setInterventions(filtered);
-            setDisplayedInterventions(filtered.slice(0, visibleCount));
-        } catch (error) {
-            console.error("Erreur :", error);
-        }
-    };
+          if (filter === "Curative") {
+              apiUrl = "http://127.0.0.1:8000/api/interventions/interventions/currative/";
+          } else if (filter === "Préventive") {
+              apiUrl = "http://127.0.0.1:8000/api/interventions/interventions/preventive/";
+          }
 
-    fetchintervention();
-}, [visibleCount]); 
+          const response = await fetch(apiUrl);
+
+          if (!response.ok) {
+              throw new Error(`Erreur lors de la récupération des interventions depuis ${apiUrl}`);
+          }
+
+          const data = await response.json();
+          const filtered = data.filter((item) => {
+              const searchTermLower = searchTerm.toLowerCase();
+              const titleMatch = safeTrim(item.title).toLowerCase().includes(searchTermLower);
+              const equipementMatch = safeTrim(item.equipement_name).toLowerCase().includes(searchTermLower);
+              const statutMatch = safeTrim(item.statut_display).toLowerCase().includes(searchTermLower);
+              const urgenceMatch = safeTrim(item.urgence_display).toLowerCase().includes(searchTermLower);
+
+           //   const categoryMatch = filter === "Tout" || item.type_intervention === filter;
+           const notEnAttente = safeTrim(item.statut_display).toLowerCase() !== "en attente";
+
+           return notEnAttente && (titleMatch || equipementMatch || statutMatch || urgenceMatch);
+            //  return  (titleMatch || equipementMatch || statutMatch || urgenceMatch);
+          });
+
+          setInterventions(filtered);
+          setDisplayedInterventions(filtered.slice(0, visibleCount));
+      } catch (error) {
+          console.error("Erreur :", error);
+      }
+  };
+
+  fetchInterventions();
+}, [visibleCount, searchTerm, filter]);
+
+const handleConfirmCancel = async (intervention) => {
+  setIsCancelPopupVisible(false); // Fermer la popup de confirmation
+
+  const interventionId = intervention.id;
+  const interventionType = intervention.type; // Assurez-vous que votre objet 'intervention' a une propriété 'type'
+
+  const apiUrl = `/api/interventions/interventions/cancel/${interventionType}/${interventionId}/`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Ajoutez vos headers d'authentification si nécessaire
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Intervention annulée avec succès:', data);
+      // Mettez à jour l'état de votre composant parent ou effectuez d'autres actions nécessaires
+      // Par exemple, re-fetch la liste des interventions pour refléter le changement
+    } else {
+      const errorData = await response.json();
+      console.error('Erreur lors de l\'annulation de l\'intervention:', errorData);
+      // Affichez un message d'erreur à l'utilisateur
+    }
+  } catch (error) {
+    console.error('Erreur réseau lors de l\'annulation:', error);
+    // Gérez les erreurs réseau
+  }
+};
+
+
+
+const handleCancelPopupClose = () => {
+  setIsCancelPopupVisible(false);
+};
 
         // Références pour détecter les clics en dehors
 
@@ -106,9 +175,17 @@ useEffect(() => {
         const statusOptions = [
             { label: "Modifier", value: "modifier" },
             { label: "Changer le statut", value: "changer le statut" },
-            { label: "Supprimer", value: "supprimer" },
+            { label: "Cancel", value: "Cancel" },
           ];
-      
+          const handleTabSelect = (category) => {
+            setFilter(category);
+        };
+    
+          const tabOptions = [
+            { label: "Tout" },
+            { label: "Curative" },
+            { label: "Préventive" },
+        ];
 
    
 
@@ -121,10 +198,10 @@ useEffect(() => {
             } else if (value === "changer le statut") {
               setSelectedInterventionid(id);
               setIsPopupVisible(true); // Assurez-vous que isPopupVisible est remis à true ici
-            } else if (value === "supprimer") {
+            } else if (value === "cancel") {
               // Quand "Supprimer" est sélectionné
               setSelectedInterventionid(id); // Stocke l'ID de l'intervention à supprimer
-              setIsDeletePopupVisible(true); // Affiche le popup de suppression
+              setIsCancelPopupVisible(true); // Affiche le popup de suppression
             }
           };
 
@@ -184,6 +261,7 @@ useEffect(() => {
         
          //   setMenuOpen(null);
       //  };
+
 
 
 
@@ -270,22 +348,11 @@ useEffect(() => {
                
                
                
-                
-        <div className="flex justify-center space-x-6 my-4">
-    {["Tout", "Curative", "Préventive"].map((category) => (
-        <button
-            key={category}
-            className={`text-lg font-semibold pb-1 transition duration-300 ${
-                filter === category ? "text-white underline" : "text-white"
-            }`}
-            onClick={() => setFilter(category)}
-        >
-            {category}
-        </button>
-    ))}
-
-
-</div>  
+               <TabSelector
+                    options={tabOptions}
+                    activeOption={filter}
+                    setActiveOption={handleTabSelect}
+                />
 
 </div>  
 
@@ -339,15 +406,16 @@ useEffect(() => {
                        
                        <div className="grid grid-cols-1  relative overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4">
                         
-      {interventions.map((intervention) => (
+        {displayedInterventions.map((intervention) => (
+
         <div key={intervention.id} className="relative">
           <InterventionCard
             id={intervention.id}
-            nom={intervention.nom_equipement}
-            urgence={intervention.urgence_label}
-            statut={intervention.statut_label}
+            nom={intervention.title}
+            urgence={intervention.urgence_display}
+            statut={intervention.statut_display}
             equipement={intervention.equipement}
-            date={new Date(intervention.date_fin).toLocaleDateString("fr-FR")}
+            date={new Date(intervention.date_debut).toLocaleDateString("fr-FR")}
             onClick={() => navigate(`/Interventioninfo/${intervention.id}`)}
             moreClick={() =>
               setMenuOpenId(
@@ -360,7 +428,7 @@ useEffect(() => {
     <Options
       options={statusOptions}
       handleSelect={(value) => handleOptionSelect(value, intervention.id)}
-      className="absolute top-12 right-3 bg-white shadow-xl rounded-lg text-black w-48 sm:w-56 z-50 border"
+      className="absolute top-12 right-3 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border"
       setMenuOpen={setMenuOpenId}
       isActive={!isPopupVisible} // Le menu est actif seulement si le PopupChange n'est pas visible
     />
@@ -388,15 +456,31 @@ useEffect(() => {
         onConfirm={handleDeleteIntervention}
         userId={selectedInterventionid}
         title="Êtes-vous sûr de vouloir supprimer cette intervention ?"
-        confirmText="Supprimer"
+        confirmText="Cancel"
         confirmColor="#F09C0A"
       />
 
 
+
+{isCancelPopupVisible && (
+        <Popupdelete
+          isVisible={isCancelPopupVisible}
+          onClose={handleCancelPopupClose}
+          onConfirm={handleConfirmCancel}
+          title="Confirmer l'annulation ?"
+          message={`Êtes-vous sûr de vouloir annuler l'intervention #${selectedInterventionid}} ?`}
+          userId={selectedInterventionid} // Passez l'ID de l'intervention à onConfirm
+          confirmText="Annuler l'intervention"
+          confirmColor="#dc2626" // Couleur rouge pour l'annulation (facultatif)
+        //  iconSrc={attention} // Vous pouvez utiliser l'icône d'attention
+         // iconBgColor="#FFF0F0"
+        />
+      )}
+
 {isSuccessPopupVisible && (
   <PopupMessage
     title="Succès"
-    message="L'intervention a ete bloque avec succes  !"
+    message="L'intervention a ete Cancel avec succes  !"
     onClose={() => setIsSuccessPopupVisible(false)}
   />
 )}
