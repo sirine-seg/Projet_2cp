@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
+import Header from "../components/Header";
 import PopupMessage from "../components/Popupcheck";
 import SearchBar from "../components/Searchbar"; 
 import Filterbutton from "../components/Filterbutton";
@@ -26,7 +26,9 @@ const AjoutPage = () => {
     const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
     const [menuOpen, setMenuOpen] = useState(null);   //  gérer l'ouverture et la fermeture d'un menu.
     const [searchTerm, setSearchTerm] = useState("");
+    const [postesList, setPostesList] = useState([]);
 
+    const [selectedPoste, setSelectedPoste] = useState("")
     const navigate = useNavigate();
 
 
@@ -46,10 +48,7 @@ const AjoutPage = () => {
     const roless = ["Tout", "Administrateur", "Technicien", "Personnel"];
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
-    useEffect(() => {
-        setNewUser((prevUser) => ({ ...prevUser, role: "Technicien" }));
-    }, []);
-
+   
 
     const handleChange = (e) => {
         setNewUser({ ...newUser, [e.target.name]: e.target.value });
@@ -59,7 +58,7 @@ const AjoutPage = () => {
 
     const handleAddUser = async () => {
         // Vérifier si tous les champs sont remplis
-        if (!newUser.nom || !newUser.prenom || !newUser.email || !newUser.telephone || !newUser.password) {
+        if (!newUser.nom || !newUser.prenom || !newUser.email || !newUser.telephone ) {
             setErrorMessage("Veuillez remplir tous les champs.");
             return;
           }
@@ -69,37 +68,19 @@ const AjoutPage = () => {
 
 
         const newUserData = {
-            first_name: newUser.prenom,
-            last_name: newUser.nom,
+            first_name: newUser.prenom || "",
+            last_name: newUser.nom || "",
             email: newUser.email,
             numero_tel: newUser.telephone ,
             role: role ,
             poste: newUser.poste || "", // Optionnel, peut être vide
-            password:newUser.password,
+            password:newUser.password || "",
         };
 
 
 
-        let url = "";
-
-        // Choisir l'endpoint selon le rôle
-        switch (newUser.role) {
-            case "Technicien":
-                url = "http://127.0.0.1:8000/users/create_technicien/";
-                break;
-            case "Administrateur":
-                url = "http://127.0.0.1:8000/users/create_admin/";
-                break;
-            default:
-                setErrorMessage("Rôle non pris en charge.");
-                return;
-        }
-
-
-
-
         try {
-          const response = await fetch(url, {
+          const response = await fetch("http://127.0.0.1:8000/api/accounts/createUser/", {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -112,7 +93,7 @@ const AjoutPage = () => {
             console.log("Réponse API:", data);
 
             if (response.ok) {
-                console.log("Utilisateur ajouté avec succès !");
+             
                 setUsers([...users, data]);
                 setNewUser({ nom: "", prenom: "", email: "", role: "", telephone: "" , poste: ""  });
                 setErrorMessage(""); // Réinitialise l'erreur après un ajout réussi
@@ -124,10 +105,27 @@ const AjoutPage = () => {
         } catch (error) {
            //   setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
            //   setIsPopupVisible(false); 
-            setIsPopupVisible(true); 
+          //  setIsPopupVisible(true); 
         }
     };
 
+
+
+    // Récupération des postes à partir de l'API
+    useEffect(() => {
+      const fetchPostes = async () => {
+        try {
+          const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/');
+          if (!response.ok) throw new Error("Erreur lors du chargement des postes");
+          const data = await response.json();
+          setPostesList(data);
+        } catch (error) {
+          console.error("Erreur lors de la récupération des postes :", error);
+        }
+      };
+    
+      fetchPostes();
+    }, []);
    // useEffect(() => {
     //    const fetchUsers = async () => {  // On crée une fonction asynchrone  pour récupérer les données depuis le backend.
          //   let url = "http://127.0.0.1:8000/api/user/?";
@@ -274,16 +272,22 @@ const AjoutPage = () => {
    
     { label: "Administrateur", value: "Administrateur" },
     { label: "Technicien", value: "Technicien" },
+    { label: "Personnel", value: "Personnel" },
   ]}
   selectedOption={newUser.role}
   onSelect={(val) => setNewUser({ ...newUser, role: val })}
 />
-
 {newUser.role === "Technicien" && (
-  <WriteContainer
+  <ChoiceContainer
     title="Poste"
-    value={newUser.poste}
-    onChange={(val) => setNewUser({ ...newUser, poste: val })}
+    options={postesList.map((poste) => ({
+      label: poste.nom,   // Ce qui sera affiché
+      value: poste.id     // La vraie valeur sélectionnée
+    }))}
+    selectedOption={
+      postesList.find(poste => poste.id === newUser.poste)?.nom || ""
+    }
+    onSelect={(val) => setNewUser({ ...newUser, poste: val })}
   />
 )}
 
@@ -355,3 +359,4 @@ const AjoutPage = () => {
 };
 
 export default AjoutPage;
+
