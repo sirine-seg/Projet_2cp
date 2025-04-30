@@ -14,13 +14,14 @@ import Badge from "../components/badge";
 import ChoiceContainer from "../components/choiceContainer"; 
 import WriteContainer from "../components/writeContainer";   
 import Headerbar from "../components/Arrowleftt";  
+import { useParams } from "react-router-dom";
 
 
 
 
 const  ModifierPagesss= () => {
-
-    
+  
+  const [currentUserRole, setCurrentUserRole] = useState("");
     const [displayedUsers, setDisplayedUsers] = useState([]); // Stocke les utilisateurs affichés
     const [filter, setFilter] = useState("Tout");  // setFilter(newValue) → C'est la fonction qui met à jour filter avec newValue. et on a fait tout car "Tout" est la valeur initiale de filter.
     const [visibleCount, setVisibleCount] = useState(6);// Nombre d'utilisateurs affichés
@@ -28,10 +29,13 @@ const  ModifierPagesss= () => {
     const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
     const [menuOpen, setMenuOpen] = useState(null);   //  gérer l'ouverture et la fermeture d'un menu.
     const [searchTerm, setSearchTerm] = useState("");
-
+ // Récupère l'ID de l'utilisateur depuis l'URL
     const navigate = useNavigate();
+ // État pour les statuts et postes récupérés
+ const [statusList, setStatusList] = useState([]);
+ const [postesList, setPostesList] = useState([]);
 
-
+ const [selectedPoste, setSelectedPoste] = useState("");
 
     const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState({
@@ -48,24 +52,46 @@ const  ModifierPagesss= () => {
     const roless = ["Tout", "Administrateur", "Technicien", "Personnel"];
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
-    useEffect(() => {
-        setNewUser((prevUser) => ({ ...prevUser, role: "Technicien" }));
-    }, []);
 
+    const { id } = useParams();
+    useEffect(() => {
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/`);
+          const data = await response.json();
+          if (response.ok) {
+            setNewUser({
+              nom: data.last_name,
+              prenom: data.first_name,
+              email: data.email,
+              role: data.role,
+              telephone: data.numero_tel,
+              poste: data.technicien?.poste || "", 
+            });
+          } else {
+            setErrorMessage("Erreur lors de la récupération des données.");
+          }
+        } catch (error) {
+          setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
+        }
+      };
+      fetchUserData();
+    }, [id]);
+    
 
     const handleChange = (e) => {
         setNewUser({ ...newUser, [e.target.name]: e.target.value });
     };
     const role = newUser.role || "Technicien";
-
+   
 
     const handleAddUser = async () => {
         // Vérifier si tous les champs sont remplis
-        if (!newUser.nom || !newUser.prenom || !newUser.email || !newUser.telephone || !newUser.password) {
-            setErrorMessage("Veuillez remplir tous les champs.");
-            return;
-          }
-          
+        if (!newUser.nom || !newUser.prenom || !newUser.email || !newUser.telephone) {
+          setErrorMessage("Veuillez remplir tous les champs.");
+          return;
+      }
+      
 
        
 
@@ -77,12 +103,24 @@ const  ModifierPagesss= () => {
             numero_tel: newUser.telephone ,
             role: role ,
             poste: newUser.poste || "", // Optionnel, peut être vide
-            password:newUser.password,
+           
         };
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/users/create_technicien/", {
-                method: "POST",
+        
+          let url = "";
+        
+        // Si le rôle est "Technicien", on utilise l'URL de mise à jour des techniciens
+        if ( newUser.role === "Technicien") {
+            url = `http://127.0.0.1:8000/api/accounts/techniciens/${id}/update/`;
+        } else {
+            // Sinon, on utilise l'URL de mise à jour des utilisateurs
+            url = `http://127.0.0.1:8000/api/accounts/users/${id}/update/`;
+        }
+
+
+          const response = await fetch(url,  {
+                method: "PUT",
                 headers: { 
                     "Content-Type": "application/json",
                    
@@ -101,7 +139,7 @@ const  ModifierPagesss= () => {
                 setIsPopupVisible(true); 
             } else {
                 setErrorMessage("Erreur lors de l'ajout : " + JSON.stringify(data));
-                setIsPopupVisible(false); 
+               
             }
         } catch (error) {
            //   setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
@@ -109,6 +147,25 @@ const  ModifierPagesss= () => {
             setIsPopupVisible(true); 
         }
     };
+
+    
+    // Récupération des postes à partir de l'API
+    useEffect(() => {
+      const fetchPostes = async () => {
+        try {
+          const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/');
+          if (!response.ok) throw new Error("Erreur lors du chargement des postes");
+          const data = await response.json();
+          setPostesList(data);
+        } catch (error) {
+          console.error("Erreur lors de la récupération des postes :", error);
+        }
+      };
+    
+      fetchPostes();
+    }, []);
+    
+    
 
    // useEffect(() => {
     //    const fetchUsers = async () => {  // On crée une fonction asynchrone  pour récupérer les données depuis le backend.
@@ -176,7 +233,7 @@ const  ModifierPagesss= () => {
                  <SearchBar
                    value={searchTerm}
                    onChange={e => setSearchTerm(e.target.value)}
-                   placeholder="Rechercher (nom, email, rôle...)"
+                   placeholder="Rechercher (nom, email...)"
                  />
        
        
@@ -228,28 +285,20 @@ const  ModifierPagesss= () => {
 
 
 
-  <ChoiceContainer
-  title="Rôle"
-  options={[
-   
-    { label: "Administrateur", value: "Administrateur" },
-    { label: "Technicien", value: "Technicien" },
-  ]}
-  selectedOption={newUser.role}
-  onSelect={(val) => setNewUser({ ...newUser, role: val })}
-/>
-
-{newUser.role === "Technicien" && (
-  <WriteContainer
-    title="Poste"
-    value={newUser.poste}
-    onChange={(val) => setNewUser({ ...newUser, poste: val })}
-  />
-)}
+  
 
 
-
-
+{currentUserRole === "Technicien" && (
+                        <ChoiceContainer
+                            title="Poste"
+                            options={postesList.map((poste) => ({
+                                label: poste.nom,
+                                value: poste.id,
+                            }))}
+                            selectedOption={postesList.find(poste => poste.id === newUser.poste)?.nom || ""}
+                            onSelect={(value) => setNewUser({ ...newUser, poste: value })}
+                        />
+                    )}
 
 <WriteContainer
   title="Nom"
@@ -276,18 +325,25 @@ const  ModifierPagesss= () => {
 <WriteContainer
   title="Numéro de téléphone"
   value={newUser.telephone}
-  
+ 
   onChange={(val) => setNewUser({ ...newUser, telephone: val })}
 />
 
+
+
 {newUser.role === "Technicien" && (
-  <WriteContainer
+  <ChoiceContainer
     title="Poste"
-    value={newUser.poste}
-    onChange={(val) => setNewUser({ ...newUser, poste: val })}
+    options={postesList.map((poste) => ({
+      label: poste.nom,   // Ce qui sera affiché
+      value: poste.id     // La vraie valeur sélectionnée
+    }))}
+    selectedOption={
+      postesList.find(poste => poste.id === newUser.poste)?.nom || ""
+    }
+    onSelect={(val) => setNewUser({ ...newUser, poste: val })}
   />
 )}
-
 
 
 
@@ -303,7 +359,7 @@ const  ModifierPagesss= () => {
  {/* Affichage du message d'erreur */}
  {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
 
-{/* Flèche de retour */}
+
  
             {isPopupVisible && (
   <PopupMessage
@@ -319,3 +375,4 @@ const  ModifierPagesss= () => {
 };
 
 export default ModifierPagesss;
+
