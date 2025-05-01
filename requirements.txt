@@ -1,0 +1,7 @@
+dj_rest_auth==7.0.0
+Django==5.1.6
+django_allauth==0.57.0
+django_phonenumber_field==8.0.0
+djangorestframework==3.15.2
+djangorestframework_simplejwt==5.4.0
+Requests==2.32.3
