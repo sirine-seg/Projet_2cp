@@ -1,3 +1,5 @@
+
+
 import { useState, useEffect } from "react";
 
 
@@ -58,7 +60,7 @@ const AjoutPage = () => {
 
     const handleAddUser = async () => {
         // Vérifier si tous les champs sont remplis
-        if (!newUser.nom || !newUser.prenom || !newUser.email || !newUser.telephone ) {
+        if ( !newUser.email || !newUser.telephone ) {
             setErrorMessage("Veuillez remplir tous les champs.");
             return;
           }
@@ -68,13 +70,13 @@ const AjoutPage = () => {
 
 
         const newUserData = {
-            first_name: newUser.prenom || "",
-            last_name: newUser.nom || "",
-            email: newUser.email,
-            numero_tel: newUser.telephone ,
-            role: role ,
-            poste: newUser.poste || "", // Optionnel, peut être vide
-            password:newUser.password || "",
+          first_name: newUser.prenom,
+          last_name: newUser.nom,
+          email: newUser.email,
+          numero_tel: newUser.telephone,
+          role: role,
+          ...(newUser.poste && { poste: newUser.poste }),
+          ...(newUser.password && newUser.password.trim() && { password: newUser.password }),
         };
 
 
@@ -144,33 +146,6 @@ const AjoutPage = () => {
 
       //  fetchUsers();
  //   }, [searchTerm, filter]);  // a chaque fois que searchTerm ou filter change, React exécute fetchUsers().
-
-
-      useEffect(() => {
-                const filteredUsers = users.filter(user => {
-                    const matchesFilter = filter === "Tout" || user.role === filter;
-                    
-                    const firstName = user.first_name ? user.first_name.toLowerCase() : "";
-                    const lastName = user.last_name ? user.last_name.toLowerCase() : "";
-                    const fullName = `${firstName} ${lastName}`.trim(); // Trim pour éviter espaces inutiles
-                    const reversedFullName = `${lastName} ${firstName}`.trim(); // Gère la recherche inversée
-            
-                    const searchNormalized = searchTerm.toLowerCase().trim(); // pour quand je fais les espaces entre par example le nom et le prenom ne fait pas des erreurs 
-            
-                    const matchesSearch = searchNormalized === "" || 
-                        firstName.includes(searchNormalized) ||
-                        lastName.includes(searchNormalized) ||
-                        user.email.toLowerCase().includes(searchNormalized) ||
-                        user.role.toLowerCase().includes(searchNormalized) ||
-                        fullName.includes(searchNormalized) ||   // Vérifie si "nom prénom" est inclus
-                        reversedFullName.includes(searchNormalized); // Vérifie si "prénom nom" est inclus
-            
-                    return matchesFilter && matchesSearch;  // matchesFilter  Vérifie si l'utilisateur correspond au rôle sélectionné ( Administrateur, Technicien, Personnel)   matchesSearch Vérifie si l'utilisateur correspond au terme de recherche.
-                });
-    
-                setDisplayedUsers(filteredUsers.slice(0, visibleCount));
-            }, [filter, visibleCount]); // Ajout de filteredUsers
-           
 
 
 
@@ -317,19 +292,20 @@ const AjoutPage = () => {
 />
 
 <WriteContainer
-  title="Numéro de téléphone"
-  value={newUser.telephone}
-  
-  onChange={(val) => setNewUser({ ...newUser, telephone: val })}
-/>
+            title="Numéro de téléphone"
+            value={newUser.telephone}
+            onChange={(val) => setNewUser({ ...newUser, telephone: val })}
+         
+          />
 
 
 
 <WriteContainer
-  title="Mot de passe"
+ 
   value={newUser.password}
   
   onChange={(val) => setNewUser({ ...newUser, password: val })}
+ title="Mot de passe"              
 />
 
 </div>
@@ -359,4 +335,3 @@ const AjoutPage = () => {
 };
 
 export default AjoutPage;
-
