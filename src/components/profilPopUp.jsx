@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import Profil from "../assets/Profil.svg";
 import EmailIcon from "../assets/EmailIconsvg.svg";
 import PhoneIcon from "../assets/PhoneIcon.svg";
@@ -10,6 +11,13 @@ export default function ProfilePopUp({
   email,
   numero,
 }) {
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/Profil");
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg w-60 overflow-hidden">
       <div className="bg-[#BCCDE2] h-16 relative">
@@ -54,7 +62,10 @@ export default function ProfilePopUp({
       </div>
 
       <button className="w-full pt-2">
-        <div className="text-center text-[#20599E] text-sm font-medium py-3 cursor-pointer hover:underline border border-[#E8EAED]">
+        <div 
+          onClick={handleClick}
+          className="text-center text-[#20599E] text-sm font-medium py-3 cursor-pointer hover:underline border border-[#E8EAED]"
+        >
           Voir le profil
         </div>
       </button>
