@@ -57,30 +57,7 @@ const AjoutPagee =  () => {
         setNewUser({ ...newUser, [e.target.name]: e.target.value });
     };
 
-    useEffect(() => {
-        const filteredUsers = users.filter(user => {
-            const matchesFilter = filter === "Tout" || user.role === filter;
-            
-            const firstName = user.first_name ? user.first_name.toLowerCase() : "";
-            const lastName = user.last_name ? user.last_name.toLowerCase() : "";
-            const fullName = `${firstName} ${lastName}`.trim(); // Trim pour éviter espaces inutiles
-            const reversedFullName = `${lastName} ${firstName}`.trim(); // Gère la recherche inversée
-    
-            const searchNormalized = searchTerm.toLowerCase().trim(); // pour quand je fais les espaces entre par example le nom et le prenom ne fait pas des erreurs 
-    
-            const matchesSearch = searchNormalized === "" || 
-                firstName.includes(searchNormalized) ||
-                lastName.includes(searchNormalized) ||
-                user.email.toLowerCase().includes(searchNormalized) ||
-                user.role.toLowerCase().includes(searchNormalized) ||
-                fullName.includes(searchNormalized) ||   // Vérifie si "nom prénom" est inclus
-                reversedFullName.includes(searchNormalized); // Vérifie si "prénom nom" est inclus
-    
-            return matchesFilter && matchesSearch;  // matchesFilter  Vérifie si l'utilisateur correspond au rôle sélectionné ( Administrateur, Technicien, Personnel)   matchesSearch Vérifie si l'utilisateur correspond au terme de recherche.
-        });
-
-        setDisplayedUsers(filteredUsers.slice(0, visibleCount));
-    }, [filter, visibleCount]); // Ajout de filteredUsers
+  
    
     const { id } = useParams();  // Récupérer l'ID depuis l'URL
     const [user, setUser] = useState(null);
@@ -191,10 +168,9 @@ const AjoutPagee =  () => {
 {/* Afficher "Poste" seulement si le user est technicien */}
 {user.role?.toLowerCase() === "technicien" && (
   <DisplayContainer
-  title="Poste"
-  content={user.poste_nom || "Non renseigné"}  // This will show "Technicien Support" or "Non renseigné" if it's not set
-/>
-
+    title="Poste"
+    content={user.poste || "Non renseigné"} // Utilise user.poste ici
+  />
 )}
       <DisplayContainer title="E‑Mail" content={user.email} />
      
@@ -246,7 +222,7 @@ const AjoutPagee =  () => {
   {/* Photo de profil à gauche (ou en haut sur mobile) */}
   {/* Photo de profil à gauche (ou en haut sur mobile) */}
 {/* Photo de profil à gauche (ou en haut sur mobile) */}
-<div className="flex flex-col items-center justify-center text-center w-full lg:w-auto">
+<div className="flex flex-col items-center top-8 text-center w-full  lg:w-auto">
 
   {/* Avatar responsive */}
   <div
@@ -294,3 +270,4 @@ const AjoutPagee =  () => {
 };
 
 export default AjoutPagee;
+
