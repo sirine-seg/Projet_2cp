@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import {
   LogOut,
   Home,
@@ -6,23 +7,20 @@ import {
   BarChart2,
   Settings,
   HelpCircle,
-  Menu,
   HardHat,
-  Users,
   ChevronRight,
 } from "lucide-react";
 import logo_bleu from "../assets/logo_bleu.svg";
 
 export default function SideBar({ isOpen, setIsOpen }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [activePage, setActivePage] = useState("Accueil"); // <<< HERE
 
   return (
     <>
       <div
         className={`fixed top-0 left-0 h-screen w-68 bg-white shadow-lg p-6 z-50 transform transition-transform duration-300 ease-in-out 
           ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-          md:relative md:flex md:flex-col md:justify-between
+          relative flex flex-col justify-between
           `}
         style={{ height: "100vh" }}
       >
@@ -37,29 +35,29 @@ export default function SideBar({ isOpen, setIsOpen }) {
             Main Menu
           </div>
           <nav className="flex flex-col gap-3">
-            <MenuItem
+            <NavItem
+              to="/home"
               icon={<Home size={20} />}
               label="Accueil"
-              active={activePage === "Accueil"}
-              onClick={() => setActivePage("Accueil")}
+              activeColor="#20599E"
             />
-            <MenuItem
+            <NavItem
+              to="/equip"
               icon={<HardHat size={20} />}
               label="Equipements"
-              active={activePage === "Equipements"}
-              onClick={() => setActivePage("Equipements")}
+              activeColor="#20599E"
             />
-            <MenuItem
+            <NavItem
+              to="/Intervention"
               icon={<FileText size={20} />}
               label="Interventions"
-              active={activePage === "Interventions"}
-              onClick={() => setActivePage("Interventions")}
+              activeColor="#20599E"
             />
-            <MenuItem
+            <NavItem
+              to="/dashboard"
               icon={<BarChart2 size={20} />}
               label="Tableau de board"
-              active={activePage === "Tableau de board"}
-              onClick={() => setActivePage("Tableau de board")}
+              activeColor="#20599E"
             />
           </nav>
 
@@ -82,36 +80,33 @@ export default function SideBar({ isOpen, setIsOpen }) {
               {/* Sub-pages */}
               {settingsOpen && (
                 <div className="ml-5 flex flex-col gap-1">
-                  <MenuItem
+                  <NavItem
+                    to="/general"
                     icon={<ChevronRight size={20} />}
                     label="General"
-                    active={activePage === "General"}
-                    activeColor="orange"
-                    onClick={() => setActivePage("General")}
+                    activeColor="#F09C0A"
                   />
-                  <MenuItem
+                  <NavItem
+                    to="/ChampsDynamiques"
                     icon={<ChevronRight size={20} />}
                     label="Champs Dynamiques"
-                    active={activePage === "Champs Dynamiques"}
-                    activeColor="orange"
-                    onClick={() => setActivePage("Champs Dynamiques")}
+                    activeColor="#F09C0A"
                   />
-                  <MenuItem
+                  <NavItem
+                    to="/Users"
                     icon={<ChevronRight size={20} />}
                     label="Utilisateurs"
-                    active={activePage === "Utilisateurs"}
-                    activeColor="orange"
-                    onClick={() => setActivePage("Utilisateurs")}
+                    activeColor="#F09C0A"
                   />
                 </div>
               )}
             </div>
 
-            <MenuItem
+            <NavItem
+              to="/aide"
               icon={<HelpCircle size={20} />}
               label="Aide et support"
-              active={activePage === "Aide et support"}
-              onClick={() => setActivePage("Aide et support")}
+              activeColor="#20599E"
             />
           </nav>
         </div>
@@ -128,21 +123,23 @@ export default function SideBar({ isOpen, setIsOpen }) {
   );
 }
 
-// Updated MenuItem component
-function MenuItem({ icon, label, active = false, activeColor = "#20599E", onClick }) {
-  const activeStyles = active
-    ? activeColor === "#20599E"
-      ? "bg-[#20599E] text-white"
-      : "bg-[#F09C0A] text-white"
-    : "text-[#202124]";
-
+// Updated NavItem component using NavLink
+function NavItem({ to, icon, label, activeColor = "#20599E" }) {
   return (
-    <div
-      onClick={onClick}
-      className={`cursor-pointer flex items-center gap-2 p-3 rounded-xl transition font-medium text-sm ${activeStyles}`}
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `flex items-center gap-2 p-3 rounded-xl transition font-medium text-sm ${
+          isActive
+            ? activeColor === "#20599E"
+              ? "bg-[#20599E] text-white"
+              : "bg-[#F09C0A] text-white"
+            : "text-[#202124] hover:bg-gray-100"
+        }`
+      }
     >
       {icon}
       <span>{label}</span>
-    </div>
+    </NavLink>
   );
 }
