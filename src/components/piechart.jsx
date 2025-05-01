@@ -33,6 +33,7 @@ export default function PieChartBase({
   colorMap = {},
   donut = false,
   showCenterText = false,
+  onClick,
 }) {
   const total = React.useMemo(
     () => data.reduce((acc, curr) => acc + curr[valueKey], 0),
@@ -147,14 +148,15 @@ export default function PieChartBase({
           </div>
         </div>
       </CardContent>
-      <div className="flex justify-end px-8 mt-auto cursor-pointer">
+      <div className="flex justify-end px-8 mt-auto">
   <motion.img 
     src={agrandir} 
     alt="Agrandir"
-    className="w-8 h-8"
+    className="w-8 h-8 cursor-pointer"
     whileHover={{ scale: 1.1 }}
     whileTap={{ scale: 0.99 }}
     transition={{ type: "spring", stiffness: 300 }}
+    onClick={onClick}
   />
 </div>
     </Card>
