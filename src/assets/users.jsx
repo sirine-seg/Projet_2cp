@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MdAccountCircle } from "react-icons/md";
 import { FaChevronDown } from "react-icons/fa";
@@ -13,7 +12,7 @@ import Usercard from "../components/Usercard";
 import Badge from "../components/badge";
 import Popupdelete from "../components/Popupdelet";
 import UserDetailsCard from "../components/Userdetails";
-//import "../App.css";
+import "../App.css";
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import AddMobile  from "../components/addMobile";
 import PopupMessage from "../components/Popupcheck";
@@ -96,6 +95,14 @@ async function fetchUsers() {
       throw new Error(`Erreur HTTP! statut: ${response.status}`);
     }
 
+
+    if (selectedPostes.length > 0) {
+      const posteIds = selectedPostes.map(poste => `poste=${poste.id}`).join('&');
+      params.push(posteIds);
+  }
+
+
+
     const data = await response.json();
     console.log("Fetch depuis le serveur pour :", cacheKey);
 
@@ -143,18 +150,16 @@ async function fetchUsers() {
         const [selectedPostesFilter, setSelectedPostesFilter] = useState([]);
 
         const handlePosteFilterSelect = (poste) => {
-            console.log("Poste sélectionné dans UsersPage:", poste);
-            // Ici, vous pouvez mettre à jour votre état 'filter' ou 'selectedPostesFilter'
-            // et potentiellement refetch les utilisateurs en fonction des postes sélectionnés.
-            setSelectedPostesFilter(prev => {
-                if (prev.some(p => p.id === poste.value)) {
-                    return prev.filter(p => p.id !== poste.value);
-                } else {
-                    return [...prev, { id: poste.value, nom: poste.label }];
-                }
-            });
-        };
-       
+          console.log("Poste sélectionné dans UsersPage:", poste);
+          setSelectedPostes(prev => {
+              if (prev.some(p => p.id === poste.value)) {
+                  return prev.filter(p => p.id !== poste.value);
+              } else {
+                  return [...prev, { id: poste.value, nom: poste.label }];
+              }
+          });
+      };
+      
     
      
     
@@ -331,6 +336,11 @@ async function fetchUsers() {
             return () => document.removeEventListener("click", handleClickOutside);
         }, []);
     
+
+
+
+
+
    
          return (
                 <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
@@ -491,20 +501,29 @@ async function fetchUsers() {
       />
 
   {/* Affichage du badge en fonction du filtre */}
-  {filter === "Technicien" && user.technicien && (
-        <div className="absolute top-2 right-2">
-          {console.log("Technicien data:", user.technicien)} {/* Log the technicien data */}
-          <Badge
-            text={user.technicien.disponibilite ? "Disponible" : "Non disponible"}
-            bgColor={user.technicien.disponibilite ? "#22C55E" : "#EF4444"}
-          />
-        </div>
-      )}
-
+  {filter === "Technicien"  && (
+  <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
+    <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
+      <Badge
+        text={user.disponibilite ? "Disponible" : "Non disponible"}
+       // bgColor={user.disponibilite ? "#22C55E" : "#EF4444"}
+        className={`
+          text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
+          px-2 sm:px-2.5 md:px-3
+          py-[8px] sm:py-[3px] md:py-[5px]
+          rounded-full
+          max-w-full
+          whitespace-nowrap
+        `}
+      />
+    </div>
+  </div>
+)}
 
       {filter === "Tout" && (
         <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
           <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
+
             <Badge
               text={user.role}
               bgColor={roleColors[user.role]}
@@ -517,9 +536,39 @@ async function fetchUsers() {
                 whitespace-nowrap
               "
             />
+
+
           </div>
         </div>
       )}
+
+
+
+
+
+{filter !== "Tout" && (
+        <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
+          <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
+
+
+          <Badge
+        text={user.is_blocked ? "Bloqué" : "Débloqué"}
+        bgColor={user.is_blocked ? "#FF4423" : "#9ca3af"} // rouge / gris
+        className="
+          text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
+          px-2 sm:px-2.5 md:px-3
+          py-[8px] sm:py-[3px] md:py-[5px]
+          rounded-full
+          max-w-full
+          whitespace-nowrap
+        "
+      />
+
+          </div>
+        </div>
+      )}
+
+
 
     </div>
   ))}
