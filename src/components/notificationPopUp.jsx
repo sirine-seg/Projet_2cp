@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import TabSelector from "./tabSelector";
 import NotificationCard from "./notificationCard";
 
@@ -7,6 +8,12 @@ export default function NotificationPopUp({
   activeTab = "Tout",
   setActiveTab,
 }) {
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/Notifications");
+  };
 
   const filteredNotifications = activeTab === "Non lus"
   ? notifications.filter((notif) => notif.unread)
@@ -52,7 +59,10 @@ export default function NotificationPopUp({
 
       {/* Footer */}
       <button>
-        <div className="text-center text-[#20599E] text-sm font-medium py-3 cursor-pointer hover:underline">
+        <div 
+          onClick={handleClick}
+          className="text-center text-[#20599E] text-sm font-medium py-3 cursor-pointer hover:underline"
+        >
           Afficher tout
         </div>
       </button>
