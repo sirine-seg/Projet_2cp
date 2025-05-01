@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../index.css"
 
 import PieChartBase from "./piechart.jsx";
@@ -8,8 +9,13 @@ import PieChartBase from "./piechart.jsx";
 import React from "react";
 
 export default function DashboardRaccourci() {
-
   const [pieChartData, setPieChartData] = useState([]);
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/dashboard");
+  };
 
   useEffect(() => {
     fetch("/data/piechrt.json")
@@ -34,6 +40,7 @@ export default function DashboardRaccourci() {
   donut={true}
   showCenterText={false}
   colorMap={pieColorMap}
+  onClick={handleClick}
 />
     </div>
   );
