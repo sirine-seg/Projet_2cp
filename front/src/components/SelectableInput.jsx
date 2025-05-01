@@ -8,7 +8,7 @@ export default function SelectableInput({
   onSelect = () => {},
   placeholder = "--",
   bgColor = "bg-white",
-  maxWidth = "max-w-xs",
+ 
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [customInput, setCustomInput] = useState("");
@@ -46,7 +46,7 @@ export default function SelectableInput({
       <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
         {title}
       </label>
-      <div className={`relative w-full ${maxWidth}`}>
+      <div className={`relative w-full `}>
         <div
           onClick={() => setIsOpen((prev) => !prev)}
           className={`flex w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[0.8125rem] font-regular font-poppins justify-between ${bgColor} cursor-pointer`}

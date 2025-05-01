@@ -6,9 +6,9 @@ import { FaChevronDown } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate} from "react-router-dom";
-
+import PicView from "@/components/viewPic";
 import PicField from "../components/picfield";
-
+import ImportManual from "../components/importManual"
 import PopupMessage from "../components/Popupcheck";
 import SearchBar from "../components/Searchbar"; 
 import Filterbutton from "../components/Filterbutton"; 
@@ -147,7 +147,10 @@ const EditPage = () => {
     formData.append("localisation", equipement.localisation);
     formData.append("codebar", equipement.codebar);
     formData.append("code", equipement.code);
-    formData.append("image", equipement.image);
+    if (equipement.image && equipement.image instanceof File) {
+      formData.append("image", equipement.image);
+    }
+  
     if (equipement.manuel instanceof File) {
       formData.append("manuel", equipement.manuel);
     } 
@@ -159,6 +162,7 @@ const EditPage = () => {
       .then((response) => {
         if (!response.ok) {
           // Server returned an error, let's read it as text
+        
           return response.text().then(text => {
             throw new Error(`Server Error: ${response.status} - ${text}`);
           });
@@ -166,7 +170,8 @@ const EditPage = () => {
         return response.json(); // only try to parse JSON if OK
       })
       .then(() => {
-        alert("Équipement mis à jour !");
+     
+        setIsPopupVisible(true); 
       })
       .catch((error) => {
         console.error("Erreur lors de la mise à jour :", error);
@@ -330,26 +335,26 @@ const localisationOptions = Object.entries(localisations).map(([value, label]) =
         <div className="mx-auto w-full max-w-4xl px-4 mt-4 -mt-8  flex justify-center">
         <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar pb-2">
         <Filtre
-    label={`Catégorie: ${filters.categorie || "Tous"}`}
+    label={`Catégorie: ${filters.categorie}`}
     onClick={() => {
       // handle filter click (e.g. open a modal or dropdown to select value)
       console.log("Clicked Catégorie");
     }}
   />
   <Filtre
-    label={`Type: ${filters.type || "Tous"}`}
+    label={`Type: ${filters.type }`}
     onClick={() => {
       console.log("Clicked Type");
     }}
   />
   <Filtre
-    label={`Localisation: ${filters.localisation || "Toutes"}`}
+    label={`Localisation: ${filters.localisation }`}
     onClick={() => {
       console.log("Clicked Localisation");
     }}
   />
   <Filtre
-    label={`État: ${filters.etat || "Tous"}`}
+    label={`État: ${filters.etat }`}
     onClick={() => {
       console.log("Clicked État");
     }}
@@ -365,7 +370,7 @@ const localisationOptions = Object.entries(localisations).map(([value, label]) =
 </div>
 
       
-      <div className="flex flex-row w-full mx-auto px-3.5 mt-12 gap-4">
+      <div className="flex flex-col-reverse sm:flex-row px-3.5 mt-12 gap-4">
   {/* Left Column */}
   <div className="flex flex-col w-full sm:w-1/2 pr-0 sm:pr-2">
     <div className="my-2">
@@ -401,7 +406,8 @@ const localisationOptions = Object.entries(localisations).map(([value, label]) =
 
   {/* Right Column */}
   <div className="flex justify-center items-center w-full sm:w-1/2 py-4">
-  <PicField selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
+   <PicView equipement={equipement} />
+  
 
 </div>
 
@@ -421,43 +427,7 @@ const localisationOptions = Object.entries(localisations).map(([value, label]) =
       }
     />
   </div>
-  <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
-  <label className="block text-black font-bold">Manuel</label>
-  
-  {/* Show previous file if exists */}
-  {equipement.manuel&& typeof equipement.manuel === "string" && (
-    <p className="text-gray-700 mb-2">
-      Fichier actuel :{" "}
-      <a
-        href={equipement.manuel} // If it's a URL
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-500 underline"
-      >
-        Voir le manuel
-      </a>
-    </p>
-  )}
-
-  {/* File upload input */}
-  
-  <input
-    type="file"
-    name="manuel"
-    accept=".pdf,.doc,.docx"
-    onChange={handleFileChange}
-   
-    className="flex w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[0.8125rem] font-regular font-poppins justify-between bg-white transition-colors duration-200 focus:outline-0 focus:ring-0"
-  />
-</div>
-
-
-</div>
-
-{/* Bottom Row */}
-<div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2">
-
-<div className="w-full sm:w-1/2 pl-0 sm:pl-2">
+  <div className="w-full sm:w-1/2 pl-0 sm:pl-2">
 <ChoiceContainer
   title="Type"
   options={types}
@@ -472,6 +442,40 @@ const localisationOptions = Object.entries(localisations).map(([value, label]) =
 
 
   </div>
+
+
+
+</div>
+
+{/* Bottom Row */}
+<div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2">
+
+
+  <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
+  <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">Manuel</label>
+  
+ 
+
+  {/* File upload input */}
+
+    <ImportManual  onChange={handleFileChange}/>
+
+   {/* Show previous file if exists */}
+   {equipement.manuel&& typeof equipement.manuel === "string" && (
+    <p className="text-gray-700 mb-2">
+      Fichier actuel :{" "}
+      <a
+        href={equipement.manuel} // If it's a URL
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-500 underline"
+      >
+        Voir le manuel
+      </a>
+    </p>
+  )}
+
+</div>
   <div className="w-full sm:w-1/2 pl-0 sm:pl-2">
 
 <ChoiceContainer
@@ -500,7 +504,7 @@ const localisationOptions = Object.entries(localisations).map(([value, label]) =
  
             {isPopupVisible && (
   <PopupMessage
-    title="L'utilisateur a été Modifier avec succès !"
+    title="Équipement mis à jour avec succès !"
     onClose={() => setIsPopupVisible(false)}
   />
 )}

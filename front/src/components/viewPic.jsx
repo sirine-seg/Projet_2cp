@@ -19,8 +19,8 @@ export default function PicView({ equipement = {} }) {
     : equipement.image
     ? equipement.image.startsWith("http")
       ? equipement.image
-      : `http://127.0.0.1:8000${equipement.image}`
-    : null;
+      : `http://127.0.0.1:8000/equip_imges/${equipement.image}`
+    : Pic;
 
   return (
     <div className="flex justify-center items-center w-full py-4">
@@ -52,4 +52,3 @@ export default function PicView({ equipement = {} }) {
     </div>
   );
 }
-

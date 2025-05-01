@@ -18,6 +18,7 @@ import Popupdelete from "../components/Popupdelet";
 import AddMobile  from "../components/addMobile";
 import PopupChange from "../components/popupChange";
 import Filtre from "../components/filtre";
+import PopupMessage from "@/components/Popupcheck";
 const FilterSelect = ({ label, options, value, onChange }) => (
     <select
       className="w-full sm:w-1/4 px-4 py-2 rounded-md border border-gray-300 bg-[#F4F4F5]"
@@ -35,7 +36,7 @@ const FilterSelect = ({ label, options, value, onChange }) => (
   
 
 const EquipementsPage = () => {
-
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [displayedEquipements, setDisplayedEquipements] = useState([]);
   const [cachedEquipements, setCachedEquipements] = useState({});
     const [equipements, setEquipements] = useState([]);
@@ -314,7 +315,8 @@ const isSmall = useIsSmallScreen();
         if (selectedEquipement?.id_equipement === equipementId) {
           setSelectedEquipement(updatedEquipement);
         }
-    
+        setIsPopupVisible(true);
+
       } catch (error) {
         console.error("Error occurred during API request:", error);
       }
@@ -410,34 +412,7 @@ const isSmall = useIsSmallScreen();
     
 
 
-    const handleDelete = (equipementId) => {
-        
-    
-            fetch(`http://localhost:8000/equipements/delete/${equipementId}/`, {
-                method: "DELETE",
-            })
-            .then(async (response) => {
-                console.log("Réponse complète:", response);
-                const text = await response.text();
-                console.log("Réponse du serveur:", text);
-            
-                if (response.ok) {
-                    console.log("Suppression réussie pour l'équipement ID:", equipementId);
-                    setEquipements(prevEquipements => 
-                        prevEquipements.filter(equipement => equipement.id_equipement !== equipementId)
-                    );
-                } else {
-                    console.error("Échec de la suppression", response.status);
-                    alert("Échec de la suppression !");
-                }
-            })
-            .catch(error => console.error("Erreur lors de la requête DELETE:", error));
-            
-        
-    
-        setMenuOpen(null);
-    };
-     
+   
    
 
     /*  useEffect(() => {
@@ -616,17 +591,7 @@ useEffect(() => {
             >
               Modifier
             </button>
-            <button
-              className="block w-full text-left px-4 py-2 text-black hover:bg-gray-200"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log("🟢 Click event triggered on button!");
-                console.log("Bouton supprimer cliqué pour l'équipement ID:", equipement.id_equipement);
-                handleDelete(equipement.id_equipement);
-              }}
-            >
-              Supprimer
-            </button>
+           
           </div>
         )}
       </div>
@@ -636,15 +601,16 @@ useEffect(() => {
   )}
   
   
-
-{visibleCount < equipements.length && (
-                        <h3
-                            className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
-                            onClick={() => setVisibleCount(visibleCount + 6)}
-                        >
-                            Afficher plus 
-                        </h3>
-                    )}
+  <div className="w-full flex justify-center"> {/* Added flex and justify-center to the parent div */}
+  {visibleCount < equipements.length && (
+    <h3
+      className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
+      onClick={() => setVisibleCount(visibleCount + 6)}
+    >
+      Afficher plus
+    </h3>
+  )}
+</div>
 </div>
 
 
@@ -671,17 +637,12 @@ useEffect(() => {
 )}
 
 
-<Popupdelete
-  isVisible={isDeletePopupVisible}
-  onClose={() => setIsDeletePopupVisible(false)}
-  onConfirm={() => {
-    handleDelete(selectedEquipement);
-    setIsDeletePopupVisible(false);
-  }}
-  equipementId={selectedEquipement}
-  title="Êtes-vous sûr de vouloir supprimer cet équipement ?"
-  message=""
-/>
+{isPopupVisible && (
+  <PopupMessage
+    title="Etat changé avec succès !"
+    onClose={() => setIsPopupVisible(false)}
+  />)}
+
 
             </div>
             

@@ -47,7 +47,8 @@ const Signaler = () => {
   const { id } = useParams(); 
   const [selectedTechnicienId, setSelectedTechnicienId] = useState("");
 const [techniciensAjoutes, setTechniciensAjoutes] = useState([]);
-
+const [selectedUrgence, setSelectedUrgence] = useState(null);
+const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [displayedEquipements, setDisplayedEquipements] = useState([]);
   const [filter, setFilter] = useState("Tout");
   const [visibleCount, setVisibleCount] = useState(6);
@@ -60,7 +61,7 @@ const [techniciensAjoutes, setTechniciensAjoutes] = useState([]);
   const [interventions, setInterventions] = useState([]);
   const [selectedDatedebut, setSelectedDatedebut] = useState(null);
   const [selectedDatefin, setSelectedDatefin] = useState(null);
-  const [selectedUrgence, setSelectedUrgence] = useState("");
+
   const [selected, setSelected] = useState("");
   //
   // const [urgenceOptions, setUrgenceOptions] = useState([]);
@@ -268,7 +269,8 @@ const urgenceOptions = [
           throw new Error(data?.message || "Échec de l'ajout !");
         }
   
-        alert("Équipement ajouté !");
+     
+        setIsPopupVisible(true);
         setInterventions([...interventions, data]);
       })
       .catch((error) => {
@@ -337,7 +339,7 @@ onClick={() => {
 
       <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
                 <div className="w-full ">
-<Headerbar title=" Ajouter Un Equipement" />
+<Headerbar title=" Signaler Un Problème" />
 </div>
 
 
@@ -361,7 +363,7 @@ onClick={() => {
           options={urgenceOptions}
           selectedOption={selectedUrgence}
           onSelect={(selectedOption) => setSelectedUrgence(selectedOption)}
-        /> 
+        />
 </div>
 
       
@@ -382,7 +384,11 @@ onClick={() => {
  {/* Affichage du message d'erreur */}
  {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
 
-        
+ {isPopupVisible && (
+  <PopupMessage
+    title="problème signalé avec succès !"
+    onClose={() => setIsPopupVisible(false)}
+  />)}  
         
       </div>
 

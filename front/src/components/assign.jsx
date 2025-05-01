@@ -1,17 +1,14 @@
 import { useState } from "react";
 import AssignPopUp from "./AssignPopUp"; // Adjust path if needed
 import { MdAccountCircle } from "react-icons/md";
+import UserProfilMail from "./userProfilMail"
 
-export default function Assigner() {
+export default function Assigner({ allTechnicians }) {
   const [showPopup, setShowPopup] = useState(false);
   const [techniciensAjoutes, setTechniciensAjoutes] = useState([]);
 
-  // Full list of available techniciens
-  const allTechnicians = [
-    { id: 1, nom: "John", prenom: "Doe", email: "john@example.com", poste: "Électricien" },
-    { id: 2, nom: "Jane", prenom: "Smith", email: "jane@example.com", poste: "Plombier" },
-    // Add more if needed
-  ];
+ 
+ 
 
   const handleAssign = (technicien) => {
     // Avoid adding duplicates if needed
@@ -47,27 +44,24 @@ export default function Assigner() {
       )}
 
       {/* Display assigned techniciens */}
-      <div style={{ marginTop: "1rem" }}>
-        {techniciensAjoutes.map((tech) => (
-          <div
-            key={tech.email}
-            className="flex justify-between items-center border-b py-2"
-          >
-            <div className="flex items-center space-x-3">
-              <MdAccountCircle className="text-gray-600 w-10 h-10" />
-              <div>
-                <p className="font-bold">
-                  {tech.nom} {tech.prenom}
-                </p>
-                <p className="text-sm text-black">{tech.email}</p>
-                <p className="text-sm text-black">
-                  {tech.poste || "Aucun poste spécifié"}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
+      {/* Display assigned techniciens */}
+<div style={{ marginTop: "1rem" }}>
+  {techniciensAjoutes.map((tech) => (
+    <div key={tech.email} className="flex justify-between items-center  py-2">
+      <div className="flex items-center space-x-3">
+        <UserProfilMail
+          nom={tech.nom}
+          prenom={tech.prenom}
+          email={tech.email}
+          imageUrl={tech.imageUrl}  // assuming the technician has an imageUrl property
+          poste={tech.poste || "Aucun poste spécifié"}  // Default message if no poste is provided
+          role={tech.role || "Aucun rôle spécifié"}  // Default message if no role is provided
+        />
       </div>
+    </div>
+  ))}
+</div>
+
     </div>
   );
 }

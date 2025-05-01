@@ -7,8 +7,11 @@ import ChoiceContainer from "../components/choiceContainer";
 import WriteContainer from "../components/writeContainer";
 import Headerbar from "../components/Arrowleftt";
 import PicField from "../components/picfield.jsx";
-
+import ImportManual from "@/components/importManual.jsx";
+import PopupMessage from "@/components/Popupcheck.jsx";
 const AjoutPage = () => {
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [equipements,setEquipements]=useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedManual, setSelectedManual] = useState(null);
@@ -36,11 +39,14 @@ const AjoutPage = () => {
 
   const handleImageChange = (event) => setSelectedImage(event.target.files[0]);
   const handleFileChange = (event) => setSelectedManual(event.target.files[0]);
-
+/*
   const handleAddEquipement = () => {
     const formData = new FormData();
     Object.entries(newEquipement).forEach(([key, value]) => formData.append(key, value));
-    if (selectedImage) formData.append("image", selectedImage);
+
+    if (selectedImage && selectedImage instanceof File) {
+      formData.append("image", selectedImage);
+    }
     if (selectedManual) formData.append("manuel", selectedManual);
 
     fetch("http://127.0.0.1:8000/api/equipements/equipement/create/", {
@@ -49,8 +55,54 @@ const AjoutPage = () => {
       headers: { Authorization: `Token ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => alert("Équipement ajouté !"))
+      .then((data) =>setIsPopupVisible(false))
       .catch(() => alert("Erreur lors de l'ajout !"));
+  };*/
+  const handleAddEquipement = () => {
+    const formData = new FormData();
+    formData.append("nom", newEquipement.nom);
+    formData.append("type", newEquipement.type);
+    formData.append("categorie", newEquipement.categorie);
+    formData.append("localisation", newEquipement.localisation);
+    formData.append("codebar", newEquipement.codebar);
+    formData.append("etat", newEquipement.etat);
+
+    if (selectedImage && selectedImage instanceof File) {
+      formData.append("image", selectedImage);
+    }
+
+    if (selectedManual) {
+      formData.append("manuel", selectedManual);
+    }
+    fetch("http://127.0.0.1:8000/api/equipements/equipement/create/", {
+        method: "POST",
+        body: formData,
+      })
+        .then(async (response) => {
+          let data;
+          try {
+            data = await response.json(); // Try parsing JSON
+          } catch (error) {
+            console.warn("Non-JSON response received:", error);
+            data = null;
+          }
+      
+          console.log("Server response:", data);
+      
+          if (!response.ok) {
+            throw new Error(data?.message || "Échec de l'ajout !");
+          }
+      
+        
+         
+          setEquipements([...equipements, data]);
+          setIsPopupVisible(true);
+        })
+        .catch((error) => {
+          console.error("Erreur lors de l'ajout:", error);
+          alert("Erreur lors de l'ajout !");
+        });
+      
   };
 
   useEffect(() => {
@@ -86,10 +138,10 @@ const AjoutPage = () => {
         <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Rechercher..." />
         <div className="mx-auto max-w-4xl px-4 mt-4 flex justify-center">
           <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar pb-2">
-            <Filtre label={`Catégorie: ${filters.categorie || "Tous"}`} />
-            <Filtre label={`Type: ${filters.type || "Tous"}`} />
-            <Filtre label={`Localisation: ${filters.localisation || "Toutes"}`} />
-            <Filtre label={`État: ${filters.etat || "Tous"}`} />
+            <Filtre label={`Catégorie: ${filters.categorie }`} />
+            <Filtre label={`Type: ${filters.type }`} />
+            <Filtre label={`Localisation: ${filters.localisation }`} />
+            <Filtre label={`État: ${filters.etat }`} />
           </div>
         </div>
       </div>
@@ -113,7 +165,7 @@ const AjoutPage = () => {
           </div>
           <div className="w-full sm:w-1/2">
             <label className="text-sm font-medium text-[#202124] mb-1">Manual</label>
-            <input type="file" name="manuel" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="w-full py-3 px-4 border rounded text-sm text-[#80868B] bg-white" />
+             <ImportManual  onChange={handleFileChange}/>
           </div>
         </div>
 
@@ -129,7 +181,16 @@ const AjoutPage = () => {
         <div className="mt-6 flex justify-end">
           <button onClick={handleAddEquipement} className="bg-[#20599E] text-white px-6 py-2 rounded-md">Ajouter</button>
         </div>
+
+        
       </div>
+      
+      {isPopupVisible && (
+  <PopupMessage
+    title="Équipement ajouté avec succès !"
+    onClose={() => setIsPopupVisible(false)}
+  />
+)}
     </div>
   );
 };

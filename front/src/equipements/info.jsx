@@ -91,26 +91,26 @@ const Info = () => {
 <div className="mx-auto w-full max-w-4xl px-4 mt-4 -mt-8  flex justify-center">
         <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar pb-2">
         <Filtre
-    label={`Catégorie: ${filters.categorie || "Tous"}`}
+    label={`Catégorie: ${filters.categorie }`}
     onClick={() => {
       // handle filter click (e.g. open a modal or dropdown to select value)
       console.log("Clicked Catégorie");
     }}
   />
   <Filtre
-    label={`Type: ${filters.type || "Tous"}`}
+    label={`Type: ${filters.type }`}
     onClick={() => {
       console.log("Clicked Type");
     }}
   />
   <Filtre
-    label={`Localisation: ${filters.localisation || "Toutes"}`}
+    label={`Localisation: ${filters.localisation }`}
     onClick={() => {
       console.log("Clicked Localisation");
     }}
   />
   <Filtre
-    label={`État: ${filters.etat || "Tous"}`}
+    label={`État: ${filters.etat }`}
     onClick={() => {
       console.log("Clicked État");
     }}
