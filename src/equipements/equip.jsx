@@ -511,7 +511,7 @@ console.log("Selected status changed:", selectedStatus);
 
   
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md  overflow-hidden ">
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] overflow-hidden ">
            <Header />
 
            <div className="w-full bg-[#20599E] text-white pb-16 text-center">
