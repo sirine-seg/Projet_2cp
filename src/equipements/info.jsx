@@ -66,7 +66,7 @@ const Info = () => {
   
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md  overflow-hidden">
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] overflow-hidden">
                     
     {/* Logo en haut à gauche */}
     <Header />
