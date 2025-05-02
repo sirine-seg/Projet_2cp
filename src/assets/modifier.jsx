@@ -1,377 +1,246 @@
 import { useState, useEffect } from "react";
-
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
 import PopupMessage from "../components/Popupcheck";
-import SearchBar from "../components/Searchbar"; 
-import Filterbutton from "../components/Filterbutton"; 
 import Header from "../components/Header";
-import AjouterButton from "../components/Ajouterbutton";
 import Buttonrec from "../components/buttonrectangle";
-import Usercard from "../components/Usercard";
-import Badge from "../components/badge";
-import ChoiceContainer from "../components/choiceContainer"; 
-import WriteContainer from "../components/writeContainer";   
-import Headerbar from "../components/Arrowleftt";  
-import { useParams } from "react-router-dom";
+import ChoiceContainer from "../components/choiceContainer";
+import WriteContainer from "../components/writeContainer";
+import Headerbar from "../components/Arrowleftt";
 
+const ModifierPagesss = () => {
+  const [postesList, setPostesList] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [newUser, setNewUser] = useState({
+    nom: "",
+    prenom: "",
+    email: "",
+    role: "",
+    telephone: "",
+    poste: "",
+  });
 
+  const { id } = useParams();
+  const navigate = useNavigate();
 
+  // Récupération des données de l'utilisateur
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/`);
+        const data = await response.json();
 
-const  ModifierPagesss= () => {
-  
-  const [currentUserRole, setCurrentUserRole] = useState("");
-    const [displayedUsers, setDisplayedUsers] = useState([]); // Stocke les utilisateurs affichés
-    const [filter, setFilter] = useState("Tout");  // setFilter(newValue) → C'est la fonction qui met à jour filter avec newValue. et on a fait tout car "Tout" est la valeur initiale de filter.
-    const [visibleCount, setVisibleCount] = useState(6);// Nombre d'utilisateurs affichés
-    const [selectedUser, setSelectedUser] = useState(null);// Utilisateur sélectionné pour modification
-    const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
-    const [menuOpen, setMenuOpen] = useState(null);   //  gérer l'ouverture et la fermeture d'un menu.
-    const [searchTerm, setSearchTerm] = useState("");
- // Récupère l'ID de l'utilisateur depuis l'URL
-    const navigate = useNavigate();
- // État pour les statuts et postes récupérés
- const [statusList, setStatusList] = useState([]);
- const [postesList, setPostesList] = useState([]);
-
- const [selectedPoste, setSelectedPoste] = useState("");
-
-    const [users, setUsers] = useState([]);
-    const [newUser, setNewUser] = useState({
-        nom: "",
-        prenom: "",
-        email: "",
-        role: "",
-        telephone: "",
-        password: ""
-    });
-    const [errorMessage, setErrorMessage] = useState(""); // État pour afficher un message d'erreur
-    const [isPopupVisible, setIsPopupVisible] = useState(false); //  Ajout du state pour le pop-up
-    const roles = ["Administrateur", "Technicien", "Personnel"];
-    const roless = ["Tout", "Administrateur", "Technicien", "Personnel"];
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    
-
-    const { id } = useParams();
-    useEffect(() => {
-      const fetchUserData = async () => {
-        try {
-          const response = await fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/`);
-          const data = await response.json();
-          if (response.ok) {
-            setNewUser({
-              nom: data.last_name,
-              prenom: data.first_name,
-              email: data.email,
-              role: data.role,
-              telephone: data.numero_tel,
-              poste: data.technicien?.poste || "", 
-            });
-          } else {
-            setErrorMessage("Erreur lors de la récupération des données.");
-          }
-        } catch (error) {
-          setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
-        }
-      };
-      fetchUserData();
-    }, [id]);
-    
-
-    const handleChange = (e) => {
-        setNewUser({ ...newUser, [e.target.name]: e.target.value });
-    };
-    const role = newUser.role || "Technicien";
-   
-
-    const handleAddUser = async () => {
-        // Vérifier si tous les champs sont remplis
-        if (!newUser.nom || !newUser.prenom || !newUser.email || !newUser.telephone) {
-          setErrorMessage("Veuillez remplir tous les champs.");
-          return;
-      }
-      
-
-       
-
-
-        const newUserData = {
-            first_name: newUser.prenom,
-            last_name: newUser.nom,
-            email: newUser.email,
-            numero_tel: newUser.telephone ,
-            role: role ,
-            poste: newUser.poste || "", // Optionnel, peut être vide
-           
-        };
-
-        try {
-        
-          let url = "";
-        
-        // Si le rôle est "Technicien", on utilise l'URL de mise à jour des techniciens
-        if ( newUser.role === "Technicien") {
-            url = `http://127.0.0.1:8000/api/accounts/techniciens/${id}/update/`;
+        if (response.ok) {
+          console.log("Données utilisateur récupérées:", data);
+          setNewUser({
+            nom: data.last_name,
+            prenom: data.first_name,
+            email: data.email,
+            role: data.role || "Personnel",
+            telephone: data.numero_tel,
+            // Correction importante ici :
+            poste: data.role === "Technicien" ? data.technicien?.poste?.id || "" : "",
+          });
         } else {
-            // Sinon, on utilise l'URL de mise à jour des utilisateurs
-            url = `http://127.0.0.1:8000/api/accounts/users/${id}/update/`;
+          setErrorMessage("Erreur lors de la récupération des données.");
         }
-
-
-          const response = await fetch(url,  {
-                method: "PUT",
-                headers: { 
-                    "Content-Type": "application/json",
-                   
-                },
-                body: JSON.stringify(newUserData),
-            });
-
-            const data = await response.json();
-            console.log("Réponse API:", data);
-
-            if (response.ok) {
-                console.log("Utilisateur ajouté avec succès !");
-                setUsers([...users, data]);
-                setNewUser({ nom: "", prenom: "", email: "", role: "", telephone: "" , poste: ""  });
-                setErrorMessage(""); // Réinitialise l'erreur après un ajout réussi
-                setIsPopupVisible(true); 
-            } else {
-                setErrorMessage("Erreur lors de l'ajout : " + JSON.stringify(data));
-               
-            }
-        } catch (error) {
-           //   setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
-           //   setIsPopupVisible(false); 
-            setIsPopupVisible(true); 
-        }
+      } catch (error) {
+        console.error("Erreur fetch:", error);
+        setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
+      }
     };
 
-    
-    // Récupération des postes à partir de l'API
-    useEffect(() => {
-      const fetchPostes = async () => {
-        try {
-          const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/');
-          if (!response.ok) throw new Error("Erreur lors du chargement des postes");
-          const data = await response.json();
-          setPostesList(data);
-        } catch (error) {
-          console.error("Erreur lors de la récupération des postes :", error);
-        }
-      };
-    
-      fetchPostes();
-    }, []);
-    
-    
+    fetchUserData();
+  }, [id]);
 
-   // useEffect(() => {
-    //    const fetchUsers = async () => {  // On crée une fonction asynchrone  pour récupérer les données depuis le backend.
-         //   let url = "http://127.0.0.1:8000/api/user/?";
+  // Récupération des postes
+  useEffect(() => {
+    const fetchPostes = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/accounts/postes/");
+        if (!response.ok) throw new Error("Erreur lors du chargement des postes");
 
-         //   if (searchTerm) {
-         //       url += `search=${searchTerm}&`;  // Envoie la recherche à Django  si searchterm n'est pas vide, on ajoute un paramètre search= à l’URL.
-         //   }
-          //  if (filter !== "Tout") {
-          //      url += `role=${filter}&`;  // Filtre par rôle
-           // }
+        const data = await response.json();
+        setPostesList(data);
+        console.log("Postes disponibles:", data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des postes :", error);
+      }
+    };
 
-           // const response = await fetch(url);  //  envoie vers le backend 
-           // const data = await response.json();
-           // setUsers(data); // Met à jour l’état users pour afficher les utilisateurs filtrés
-     //   };
+    fetchPostes();
+  }, []);
 
-      //  fetchUsers();
- //   }, [searchTerm, filter]);  // a chaque fois que searchTerm ou filter change, React exécute fetchUsers().
+  const handleChange = (e) => {
+    setNewUser({ ...newUser, [e.target.name]: e.target.value });
+  };
 
-
-      useEffect(() => {
-                const filteredUsers = users.filter(user => {
-                    const matchesFilter = filter === "Tout" || user.role === filter;
-                    
-                    const firstName = user.first_name ? user.first_name.toLowerCase() : "";
-                    const lastName = user.last_name ? user.last_name.toLowerCase() : "";
-                    const fullName = `${firstName} ${lastName}`.trim(); // Trim pour éviter espaces inutiles
-                    const reversedFullName = `${lastName} ${firstName}`.trim(); // Gère la recherche inversée
-            
-                    const searchNormalized = searchTerm.toLowerCase().trim(); // pour quand je fais les espaces entre par example le nom et le prenom ne fait pas des erreurs 
-            
-                    const matchesSearch = searchNormalized === "" || 
-                        firstName.includes(searchNormalized) ||
-                        lastName.includes(searchNormalized) ||
-                        user.email.toLowerCase().includes(searchNormalized) ||
-                        user.role.toLowerCase().includes(searchNormalized) ||
-                        fullName.includes(searchNormalized) ||   // Vérifie si "nom prénom" est inclus
-                        reversedFullName.includes(searchNormalized); // Vérifie si "prénom nom" est inclus
-            
-                    return matchesFilter && matchesSearch;  // matchesFilter  Vérifie si l'utilisateur correspond au rôle sélectionné ( Administrateur, Technicien, Personnel)   matchesSearch Vérifie si l'utilisateur correspond au terme de recherche.
-                });
-    
-                setDisplayedUsers(filteredUsers.slice(0, visibleCount));
-            }, [filter, visibleCount]); // Ajout de filteredUsers
-           
-
-    return (
-        <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
-                    
-        {/* Logo en haut à gauche */}
-        <Header />
-       
-       
-       
-       
-       
-                           {/* En-tête */}
-                           <div className="w-full bg-[#20599E] text-white py-16 text-center">
-                          
-                           <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
-                            Utilisateur
-                           </h1>
-                           {/* bare de recherhce  */}    
-                 <SearchBar
-                   value={searchTerm}
-                   onChange={e => setSearchTerm(e.target.value)}
-                   placeholder="Rechercher (nom, email...)"
-                 />
-       
-       
-       
-       
-       
-                 {/*
-
-
-              {/* Boutons de filtre – dans la partie bleue, au-dessus de la searchbar */}
-          <div className="mx-auto w-full max-w-4xl px-4 mt-4 -mt-8  flex justify-center">
-          <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar">
-    {roless.map((role) => (
-      <Filterbutton
-        key={role}
-        text={role}
-        selected={filter === role}
-        hasDropdown={role === "Technicien"} // ou autre logique si d’autres rôles ont un menu
-        isDropdownOpen={role === "Technicien" && isDropdownOpen}
-        onClick={() => {
-          if (role === "Technicien") {
-            setFilter(role);
-            setIsDropdownOpen(!isDropdownOpen);
-          } else {
-            setFilter(role);
-            setIsDropdownOpen(false);
-          }
-        }}
-      />
-    ))}
-  </div>
-</div>
-       
-                    </div>
-
-
-   
-                    
-                    { /* <div className="w-full max-w-7xl bg-[#F4F4F4] min-h-screen rounded-t-[80px] px-6 py-8 shadow-md flex flex-col"> */}
-               
-                    <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
-                    <div className="w-full ">
-  <Headerbar title="Modifier un nouvel utilisateur" />
-</div>
-
-             
-                    <div className="w-full max-w-5xl mx-auto mt-12 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-  {/* Rôle bloqué */}
-
-
-
-  
-
-
-{currentUserRole === "Technicien" && (
-                        <ChoiceContainer
-                            title="Poste"
-                            options={postesList.map((poste) => ({
-                                label: poste.nom,
-                                value: poste.id,
-                            }))}
-                            selectedOption={postesList.find(poste => poste.id === newUser.poste)?.nom || ""}
-                            onSelect={(value) => setNewUser({ ...newUser, poste: value })}
-                        />
-                    )}
-
-<WriteContainer
-  title="Nom"
-  value={newUser.nom}
-
-  onChange={(val) => setNewUser({ ...newUser, nom: val })}
-/>
-
-<WriteContainer
-  title="Prénom"
-  value={newUser.prenom}
- 
-  onChange={(val) => setNewUser({ ...newUser, prenom: val })}
-/>
-
-<WriteContainer
-  title="E-mail"
-  value={newUser.email}
- 
-  onChange={(val) => setNewUser({ ...newUser, email: val })}
-
-/>
-
-<WriteContainer
-  title="Numéro de téléphone"
-  value={newUser.telephone}
- 
-  onChange={(val) => setNewUser({ ...newUser, telephone: val })}
-/>
-
-
-
-{newUser.role === "Technicien" && (
-  <ChoiceContainer
-    title="Poste"
-    options={postesList.map((poste) => ({
-      label: poste.nom,   // Ce qui sera affiché
-      value: poste.id     // La vraie valeur sélectionnée
-    }))}
-    selectedOption={
-      postesList.find(poste => poste.id === newUser.poste)?.nom || ""
+  const handleAddUser = async () => {
+    // Vérifier si tous les champs sont remplis
+    if (!newUser.nom || !newUser.prenom || !newUser.email || !newUser.telephone) {
+      setErrorMessage("Veuillez remplir tous les champs.");
+      return;
     }
-    onSelect={(val) => setNewUser({ ...newUser, poste: val })}
-  />
-)}
+
+    // Vérifier si un poste est sélectionné pour les techniciens
+    if (newUser.role === "Technicien" && !newUser.poste) {
+      setErrorMessage("Veuillez sélectionner un poste pour le technicien.");
+      return;
+    }
+
+    const userData = {
+      first_name: newUser.prenom,
+      last_name: newUser.nom,
+      email: newUser.email,
+      numero_tel: newUser.telephone,
+      role: newUser.role,
+    };
+
+    const technicienData = {
+      poste: newUser.role === "Technicien" ? parseInt(newUser.poste) : null,
+    };
+
+    console.log("Données utilisateur à envoyer:", userData);
+    console.log("Données technicien à envoyer:", technicienData);
+
+    try {
+      // Mise à jour des informations de base (pour tous les utilisateurs)
+      const userResponse = await fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/update/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!userResponse.ok) {
+        const errorData = await userResponse.json(); // Tente de récupérer le message d'erreur
+        setErrorMessage(
+          "Erreur lors de la modification des informations de l'utilisateur : " +
+            JSON.stringify(errorData)
+        );
+        return; // Important : arrête l'exécution si la mise à jour de l'utilisateur échoue
+      }
+      const userDataResult = await userResponse.json();
+      console.log("Réponse de l'API (user):", userDataResult);
 
 
+      // Mise à jour du poste pour les techniciens
+      if (newUser.role === "Technicien") {
+        const technicienResponse = await fetch(
+          `http://127.0.0.1:8000/api/accounts/techniciens/${id}/update/`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(technicienData),
+          }
+        );
 
+        if (!technicienResponse.ok) {
+          const errorData = await technicienResponse.json();
+          setErrorMessage(
+            "Erreur lors de la modification du poste : " + JSON.stringify(errorData)
+          );
+          return;
+        }
+        const technicienDataResult = await technicienResponse.json();
+        console.log("Réponse de l'API (technicien):", technicienDataResult);
+      }
 
-</div>
+      console.log("Utilisateur modifié avec succès !");
+      setIsPopupVisible(true);
+    } catch (error) {
+      console.error("Erreur complète:", error);
+      setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
+      setIsPopupVisible(true);
+    }
+  };
 
+  return (
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
+      {/* Logo en haut à gauche */}
+      <Header />
 
-   
-    {/* Bouton Ajouter avec animation */}
-    <div className="flex justify-center mt-4">
-  <Buttonrec text="Modifier" onClick={handleAddUser} />
-</div>
- {/* Affichage du message d'erreur */}
- {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
+      {/* En-tête */}
+      <div className="w-full bg-[#20599E] text-white py-16 text-center">
+        <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
+          Utilisateur
+        </h1>
+      </div>
 
-
- 
-            {isPopupVisible && (
-  <PopupMessage
-    title="L’utilisateur a été Modifier avec succès !"
-    onClose={() => setIsPopupVisible(false)}
-  />
-)}
-
-
-            </div>
+      <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
+        <div className="w-full">
+          <Headerbar title="Modifier un utilisateur" />
         </div>
-    );
+
+        <div className="w-full max-w-5xl mx-auto mt-12 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <WriteContainer
+            title="Nom"
+            value={newUser.nom}
+            onChange={(val) => setNewUser({ ...newUser, nom: val })}
+          />
+
+          <WriteContainer
+            title="Prénom"
+            value={newUser.prenom}
+            onChange={(val) => setNewUser({ ...newUser, prenom: val })}
+          />
+
+          <WriteContainer
+            title="E-mail"
+            value={newUser.email}
+            onChange={(val) => setNewUser({ ...newUser, email: val })}
+          />
+
+          <WriteContainer
+            title="Numéro de téléphone"
+            value={newUser.telephone}
+            onChange={(val) => setNewUser({ ...newUser, telephone: val })}
+          />
+
+          {/* Affichage du sélecteur de poste uniquement pour les techniciens */}
+          {newUser.role === "Technicien" && (
+            <ChoiceContainer
+              title="Poste"
+              options={postesList.map((poste) => ({
+                label: poste.nom,
+                value: poste.id,
+              }))}
+              selectedOption={
+                postesList.find((poste) => poste.id === parseInt(newUser.poste))
+                  ?.nom || ""
+              }
+              onSelect={(val) => {
+                setNewUser({ ...newUser, poste: val });
+              }}
+            />
+          )}
+        </div>
+
+        {/* Bouton Modifier avec animation */}
+        <div className="flex justify-center mt-4">
+          <Buttonrec text="Modifier" onClick={handleAddUser} />
+        </div>
+
+        {/* Affichage du message d'erreur */}
+        {errorMessage && (
+          <p className="text-red-500 text-center mb-4">{errorMessage}</p>
+        )}
+
+        {/* Popup de confirmation */}
+        {isPopupVisible && (
+          <PopupMessage
+            title="L'utilisateur a été modifié avec succès !"
+            onClose={() => {
+              setIsPopupVisible(false);
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default ModifierPagesss;
