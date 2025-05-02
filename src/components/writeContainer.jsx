@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function WriteContainer({ title, onSubmit, onChange, value, message }) {
+export default function WriteContainer({ title, onSubmit, onChange, value, message, bgColor="bg-[#FFFFFF]" }) {
   const [input, setInput] = useState("");
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function WriteContainer({ title, onSubmit, onChange, value, messa
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder={title === "Numéro de téléphone" ? "+213XXXXXXXXX" : "---"}
-            className="w-full py-3 px-4 border border-white rounded-[0.5rem] text-[0.8125rem] font-regular font-poppins bg-white resize-none focus:outline-0 focus:ring-0"
+            className={`w-full py-3 px-4 border border-white rounded-[0.5rem] text-[0.8125rem] font-regular font-poppins ${bgColor} resize-none focus:outline-0 focus:ring-0`}
           />
         </div>
       </div>
