@@ -154,7 +154,7 @@ const ModifierPagesss = () => {
     } catch (error) {
       console.error("Erreur complète:", error);
       setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
-      setIsPopupVisible(true);
+    //  setIsPopupVisible(true);
     }
   };
 
