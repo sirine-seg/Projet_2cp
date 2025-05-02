@@ -6,7 +6,7 @@ import Profil from './pages/profil.jsx';
 import Notifications from './pages/notifications.jsx';
 
 import Users from './utilisateurs/users.jsx';
-import Ajout from './utilisateurs/ajouttt.jsx';
+import AjouterUser from './utilisateurs/ajouttt.jsx';
 import TechnicienDetails from "./utilisateurs/technicien.jsx";
 import Modifie from "./utilisateurs/modifier.jsx";
 
