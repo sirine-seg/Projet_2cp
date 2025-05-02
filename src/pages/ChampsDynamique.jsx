@@ -265,7 +265,7 @@ export default function ChampsDynamiquesPage() {
   return (
     <div className="min-h-screen w-full bg-[#F4F4F4]">
       <div className="fixed top-0 left-0 h-screen w-64 z-30">
-        <SideBar />
+        <SideBar isOpen={true} />
       </div>
 
       <div className="top-0 left-0 right-0 z-20">
