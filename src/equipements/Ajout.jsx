@@ -132,7 +132,7 @@ const AjoutPage = () => {
   }, []);
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md overflow-x-hidden">
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] overflow-x-hidden">
       <Header />
       <div className="w-full bg-[#20599E] text-white py-16 text-center">
         <h1 className="text-4xl font-bold text-[#F4F4F4] mb-4">Equipements</h1>
