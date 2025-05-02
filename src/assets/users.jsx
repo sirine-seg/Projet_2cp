@@ -448,7 +448,7 @@ async function fetchUsers() {
       {/* Bouton Ajouter */}
       {!isSmall && (
         <div >
-        <AjouterButton onClick={() => navigate("/Ajout")} />
+        <AjouterButton onClick={() => navigate("/AjouterUser")} />
         </div>
       )}
       {/* Le contenu principal ici */}
@@ -576,7 +576,7 @@ async function fetchUsers() {
 
 {isSmall && (
   <div className="mt-4 flex justify-end pr-4">
-    <AddMobile onClick={() => navigate("/Ajout")} />
+    <AddMobile onClick={() => navigate("/AjouterUser")} />
  
   </div>
 )}
