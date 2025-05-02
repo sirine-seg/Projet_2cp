@@ -265,7 +265,17 @@ export default function ChampsDynamiquesPage() {
   return (
     <div className="min-h-screen w-full bg-[#F4F4F4]">
       <div className="fixed top-0 left-0 h-screen w-64 z-30">
+        
+      {/* Mobile - always closed or controlled differently */}
+      <div className="lg:hidden">
+        <SideBar isOpen={false} />
+      </div>
+      
+      {/* Desktop - always open */}
+      <div className="hidden lg:block">
         <SideBar isOpen={true} />
+      </div>
+        
       </div>
 
       <div className="top-0 left-0 right-0 z-20">
