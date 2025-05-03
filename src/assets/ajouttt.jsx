@@ -54,7 +54,7 @@ const AjoutPage = () => {
 
     const handleAddUser = async () => {
         // Vérifier si tous les champs sont remplis
-        if ( !newUser.email  ) {
+        if ( !newUser.email  ||!newUser.nom  ||!newUser.prenom ) {
             setErrorMessage("Veuillez remplir tous les champs.");
             return;
           }
