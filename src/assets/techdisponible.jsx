@@ -499,7 +499,7 @@ const allUsersSelected = selectedUserCount === users.length && users.length > 0;
           lastName={user.user.last_name}
           email={user.user.email}
           photo={user.user.photo}
-          previewUrl={previewUrl}
+        //  previewUrl={previewUrl}
           onClick={() => handleClick(user.user)}
           onMenuClick={() => setMenuOpen(menuOpen === user.user.id ? null : user.user.id)}
           isMenuOpen={menuOpen === user.user.id}
