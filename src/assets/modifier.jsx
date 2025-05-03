@@ -161,8 +161,12 @@ const ModifierPagesss = () => {
         console.log("Réponse de l'API (technicien):", technicienDataResult);
       }
 
-      console.log("Utilisateur modifié avec succès !");
-      setIsPopupVisible(true);
+   //   console.log("Utilisateur modifié avec succès !");
+      
+      setIsPopupVisible(false);
+      setTimeout(() => {
+        setIsPopupVisible(true);
+    }, 10);
     } catch (error) {
       console.error("Erreur complète:", error);
       setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
