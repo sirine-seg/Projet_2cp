@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { MdAccountCircle } from "react-icons/md";
-import { FaChevronDown } from "react-icons/fa";
-import { motion } from "framer-motion";
+
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/Searchbar"; 
 import Filterbutton from "../components/Filterbutton"; 
@@ -11,16 +9,16 @@ import Buttonrec from "../components/buttonrectangle";
 import Usercard from "../components/Usercard";
 import Badge from "../components/badge";
 import Popupdelete from "../components/Popupdelet";
-import UserDetailsCard from "../components/Userdetails";
 import "../App.css";
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
-import AddMobile  from "../components/addMobile";
+import AddMobile from "../components/addMobile";
 import PopupMessage from "../components/Popupcheck";
-import Filtre from "../components/filtrefleche"
-
-
-
-
+import Filtre from "../components/filtrefleche";
+import SelectionToolbar from "../components/selectionToolBar";
+import UserList from "../components/userList";
+import ViewToggle from "../components/viewToggle";
+import UserListHeader from "../components/userListHeader"
+import exportUsersToPDF from "../components/exportPdfuser";
 const UsersPage = () => {
     const [users, setUsers] = useState([]);  // Stocke tous les utilisateurs
     const [displayedUsers, setDisplayedUsers] = useState([]); // Stocke les utilisateurs affichés
@@ -30,8 +28,8 @@ const UsersPage = () => {
     const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
     const [menuOpen, setMenuOpen] = useState(null);   //  gérer l'ouverture et la fermeture d'un menu.
     const [searchTerm, setSearchTerm] = useState("");
-    const [isAddUserOpen, setIsAddUserOpen] = useState(false); // isAdduseropen stock un boolean true ou false 
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState({});
     const navigate = useNavigate();
     const [showPopup, setShowPopup] = useState(false);
     const [isDeletePopupVisible, setIsDeletePopupVisible] = useState(false);
@@ -40,604 +38,539 @@ const UsersPage = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const isSmall = useIsSmallScreen();
     const [selectedPostes, setSelectedPostes] = useState([]);
+    const technicianRoles = ["Plombier", "Électricien", "Informaticien", "Femme de ménage"];
+    const roles = ["Tout", "Administrateur", "Technicien", "Personnel"];
+    const [cachedUsers, setCachedUsers] = useState({});
+    const [isUnblockPopupVisible, setIsUnblockPopupVisible] = useState(false);
+    const [isBlockPopupVisible, setIsBlockPopupVisible] = useState(false);
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [postesList, setPostesList] = useState([]);
+    const [selectedPoste, setSelectedPoste] = useState("");
+ const [isPopupVisiblebloque, setisPopupVisiblebloque] = useState(false);
+    const [selected, setSelected] = useState(false);
+    const [techniciens, setTechniciens] = useState([]);
+    const [filteredTechniciens, setFilteredTechniciens] = useState([]);
+    const [currentView, setCurrentView] = useState("grid"); // "list" ou "grid"
+    const [selectedUsers, setSelectedUsers] = useState([]);
 
-const technicianRoles = ["Plombier", "Électricien", "Informaticien", "Femme de ménage"];
-const roles = ["Tout", "Administrateur", "Technicien", "Personnel"];
-const [cachedUsers, setCachedUsers] = useState({});
+// List view
 
-const [isUnblockPopupVisible, setIsUnblockPopupVisible] = useState(false);
-const [isBlockPopupVisible, setIsBlockPopupVisible] = useState(false);
+const handleUserToggle = (id) => {
+  setUsers(users.map(user =>
+    user.id === id ? { ...user, checked: !user.checked } : user
+  ));
+};
 
-const [isPopupVisible, setIsPopupVisible] = useState(false); // au début, pas visible
+const handleSelectAllUsers = () => {
+  setUsers(users.map(user => ({ ...user, checked: true })));
+};
 
-const [postesList, setPostesList] = useState([]);
+const handleDeselectAllUsers = () => {
+  setUsers(users.map(user => ({ ...user, checked: false })));
+};
 
-const [selectedPoste, setSelectedPoste] = useState("");
-
-const [isPopupVisiblebloque, setisPopupVisiblebloque] = useState(false); // au début, pas visible
-const [selected, setSelected] = useState(false);
-
-  // Exemple de gestion du clic pour changer l'état de `selected`
- 
+const handleUserActionClick = () => {
+  const selected = users.filter(u => u.checked);
+  alert(`Action sur ${selected.length} utilisateur(s)`);
+};
 
 useEffect(() => {
-  fetchUsers();
-}, [filter, searchTerm, visibleCount]);
+  const selected = users.filter(u => u.checked);
+  setSelectedUsers(selected);
+}, [users]);
 
-async function fetchUsers() {
-  const cacheKey = `${filter}_${searchTerm}`;
-
-  if (cachedUsers[cacheKey]) {
-    console.log("Utilisation du cache pour :", cacheKey);
-    setUsers(cachedUsers[cacheKey]);
-    setDisplayedUsers(cachedUsers[cacheKey].slice(0, visibleCount));
-    return;
-  }
-
-  try {
-    let url = "http:///127.0.0.1:8000/api/accounts/users/?";
-
-    const params = [];
-
-    if (filter && filter !== "Tout") {
-      params.push(`role=${filter}`);
-    }
-    if (searchTerm.trim() !== "") {
-      params.push(`search=${encodeURIComponent(searchTerm.trim())}`);
-    }
-
-    if (params.length > 0) {
-      url += params.join('&');
-    }
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Erreur HTTP! statut: ${response.status}`);
-    }
+const handleExportPDF = () => {
+  console.log("Exporting users to PDF...", selectedUsers);
+  exportUsersToPDF(selectedUsers);
+};
 
 
-    if (selectedPostes.length > 0) {
-      const posteIds = selectedPostes.map(poste => `poste=${poste.id}`).join('&');
-      params.push(posteIds);
-  }
+const selectedUserCount = users.filter(u => u.checked).length;
+const allUsersSelected = selectedUserCount === users.length && users.length > 0;
 
-
-
-    const data = await response.json();
-    console.log("Fetch depuis le serveur pour :", cacheKey);
-
-    // Met à jour le cache
-    setCachedUsers(prev => ({ ...prev, [cacheKey]: data }));
-
-    setUsers(data);
-    setDisplayedUsers(data.slice(0, visibleCount));
-  } catch (error) {
-    console.error("Erreur lors de la récupération des utilisateurs:", error);
-  }
-}
-
-
-
-
- // Charge les utilisateurs à chaque changement de page ou ajout d'affichage
-
-         // Filtrer les utilisateurs par rôle si on a selectionne tout ca veut dire tout les utilisateurs affiche sinon je vais  affiche  par role 
-        const filteredUsers = users.filter(user =>
-            filter === "Tout" ? true : user.role === filter
-        );
-    
-
-
-        
-        const techniciensDispo = users.filter(user => 
-            user.role === "Technicien" && user.technicien && user.technicien.disponibilite === true
-        );
-        
-
-        
-//  useEffect est un hook React qui permet d'exécuter du code lorsque certaines valeurs changent
-       
-
-    
-        // focntion pour faire la recherche par nom prenom role email 
-        // Ajout de searchTerm et users dans les dépendances
-        
- // Ajout de filteredUsers
-       
-         //  si visibleCount === 12, on prend les 3 premiers utilisateurs 
-        // L’interface utilisateur est mise à jour pour afficher les utilisateurs sélectionnés.
-        
-        const [selectedPostesFilter, setSelectedPostesFilter] = useState([]);
-
-        const handlePosteFilterSelect = (poste) => {
-          console.log("Poste sélectionné dans UsersPage:", poste);
-          setSelectedPostes(prev => {
-              if (prev.some(p => p.id === poste.value)) {
-                  return prev.filter(p => p.id !== poste.value);
-              } else {
-                  return [...prev, { id: poste.value, nom: poste.label }];
-              }
-          });
-      };
-      
-    
-     
-    
-        const handleEdit = (user) => {
-            navigate(`/Modifie/${user.id}` );
-        };
-       
-        const roleColors = {
-            "Technicien": "#F09C0A ",
-            "Administrateur": "#20599E",
-            "Personnel": "#6B7280",
-        };
-        
-        const closePopup = () => {
-            setShowEditPopup(false);
-            setSelectedUser(null);
-        };
-
-
-        const handleBloquer = async () => {
-          try {
-            const response = await fetch(`http:///127.0.0.1:8000/api/accounts/user/${selectedUserId}/block/`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            });
-        
-            if (response.ok) {
-              console.log('Utilisateur bloqué avec succès');
-              // Mettre à jour l'état local (isBlocked) de l'utilisateur
-              setUsers((prevUsers) =>
-                prevUsers.map((user) =>
-                  user.id === selectedUserId ? { ...user, is_blocked: true } : user
-
-              
-                )
-              );
-
-
-              setDisplayedUsers((prevDisplayedUsers) =>
-                prevDisplayedUsers.map((user) =>
-                  user.id === selectedUserId ? { ...user, is_blocked: true } : user
-                )
-              );
-              setIsPopupVisible(false); 
-             setTimeout(() => {
-                   setIsPopupVisible(true); 
-                }, 10);
-             
-            } else {
-              console.error('Erreur lors du blocage de l\'utilisateur');
-            }
-          } catch (error) {
-            console.error('Erreur réseau :', error);
-          } finally {
-            setIsBlockPopupVisible(false); // Fermer le popup même si ça échoue
-          }
-        };
-
-
-
-        const handleDeBloquer = async () => {
-          try {
-            const response = await fetch(`http:///127.0.0.1:8000/api/accounts/users/${selectedUserId}/unblock/`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            });
-        
-            if (response.ok) {
-              console.log('Utilisateur débloqué avec succès');
-              // Mettre à jour l'état local (isBlocked) de l'utilisateur
-              setUsers((prevUsers) =>
-                prevUsers.map((user) =>
-                  user.id === selectedUserId ? { ...user, is_blocked: false } : user
-                )
-              );
-
-
-              setDisplayedUsers((prevDisplayedUsers) =>
-                prevDisplayedUsers.map((user) =>
-                  user.id === selectedUserId ? { ...user, is_blocked: false } : user
-                )
-              );
-              setisPopupVisiblebloque(false);
-              setTimeout(() => {
-                setisPopupVisiblebloque(true);
-              }, 10);
-            } else {
-              console.error('Erreur lors du déblocage de l\'utilisateur');
-            }
-          } catch (error) {
-            console.error('Erreur réseau :', error);
-          } finally {
-            setIsUnblockPopupVisible(false); // Fermer le popup même si ça échoue
-          }
-        };
-        
-
-          
     // Récupération des postes à partir de l'API
     useEffect(() => {
-      const fetchPostes = async () => {
-        try {
-          const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/');
-          if (!response.ok) throw new Error("Erreur lors du chargement des postes");
-          const data = await response.json();
-          setPostesList(data);
-        } catch (error) {
-          console.error("Erreur lors de la récupération des postes :", error);
-        }
-      };
+        const fetchPostes = async () => {
+            try {
+              const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/', {
+                method: "GET",
+                headers: {
+                 // Authorization: `Token ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+                if (!response.ok) throw new Error("Erreur lors du chargement des postes");
+                const data = await response.json();
+                setPostesList(data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des postes :", error);
+            }
+        };
     
-      fetchPostes();
+        fetchPostes();
     }, []);
-    
-   
-       
-  
-       // const handleDelete = (userId) => {
-       //     console.log(" handleDelete appelé avec userId:", userId);
+
+    useEffect(() => {
+        fetchUsers();
+    }, [filter, searchTerm, visibleCount, selectedPostes]);
+
+    async function fetchUsers() {
+        const cacheKey = `${filter}_${searchTerm}_${JSON.stringify(selectedPostes)}`;
+
+        if (cachedUsers[cacheKey]) {
+            console.log("Utilisation du cache pour :", cacheKey);
+            const cachedData = cachedUsers[cacheKey];
+            setUsers(cachedData);
+            setDisplayedUsers(cachedData.slice(0, visibleCount));
+            return;
+        }
+
+        try {
+            let url = "http://127.0.0.1:8000/api/accounts/users/?";
+            const params = [];
+
+            if (filter && filter !== "Tout") {
+                params.push(`role=${filter}`);
+            }
             
-       //     if (window.confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) {
-        //        console.log(" L'utilisateur a confirmé la suppression");
-        
-        //        fetch(`http://127.0.0.1:8000//api/user/${userId}/`, {
-        //            method: "DELETE",
-         //       })
-          //      .then((response) => {
-            //        console.log("Réponse serveur:", response.status);
-        
-            //        if (response.ok) {
-             //           console.log(" Suppression réussie pour l'utilisateur ID:", userId);
-             //           setUsers(prev => prev.filter(user => user.id !== userId));
-             //           setDisplayedUsers(displayedUsers.filter(user => user.id !== userId));
-              //      } else {
-                  //      console.error(" Échec de la suppression");
-                   //     alert("Échec de la suppression !");
-                 //   }
-             //   })
-           //     .catch(error => console.error(" Erreur lors de la requête DELETE:", error));
-          //  } else {
-         //       console.log(" L'utilisateur a annulé la suppression");
-          //  }
-        
-         //   setMenuOpen(null);
-      //  };
+            if (searchTerm.trim() !== "") {
+                params.push(`search=${encodeURIComponent(searchTerm.trim())}`);
+            }
+            
+            // Ajout du filtre par poste si des postes sont sélectionnés
+            if (filter === "Technicien" && selectedPostes.length > 0) {
+                // Utiliser poste comme paramètre unique avec les IDs séparés par des virgules
+                const posteIds = selectedPostes.map(poste => poste.id).join(',');
+                params.push(`poste=${posteIds}`);
+            }
 
-      const handlePosteSelect = (option) => {
-        console.log("Poste sélectionné:", option);  // Affiche l'objet du poste sélectionné
-        setSelectedPoste(option);  // Mets à jour l'état du poste sélectionné
-      };
+            if (params.length > 0) {
+                url += params.join('&');
+            }
 
-        const handleClick = (user) => {
-       
-               navigate(`/TechnicienDetails/${user.id}`); // Redirige vers la page spéciale pour les techniciens
+            console.log("Fetching URL:", url);
+            const response = await fetch(url, {
+              method: "GET",
+              headers: {
+               // Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+              },
+          });
           
-       };
-        
-      //  const handleClick = (user) => {
-       //   setSelectedUser(user); // on affiche les détails de l'utilisateur sélectionné
-       // };
-        
-     
-        useEffect(() => {
-            const handleClickOutside = (event) => {
-                if (!event.target.closest(".menu-container")) {
-                    setMenuOpen(null);
+            
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP! statut: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Fetch depuis le serveur pour :", cacheKey);
+            console.log("Données reçues:", data);
+
+            // Met à jour le cache
+            setCachedUsers(prev => ({ ...prev, [cacheKey]: data }));
+
+            setUsers(data);
+            setDisplayedUsers(data.slice(0, visibleCount));
+        } catch (error) {
+            console.error("Erreur lors de la récupération des utilisateurs:", error);
+        }
+    }
+
+    // Fonction pour gérer la sélection des postes dans le composant Filtre
+    const handlePosteFilterSelect = (selectedPosteObjects) => {
+        console.log("Postes sélectionnés:", selectedPosteObjects);
+        setSelectedPostes(selectedPosteObjects);
+    };
+
+    const handleEdit = (user) => {
+        navigate(`/Modifie/${user.id}`);
+    };
+    
+    const roleColors = {
+        "Technicien": "#F09C0A ",
+        "Administrateur": "#20599E",
+        "Personnel": "#6B7280",
+    };
+    
+    const closePopup = () => {
+        setShowEditPopup(false);
+        setSelectedUser(null);
+    };
+
+    const handleBloquer = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/accounts/user/${selectedUserId}/block/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
                 }
-            };
-            document.addEventListener("click", handleClickOutside);
-            return () => document.removeEventListener("click", handleClickOutside);
-        }, []);
+            });
+        
+            if (response.ok) {
+                console.log('Utilisateur bloqué avec succès');
+                // Mettre à jour l'état local (isBlocked) de l'utilisateur
+                setUsers((prevUsers) =>
+                    prevUsers.map((user) =>
+                        user.id === selectedUserId ? { ...user, is_blocked: true } : user
+                    )
+                );
+
+                setDisplayedUsers((prevDisplayedUsers) =>
+                    prevDisplayedUsers.map((user) =>
+                    user.id === selectedUserId ? { ...user, is_blocked: true } : user
+                    )
+                );
+                setIsPopupVisible(false); 
+                setTimeout(() => {
+                    setIsPopupVisible(true); 
+                }, 10);
+            } else {
+                console.error('Erreur lors du blocage de l\'utilisateur');
+            }
+        } catch (error) {
+            console.error('Erreur réseau :', error);
+        } finally {
+            setIsBlockPopupVisible(false); // Fermer le popup même si ça échoue
+        }
+    };
+
+    const handleDeBloquer = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/accounts/users/${selectedUserId}/unblock/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+        
+            if (response.ok) {
+                console.log('Utilisateur débloqué avec succès');
+                // Mettre à jour l'état local (isBlocked) de l'utilisateur
+                setUsers((prevUsers) =>
+                    prevUsers.map((user) =>
+                    user.id === selectedUserId ? { ...user, is_blocked: false } : user
+                    )
+                );
+
+                setDisplayedUsers((prevDisplayedUsers) =>
+                    prevDisplayedUsers.map((user) =>
+                    user.id === selectedUserId ? { ...user, is_blocked: false } : user
+                    )
+                );
+                setisPopupVisiblebloque(false);
+                setTimeout(() => {
+                    setisPopupVisiblebloque(true);
+                }, 10);
+            } else {
+                console.error('Erreur lors du déblocage de l\'utilisateur');
+            }
+        } catch (error) {
+            console.error('Erreur réseau :', error);
+        } finally {
+            setIsUnblockPopupVisible(false); // Fermer le popup même si ça échoue
+        }
+    };
+
+    const handlePosteSelect = (option) => {
+        console.log("Poste sélectionné:", option);
+        setSelectedPoste(option);
+    };
+
+    const handleClick = (user) => {
+        navigate(`/TechnicienDetails/${user.id}`);
+    };
     
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest(".menu-container")) {
+                setMenuOpen(null);
+            }
+        };
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
+    }, []);
 
 
+  
 
+    return (
+        <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
+            {/* Logo en haut à gauche */}
+            <Header />
 
+            {/* En-tête */}
+            <div className="w-full bg-[#20599E] text-white py-16 text-center">
+                <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
+                    Utilisateurs
+                </h1>
+                
+                {/* Barre de recherche */}    
+                <SearchBar
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    placeholder="Rechercher (nom, email,...)"
+                />
 
-   
-         return (
-                <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
-                    
- {/* Logo en haut à gauche */}
- <Header />
+                {/* Boutons de filtre */}
+                <div className="mx-auto w-full max-w-4xl px-4 mt-4 -mt-8 flex justify-center">
+                    <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar">
+                        {roles.map((role) => (
+                            role === "Technicien" ? (
+                                <Filtre
+                                    key={role}
+                                    label={role}
+                                    filter={filter}
+                                    setFilter={setFilter}
+                                    isDropdownOpen={isDropdownOpen}
+                                    setIsDropdownOpen={setIsDropdownOpen}
+                                    postesList={postesList}
+                                    onPosteSelect={handlePosteFilterSelect}
+                                />
+                            ) : (
+                                <Filterbutton
+                                    key={role}
+                                    text={role}
+                                    selected={filter === role}
+                                    isDropdownOpen={isDropdownOpen[role]}
+                                    onClick={() => {
+                                        setFilter(role);
+                                        setIsDropdownOpen((prev) => ({
+                                            ...prev,
+                                            [role]: !prev[role],
+                                        }));
+                                    }}
+                                />
+                            )
+                        ))}
+                    </div>
+                </div>
+            </div>
 
-
-
-
-
-                    {/* En-tête */}
-                    <div className="w-full bg-[#20599E] text-white py-16 text-center">
-                   
-                    <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
-                        Utilisateurs
-                    </h1>
-                    {/* bare de recherhce  */}    
-          <SearchBar
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            placeholder="Rechercher (nom, email,...)"
-          />
-
-
-
-
-
-          {/* Boutons de filtre – dans la partie bleue, au-dessus de la searchbar */}
-          <div className="mx-auto w-full max-w-4xl px-4 mt-4 -mt-8  flex justify-center">
-          <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar">
-          {
-  roles.map((role) => (
-    role === "Technicien" ? (
-      <Filtre
-      key={role}
-      label={role}
-      filter={filter}
-      setFilter={setFilter}
-      isDropdownOpen={isDropdownOpen}
-      setIsDropdownOpen={setIsDropdownOpen}
-      postesList={postesList} // Passer la liste des postes ici
-      onPosteSelect={handlePosteFilterSelect} // Passer la nouvelle fonction de sélection
-  />
-    ) : (
-      <Filterbutton
-        key={role}
-        text={role}
-        selected={filter === role}
-        isDropdownOpen={isDropdownOpen[role]}
-        onClick={() => {
-          setFilter(role);
-          setIsDropdownOpen((prev) => ({
-            ...prev,
-            [role]: !prev[role],
-          }));
-        }}
-      />
-    )
-  ))
-}
-
-
-    
-  </div>
-</div>
-       
-                     </div>
-
-
-   
-                    
-                    { /* <div className="w-full max-w-7xl bg-[#F4F4F4] min-h-screen rounded-t-[80px] px-6 py-8 shadow-md flex flex-col"> */}
-               
-                    <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
-
-             
-                      
-                  
-                  {/*  <div className="flex space-x-4 mb-4 mx-auto relative">*/}
-                 
-                    {/* Résultats et bouton Ajouter */}
-                    <div className="relative w-full px-4 my-0">
-  {/* Conteneur principal avec flex pour aligner les éléments */}
-  <div className="flex justify-between items-center flex-wrap">
-    {/* Message des résultats */}
-    <div className="text-gray-600 font-semibold text-sm sm:text-base md:text-lg">
-      {Math.min(visibleCount, users.length)} Résultats affichés sur {users.length}
-    </div>
-
-    {/* Conteneur des boutons */}
-    <div className="flex space-x-2 mt-2 sm:mt-0">
+            <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
+                {/* Résultats et bouton Ajouter */} 
+                <div className="relative w-full px-4 my-0">
+                    <div className="flex justify-between items-center flex-wrap">
+                        <div className="text-gray-600 font-semibold text-sm sm:text-base md:text-lg">
+                            {Math.min(visibleCount, users.length)} Résultats affichés sur {users.length}
+                        </div>
+                        <div className="flex items-center space-x-2 mt-2 sm:mt-0">
       {/* Bouton Disponible (s'affiche seulement si "Technicien" est sélectionné) */}
       {filter === "Technicien" && (
-       <Buttonrec
-       text="Disponible"
-       bgColor="#D1D5DB"
-       textColor="gray-600"
-       onClick={() => navigate("/Disponible")}
-       className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
-     />
-     
+        <Buttonrec
+          text="Disponible"
+          bgColor="#D1D5DB"
+          textColor="gray-600"
+          onClick={() => navigate("/Disponible")}
+          className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
+        />
       )}
+
+
+
+
+
+      {/* View Toggle */}
+      <div className="h-9 flex items-center">
+        <ViewToggle onChange={(view) => setCurrentView(view)} />
+      </div>
 
       {/* Bouton Ajouter */}
       {!isSmall && (
-        <div >
         <AjouterButton onClick={() => navigate("/AjouterUser")} />
-        </div>
       )}
-      {/* Le contenu principal ici */}
-
-      {/* Bouton mobile affiché uniquement sur petits écrans */}
-     
-   
-
     </div>
-  </div>
-</div>
-
-                
-                    {/* Liste des utilisateurs  :les cartes   ::: gap pour espace entre les cartes et grid pour si la carte prend un colone .. ect     ;;;;.map((user) => ( ... )) permet de générer une carte pour chaque utilisateur. */}
-                    {/* </div> <div className="flex flex-wrap  gap-4 px-2 mt-6 w-full max-w-7xl mx-auto justify-center  ">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4"> */}
-                   <div className=" flex flex-wrap  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4 ">
-  {displayedUsers.map((user) => (
-    <div key={user.id} className="relative w-full sm:w-1/2 md:w-[360px]">
-
-    
-
-      {/* Carte sans rôle */}
-      <Usercard
-        firstName={user.first_name}
-        lastName={user.last_name}
-        email={user.email}
-        photo={user.photo}
-        previewUrl={previewUrl}
-        onClick={() => handleClick(user)}
-        onMenuClick={() => setMenuOpen(menuOpen === user.id ? null : user.id)}
-        isMenuOpen={menuOpen === user.id}
-        onEditClick={() => handleEdit(user)}
-        is_blocked={user.is_blocked}
-
-        onBlockClick={() => {
-          setMenuOpen(null);
-          setSelectedUserId(user.id);
-          setIsBlockPopupVisible(true); // Affiche le popup de blocage
-        }}
-        
-        onUnblockClick={() => {
-          setMenuOpen(null);
-          setSelectedUserId(user.id);
-          setIsUnblockPopupVisible(true); // Affiche le popup de déblocage
-        }}
-      
-      
-
-      />
-
-  {/* Affichage du badge en fonction du filtre */}
-  {filter === "Technicien"  && (
-  <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
-    <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
-      <Badge
-        text={user.disponibilite ? "Disponible" : "Non disponible"}
-       // bgColor={user.disponibilite ? "#22C55E" : "#EF4444"}
-        className={`
-          text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
-          px-2 sm:px-2.5 md:px-3
-          py-[8px] sm:py-[3px] md:py-[5px]
-          rounded-full
-          max-w-full
-          whitespace-nowrap
-        `}
-      />
-    </div>
-  </div>
-)}
-
-      {filter === "Tout" && (
-        <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
-          <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
-
-            <Badge
-              text={user.role}
-              bgColor={roleColors[user.role]}
-              className="
-                text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
-                px-2 sm:px-2.5 md:px-3
-                py-[8px] sm:py-[3px] md:py-[5px]
-                rounded-full
-                max-w-full
-                whitespace-nowrap
-              "
-            />
-
-
-          </div>
-        </div>
-      )}
-
-
-
-
-
-{filter !== "Tout" && (
-        <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
-          <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
-
-
-          <Badge
-        text={user.is_blocked ? "Bloqué" : "Débloqué"}
-        bgColor={user.is_blocked ? "#FF4423" : "#9ca3af"} // rouge / gris
-        className="
-          text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
-          px-2 sm:px-2.5 md:px-3
-          py-[8px] sm:py-[3px] md:py-[5px]
-          rounded-full
-          max-w-full
-          whitespace-nowrap
-        "
-      />
-
-          </div>
-        </div>
-      )}
-
-
-
-    </div>
-  ))}
-</div>
-
-{isSmall && (
-  <div className="mt-4 flex justify-end pr-4">
-    <AddMobile onClick={() => navigate("/AjouterUser")} />
- 
-  </div>
-)}
-      
-
-        
-                  {/* Afficher plus */}
-                  {visibleCount < users.length && (
-                        <h3
-                            className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
-                            onClick={() => setVisibleCount(visibleCount + 3)}
-                        >
-                            Afficher plus 
-                        </h3>
-                    )}
-
-
-  {/* Popup Bloquer */}
-<Popupdelete
-  isVisible={isBlockPopupVisible}
-  onClose={() => setIsBlockPopupVisible(false)}
-  onConfirm={handleBloquer}  // Cette fonction va bloquer l'utilisateur
-  userId={selectedUserId}
-  title="Êtes-vous sûr de vouloir bloquer cet utilisateur ?"
-  message=""
-/>
-
-{/* Popup Débloquer */}
-<Popupdelete
-  isVisible={isUnblockPopupVisible}
-  onClose={() => setIsUnblockPopupVisible(false)}
-  onConfirm={handleDeBloquer}  // Cette fonction va débloquer l'utilisateur
-  userId={selectedUserId}
-  title="Êtes-vous sûr de vouloir débloquer cet utilisateur ?"
-  message=""
-  confirmText="Debloquer"
-/>
-
-{isPopupVisible && (
-  <PopupMessage
-    title="L’utilisateur a été bloqué avec succès !"
-    message=""
-    onClose={() => setIsPopupVisible(false)} 
-  />
-)}
-
-
-
-{isPopupVisiblebloque && (
-  <PopupMessage
-    title="L’utilisateur a été Debloqué avec succès !"
-    message=""
-    onClose={() =>setisPopupVisiblebloque(false)} 
-  />
-)}
-
-
-         </div>
+                    </div>
                 </div>
-            );
-        };
-        
-        export default UsersPage;
-        
+
+
+
+
+
+                <div className="flex flex-wrap space-y-4 p-4">
+
+  <div className="flex justify-between items-center w-full">
+    {currentView === "list" && (
+      <div className="sm:py-2 w-full">
+       <SelectionToolbar
+                  selectedCount={selectedUserCount}
+                  allSelected={allUsersSelected}
+                  onSelectAll={handleSelectAllUsers}
+                  onDeselectAll={handleDeselectAllUsers}
+ selectedEquipments ={selectedUsers} // Passer le tableau des utilisateurs sélectionnés
+                />
+      </div>
+    )}
+    </div>
+
+  {currentView === "list" ? (
+    /* Vue liste */
+    <div className="w-full space-y-2">
+      <UserListHeader />
+      {displayedUsers.map((user) => (
+        <div key={user.id} className="relative w-full">
+
+
+          <UserList
+            nom={user.first_name}
+            prenom={user.last_name}
+            email={user.email}
+            role={user.role}
+            imageUrl={user.imageUrl}
+            checked={user.checked}
+            onToggle={() => handleUserToggle(user.id)}
+            moreClick={() => console.log("Plus d'infos sur", user.last_name)}
+          />
+        </div>
+      ))}
+    </div>
+  ) : (
+
+    /* Liste des utilisateurs en mode carte */
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+      {displayedUsers.map((user) => (
+        <div key={user.id} className="relative w-full sm:w-1/2 md:w-[360px]">
+          <Usercard
+            firstName={user.first_name}
+            lastName={user.last_name}
+            email={user.email}
+            photo={user.photo}
+            previewUrl={previewUrl}
+            onClick={() => handleClick(user)}
+            onMenuClick={() => setMenuOpen(menuOpen === user.id ? null : user.id)}
+            isMenuOpen={menuOpen === user.id}
+            onEditClick={() => handleEdit(user)}
+            is_blocked={user.is_blocked}
+            onBlockClick={() => {
+              setMenuOpen(null);
+              setSelectedUserId(user.id);
+              setIsBlockPopupVisible(true);
+            }}
+            onUnblockClick={() => {
+              setMenuOpen(null);
+              setSelectedUserId(user.id);
+              setIsUnblockPopupVisible(true);
+            }}
+          />
+
+          {/* Affichage du badge en fonction du filtre */}
+          {filter === "Technicien" && user.technicien && (
+            <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
+              <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
+                <Badge
+                  text={user.technicien.disponibilite ? "Disponible" : "Non disponible"}
+                  className={`
+                    text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
+                    px-2 sm:px-2.5 md:px-3
+                    py-[8px] sm:py-[3px] md:py-[5px]
+                    rounded-full
+                    max-w-full
+                    whitespace-nowrap
+                  `}
+                />
+              </div>
+            </div>
+          )}
+
+          {filter === "Tout" && (
+            <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
+              <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
+                <Badge
+                  text={user.role}
+                  bgColor={roleColors[user.role]}
+                  className="
+                    text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
+                    px-2 sm:px-2.5 md:px-3
+                    py-[8px] sm:py-[3px] md:py-[5px]
+                    rounded-full
+                    max-w-full
+                    whitespace-nowrap
+                  "
+                />
+              </div>
+            </div>
+          )}
+
+          {filter !== "Tout" && filter !== "Technicien" && (
+            <div className="absolute bottom-3 right-3 w-auto max-w-[90%] z-10">
+              <div className="scale-[0.75] sm:scale-[0.85] md:scale-[0.95] lg:scale-100">
+                <Badge
+                  text={user.is_blocked ? "Bloqué" : "Débloqué"}
+                  bgColor={user.is_blocked ? "#FF4423" : "#9ca3af"}
+                  className="
+                    text-[12px] sm:text-[9px] md:text-[10px] lg:text-xs
+                    px-2 sm:px-2.5 md:px-3
+                    py-[8px] sm:py-[3px] md:py-[5px]
+                    rounded-full
+                    max-w-full
+                    whitespace-nowrap
+                  "
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+
+</div>
+                
+
+                {isSmall && (
+                    <div className="mt-4 flex justify-end pr-4">
+                        <AddMobile onClick={() => navigate("/AjouterUser")} />
+                    </div>
+                )}
+
+                {/* Afficher plus */}
+                {visibleCount < users.length && (
+                    <h3
+                        className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
+                        onClick={() => setVisibleCount(visibleCount + 3)}
+                    >
+                        Afficher plus 
+                    </h3>
+                )}
+
+                {/* Popup Bloquer */}
+                <Popupdelete
+                    isVisible={isBlockPopupVisible}
+                    onClose={() => setIsBlockPopupVisible(false)}
+                    onConfirm={handleBloquer}
+                    userId={selectedUserId}
+                    title="Êtes-vous sûr de vouloir bloquer cet utilisateur ?"
+                    message=""
+                />
+
+                {/* Popup Débloquer */}
+                <Popupdelete
+                    isVisible={isUnblockPopupVisible}
+                    onClose={() => setIsUnblockPopupVisible(false)}
+                    onConfirm={handleDeBloquer}
+                    userId={selectedUserId}
+                    title="Êtes-vous sûr de vouloir débloquer cet utilisateur ?"
+                    message=""
+                    confirmText="Debloquer"
+                />
+
+                {isPopupVisible && (
+                    <PopupMessage
+                        title="L'utilisateur a été bloqué avec succès !"
+                        message=""
+                        onClose={() => setIsPopupVisible(false)} 
+                    />
+                )}
+
+                {isPopupVisiblebloque && (
+                    <PopupMessage
+                        title="L'utilisateur a été Debloqué avec succès !"
+                        message=""
+                        onClose={() => setisPopupVisiblebloque(false)} 
+                    />
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default UsersPage;
