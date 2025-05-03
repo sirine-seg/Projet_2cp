@@ -1,14 +1,15 @@
 import React from "react";
 import CustomCheckbox from "./customCheckbox";
-import upload from '../assets/upload.svg';
-import quitter from '../assets/quitter.svg';
+import upload from "../assets/upload.svg";
+import quitter from "../assets/quitter.svg";
+import exportToPDF from "./exportPdf";
 
 const SelectionToolbar = ({
   selectedCount,
   allSelected,
   onSelectAll,
   onDeselectAll,
-  onActionClick,
+  selectedEquipments, // <-- this should be passed as a prop
 }) => {
   if (selectedCount === 0) return null;
 
@@ -28,7 +29,9 @@ const SelectionToolbar = ({
             />
           </button>
 
-          <span className="text-sm font-medium">{selectedCount} Sélectionné{selectedCount > 1 ? 's' : ''}</span>
+          <span className="text-sm font-medium">
+            {selectedCount} Sélectionné{selectedCount > 1 ? "s" : ""}
+          </span>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -37,24 +40,28 @@ const SelectionToolbar = ({
             id="selectAll"
             onChange={(e) => {
               if (!allSelected) {
-              onSelectAll();
+                onSelectAll();
               } else {
-              onDeselectAll();
+                onDeselectAll();
               }
             }}
           />
           <label htmlFor="selectAll" className="text-sm font-medium">
-          <span className="hidden sm:inline">Sélectionner </span>Tout
+            <span className="hidden sm:inline">Sélectionner </span>Tout
           </label>
         </div>
       </div>
 
-      <div onClick={onActionClick}>
-        <img 
-            src={upload} 
-            alt="upload" 
-            className="h-[20px] w-[20px] shrink-0 cursor-pointer" 
-          />
+      <div
+        onClick={() => exportToPDF(selectedEquipments)}
+        className="cursor-pointer"
+        title="Exporter en PDF"
+      >
+        <img
+          src={upload}
+          alt="export"
+          className="h-[20px] w-[20px] shrink-0"
+        />
       </div>
     </div>
   );

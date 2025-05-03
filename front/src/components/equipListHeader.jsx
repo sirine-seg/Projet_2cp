@@ -16,7 +16,7 @@ const EquipListHeader = () => {
                 <span className="w-[40%] sm:w-[30%] overflow-hidden whitespace-nowrap">Localisation</span>
 
                 {/* État visible seulement en desktop */}
-                <div className="sm:w-[30%] md:w-[20%] hidden sm:flex items-center space-x-2 ml-auto">
+                <div className="sm:w-[25%] md:w-[18%] hidden sm:flex items-center space-x-2 ml-auto">
                     <span className="overflow-hidden whitespace-nowrap">État</span>
                 </div>
             </div>

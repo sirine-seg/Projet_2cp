@@ -10,4 +10,8 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths()
   ],
+
+   build: {
+    assetsInclude: ['**/*.PNG'],
+  },
 })

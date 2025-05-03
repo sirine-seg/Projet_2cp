@@ -57,7 +57,8 @@ export default function LineChartCard({
       <CardContent className="flex-1">
         <ChartContainer config={chartConfig} className="w-full">
           {/* Adjust the aspect ratio for responsiveness */}
-          <div className="w-full aspect-[2/3] sm:aspect-[3/2] md:aspect-[30/9] overflow-visible">
+          <div className="w-full aspect-[5/6] sm:aspect-[3/2] md:aspect-[30/9] overflow-visible">
+
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ left: 12, right: 12 }}>
                 <CartesianGrid vertical={false} />
@@ -66,7 +67,7 @@ export default function LineChartCard({
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
+                  
                 />
 
                 {Object.entries(chartConfig).map(([dataKey, { color }]) => (

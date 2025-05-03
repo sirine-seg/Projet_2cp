@@ -18,12 +18,12 @@ const CustomTooltip = ({
     <div
       style={{
         backgroundColor: "white",
-        borderRadius: "8px",
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+        borderRadius: "6px", // Even smaller border radius
+        boxShadow: "0 1px 4px rgba(0, 0, 0, 0.15)", // Subtler shadow
         color: "#000",
-        padding: "0.75rem",
-        fontSize: "0.875rem",
-        maxWidth: "300px",
+        padding: "0.4rem", // Further reduced padding
+        fontSize: "0.7rem", // Even smaller font size
+        maxWidth: "180px", // Further reduced maximum width
         width: "100%",
         boxSizing: "border-box",
         zIndex: 1000,
@@ -32,9 +32,9 @@ const CustomTooltip = ({
       <div
         style={{
           color: "#facc15",
-          fontWeight: "600",
-          marginBottom: "0.5rem",
-          fontSize: "1rem",
+          fontWeight: "500", // Slightly lighter title weight
+          marginBottom: "0.2rem", // Further reduced margin
+          fontSize: "0.8rem", // Even smaller title
         }}
       >
         {formattedLabel}
@@ -46,11 +46,12 @@ const CustomTooltip = ({
           style={{
             display: "flex",
             justifyContent: "space-between",
-            marginBottom: "4px",
+            marginBottom: "1px", // Further reduced margin
             color: entry.color,
+            fontSize: "0.65rem", // Even smaller value font size
           }}
         >
-          <span style={{ fontWeight: 500 }}>{entry.name}</span>
+          <span style={{ fontWeight: 400 }}>{entry.name}</span> {/* Lighter name weight */}
           <span>
             {valueFormatter ? valueFormatter(entry.value) : entry.value}
           </span>

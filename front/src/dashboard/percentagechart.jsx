@@ -16,11 +16,13 @@ export default function InterventionProgressCard({
   backgroundColor = "bg-blue-200",
 }) {
   return (
-    <Card className="w-full max-w-md flex flex-col">
+    <Card className="w-full max-w-md flex flex-col p-3 sm:p-4">
       <CardHeader>
-        <CardTitle className="text-base sm:text-lg">{title}</CardTitle>
+        <CardTitle className="text-base sm:text-lg md:text-xl lg:text-2xl">
+          {title}
+        </CardTitle>
         {description && (
-          <CardDescription className="text-sm text-muted-foreground">
+          <CardDescription className="text-xs sm:text-sm text-muted-foreground">
             {description}
           </CardDescription>
         )}
@@ -30,18 +32,20 @@ export default function InterventionProgressCard({
         {data.map(({ label, value }) => (
           <div
             key={label}
-            className="flex items-center justify-between gap-2 w-full"
+            className="flex items-center justify-between gap-2 w-full min-w-0"
           >
-            <div className="w-24 text-sm truncate">{label}</div>
-            <div className="flex-1 mx-2 h-3 rounded-full overflow-hidden relative">
+            <div className="w-16 sm:w-24 text-xs sm:text-base truncate">
+              {label}
+            </div>
+            <div className="flex-1 mx-1 sm:mx-2 h-2 sm:h-3 rounded-full overflow-hidden relative">
               <div className={`absolute inset-0 ${backgroundColor}`} />
               <div
                 className={`absolute h-full ${barColor} rounded-full`}
                 style={{ width: `${value}%` }}
               />
             </div>
-            <div className="w-12 text-sm text-right font-medium">
-              {value.toString().padStart(2, "0")}% 
+            <div className="w-10 sm:w-12 text-xs sm:text-base text-right font-medium">
+              {value.toString().padStart(2, "0")}%
             </div>
           </div>
         ))}
@@ -49,5 +53,6 @@ export default function InterventionProgressCard({
     </Card>
   );
 }
+
 
 

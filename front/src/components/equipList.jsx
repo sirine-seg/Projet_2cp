@@ -63,4 +63,4 @@ const EquipList = ({
     );
 };
 
-export default EquipList
+export default EquipList;

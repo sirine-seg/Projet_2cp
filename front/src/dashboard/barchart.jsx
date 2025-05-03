@@ -78,7 +78,7 @@ const ChartCard = ({ data, title, description }) => {
                 <Tooltip
                   content={
                     <CustomTooltip
-                      valueFormatter={(value) => `${value} h`}
+                      valueFormatter={(value) => `${value} day`}
                       labelFormatter={(label) => `Category: ${label}`}
                     />
                   }

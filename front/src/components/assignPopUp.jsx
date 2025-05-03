@@ -15,11 +15,11 @@ export default function AssignPopUp({
     const query = searchQuery.toLowerCase().trim();
   
     // Construction du nom complet et autres champs
-    const fullName = `${tech.nom} ${tech.prenom}`.toLowerCase();
-    const fullNameReverse = `${tech.prenom} ${tech.nom}`.toLowerCase();
-    const email = tech.email?.toLowerCase() || "";
-    const poste = tech.poste?.toLowerCase() || "";
-    const role = tech.rolee?.toLowerCase() || "";
+    const fullName = `${tech.user.nom} ${tech.user.prenom}`.toLowerCase();
+    const fullNameReverse = `${tech.user.prenom} ${tech.nom}`.toLowerCase();
+    const email = tech.user.email?.toLowerCase() || "";
+    const poste = tech.user.poste?.toLowerCase() || "";
+    const role = tech.user.rolee?.toLowerCase() || "";
   
     // Filtrage selon la recherche
     return (
@@ -60,13 +60,13 @@ export default function AssignPopUp({
           {filtered.map((tech) => (
             <TechnicienAssign
            
-            key={tech.id}
-            nom={tech.nom} 
-            prenom={tech.prenom} 
-            poste={tech.poste}
-            role={tech.rolee} 
-              email={tech.email}
-              imageUrl={tech.photo}
+            key={tech.user.id}
+            nom={tech.user.nom} 
+            prenom={tech.user.prenom} 
+            poste={tech.user.poste}
+            role={tech.user.rolee} 
+              email={tech.user.email}
+              imageUrl={tech.user.photo}
             
               buttonTitle={buttonTitle}
               onAssign={() => onAssign(tech)}

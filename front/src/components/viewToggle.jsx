@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import viewList from '../assets/viewList.svg';
 import viewCard from '../assets/viewCard.svg';
 
-const ViewToggle = ({ onChange }) => {
-  const [view, setView] = useState("grid");
+const ViewToggle = ({  onChange, initialValue = "grid"  }) => {
+  const [view, setView] = useState(initialValue);
+  
+  useEffect(() => {
+    // Set initial value when component mounts
+    setView(initialValue);
+  }, [initialValue]);
 
   const handleClick = (newView) => {
     setView(newView);
