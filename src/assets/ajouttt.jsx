@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect } from "react";
 
 
@@ -21,11 +19,7 @@ import Headerbar from "../components/Arrowleftt";
 const AjoutPage = () => {
 
     
-    const [displayedUsers, setDisplayedUsers] = useState([]); // Stocke les utilisateurs affichés
-    const [filter, setFilter] = useState("Tout");  // setFilter(newValue) → C'est la fonction qui met à jour filter avec newValue. et on a fait tout car "Tout" est la valeur initiale de filter.
-    const [visibleCount, setVisibleCount] = useState(6);// Nombre d'utilisateurs affichés
-    const [selectedUser, setSelectedUser] = useState(null);// Utilisateur sélectionné pour modification
-    const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
+     const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
     const [menuOpen, setMenuOpen] = useState(null);   //  gérer l'ouverture et la fermeture d'un menu.
     const [searchTerm, setSearchTerm] = useState("");
     const [postesList, setPostesList] = useState([]);
@@ -60,7 +54,7 @@ const AjoutPage = () => {
 
     const handleAddUser = async () => {
         // Vérifier si tous les champs sont remplis
-        if ( !newUser.email || !newUser.telephone ) {
+        if ( !newUser.email  ) {
             setErrorMessage("Veuillez remplir tous les champs.");
             return;
           }
@@ -117,7 +111,13 @@ const AjoutPage = () => {
     useEffect(() => {
       const fetchPostes = async () => {
         try {
-          const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/');
+          const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/', {
+            method: "GET",
+            headers: {
+             // Authorization: `Token ${token}`,
+                "Content-Type": "application/json",
+            },
+        });
           if (!response.ok) throw new Error("Erreur lors du chargement des postes");
           const data = await response.json();
           setPostesList(data);
@@ -128,25 +128,7 @@ const AjoutPage = () => {
     
       fetchPostes();
     }, []);
-   // useEffect(() => {
-    //    const fetchUsers = async () => {  // On crée une fonction asynchrone  pour récupérer les données depuis le backend.
-         //   let url = "http://127.0.0.1:8000/api/user/?";
-
-         //   if (searchTerm) {
-         //       url += `search=${searchTerm}&`;  // Envoie la recherche à Django  si searchterm n'est pas vide, on ajoute un paramètre search= à l’URL.
-         //   }
-          //  if (filter !== "Tout") {
-          //      url += `role=${filter}&`;  // Filtre par rôle
-           // }
-
-           // const response = await fetch(url);  //  envoie vers le backend 
-           // const data = await response.json();
-           // setUsers(data); // Met à jour l’état users pour afficher les utilisateurs filtrés
-     //   };
-
-      //  fetchUsers();
- //   }, [searchTerm, filter]);  // a chaque fois que searchTerm ou filter change, React exécute fetchUsers().
-
+   
 
 
             useEffect(() => {
@@ -183,43 +165,10 @@ const AjoutPage = () => {
                            <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
                             Utilisateur
                            </h1>
-                           {/* bare de recherhce  */}    
-                 <SearchBar
-                   value={searchTerm}
-                   onChange={e => setSearchTerm(e.target.value)}
-                   placeholder="Rechercher (nom, email, rôle...)"
-                 />
-       
-       
-       
-       
-       
-                 {/*
+                        {/*
 
 
-              {/* Boutons de filtre – dans la partie bleue, au-dessus de la searchbar */}
-          <div className="mx-auto w-full max-w-4xl px-4 mt-4 -mt-8  flex justify-center">
-          <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar">
-    {roless.map((role) => (
-      <Filterbutton
-        key={role}
-        text={role}
-        selected={filter === role}
-        hasDropdown={role === "Technicien"} // ou autre logique si d’autres rôles ont un menu
-        isDropdownOpen={role === "Technicien" && isDropdownOpen}
-        onClick={() => {
-          if (role === "Technicien") {
-            setFilter(role);
-            setIsDropdownOpen(!isDropdownOpen);
-          } else {
-            setFilter(role);
-            setIsDropdownOpen(false);
-          }
-        }}
-      />
-    ))}
-  </div>
-</div>
+              {/*  */}
        
                     </div>
 
