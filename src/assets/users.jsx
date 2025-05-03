@@ -14,7 +14,7 @@ import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import AddMobile from "../components/addMobile";
 import PopupMessage from "../components/Popupcheck";
 import Filtre from "../components/filtrefleche";
-import SelectionToolbar from "../components/selectionToolBaru";
+import SelectionToolbar from "../components/selectionToolBar";
 import UserList from "../components/userList";
 import ViewToggle from "../components/viewToggle";
 import UserListHeader from "../components/userListHeader"
@@ -477,7 +477,7 @@ const allUsersSelected = selectedUserCount === users.length && users.length > 0;
             lastName={user.last_name}
             email={user.email}
             photo={user.photo}
-            previewUrl={previewUrl}
+         //   previewUrl={previewUrl}
             onClick={() => handleClick(user)}
             onMenuClick={() => setMenuOpen(menuOpen === user.id ? null : user.id)}
             isMenuOpen={menuOpen === user.id}
