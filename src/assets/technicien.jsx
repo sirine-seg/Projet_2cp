@@ -214,11 +214,11 @@ const AjoutPagee =  () => {
     "
   >
     <label htmlFor="photoUpload" className="w-full h-full cursor-pointer ">
-      {previewUrl ? (
-        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-      ) : user.photo ? (
-        <img
-          src={user.photo.startsWith("http") ? user.photo : `http://127.0.0.1:8000${user.photo}`}
+
+    {user.photo ? (
+          <img
+      
+          src={user.photo}
           alt="Utilisateur"
           className="w-full h-full object-cover"
         />
@@ -243,4 +243,3 @@ const AjoutPagee =  () => {
 };
 
 export default AjoutPagee;
-
