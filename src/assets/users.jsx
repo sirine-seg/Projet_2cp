@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useLocation } from "react-router-dom";
 import SearchBar from "../components/Searchbar"; 
 import Filterbutton from "../components/Filterbutton"; 
 import Header from "../components/Header";
@@ -19,6 +19,9 @@ import UserList from "../components/userList";
 import ViewToggle from "../components/viewToggle";
 import UserListHeader from "../components/userListHeader"
 import exportUsersToPDF from "../components/exportPdfuser";
+
+
+const VIEW_STORAGE_KEY = "usersPageView"; // Key for localStorage
 const UsersPage = () => {
     const [users, setUsers] = useState([]);  // Stocke tous les utilisateurs
     const [displayedUsers, setDisplayedUsers] = useState([]); // Stocke les utilisateurs affichés
@@ -46,14 +49,41 @@ const UsersPage = () => {
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [postesList, setPostesList] = useState([]);
     const [selectedPoste, setSelectedPoste] = useState("");
- const [isPopupVisiblebloque, setisPopupVisiblebloque] = useState(false);
+    const [isPopupVisiblebloque, setisPopupVisiblebloque] = useState(false);
     const [selected, setSelected] = useState(false);
     const [techniciens, setTechniciens] = useState([]);
+    const location = useLocation();
     const [filteredTechniciens, setFilteredTechniciens] = useState([]);
-    const [currentView, setCurrentView] = useState("grid"); // "list" ou "grid"
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [currentView, setCurrentView] = useState(() => {
+    const storedView = localStorage.getItem(VIEW_STORAGE_KEY);
+      return storedView || "grid"; // Default to "grid" if nothing is stored
+  });
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [returnToList, setReturnToList] = useState(false);
+ // Récupérer l'état de retour à la liste depuis l'historique de navigation
+ useEffect(() => {
+  if (location.state?.fromDetails && currentView === "list") {
+      setReturnToList(true);
+  } else {
+      setReturnToList(false);
+  }
+}, [location, currentView]);
+
+// Sauvegarder la préférence de vue dans le localStorage
+useEffect(() => {
+  localStorage.setItem(VIEW_STORAGE_KEY, currentView);
+}, [currentView]);
 
 // List view
+
+
+
+useEffect(() => {
+  const selected = users.filter(u => u.checked);
+  setSelectedUsers(selected);
+}, [users]);
+
+
 
 const handleUserToggle = (id) => {
   setUsers(users.map(user =>
@@ -69,15 +99,13 @@ const handleDeselectAllUsers = () => {
   setUsers(users.map(user => ({ ...user, checked: false })));
 };
 
+
+
+// 5. Action sur les utilisateurs sélectionnés
 const handleUserActionClick = () => {
   const selected = users.filter(u => u.checked);
   alert(`Action sur ${selected.length} utilisateur(s)`);
 };
-
-useEffect(() => {
-  const selected = users.filter(u => u.checked);
-  setSelectedUsers(selected);
-}, [users]);
 
 const handleExportPDF = () => {
   console.log("Exporting users to PDF...", selectedUsers);
@@ -386,7 +414,7 @@ const allUsersSelected = selectedUserCount === users.length && users.length > 0;
 
 
 
-                <div className="flex flex-wrap space-y-4 p-4">
+<div className="flex flex-wrap space-y-4 p-4">
 
   <div className="flex justify-between items-center w-full">
     {currentView === "list" && (
@@ -396,7 +424,8 @@ const allUsersSelected = selectedUserCount === users.length && users.length > 0;
                   allSelected={allUsersSelected}
                   onSelectAll={handleSelectAllUsers}
                   onDeselectAll={handleDeselectAllUsers}
- selectedEquipments ={selectedUsers} // Passer le tableau des utilisateurs sélectionnés
+                  onActionClick={handleUserActionClick}
+                  selectedEquipments ={selectedUsers} // Passer le tableau des utilisateurs sélectionnés
                 />
       </div>
     )}
@@ -409,17 +438,31 @@ const allUsersSelected = selectedUserCount === users.length && users.length > 0;
       {displayedUsers.map((user) => (
         <div key={user.id} className="relative w-full">
 
+<UserList
+        nom={user.first_name}
+        prenom={user.last_name}
+        email={user.email}
+        role={user.role}
+        imageUrl={user.photo}
+        checked={user.checked}
+        onToggle={() => handleUserToggle(user.id)}
+        user={user} // Passez l'objet utilisateur complet
+        onEditClick={handleEdit} // Passez la fonction handleEdit
+        onBlockClick={(userId) => { // Passez la fonction pour bloquer
+            setMenuOpen(null);
+            setSelectedUserId(userId);
+            setIsBlockPopupVisible(true);
+        }}
+        onUnblockClick={(userId) => { // Passez la fonction pour débloquer
+            setMenuOpen(null);
+            setSelectedUserId(userId);
+            setIsUnblockPopupVisible(true);
+        }}
+        setSelectedUserId={setSelectedUserId} // Passez setSelectedUserId
+        setIsBlockPopupVisible={setIsBlockPopupVisible} // Passez setIsBlockPopupVisible
+        setIsUnblockPopupVisible={setIsUnblockPopupVisible} // Passez setIsUnblockPopupVisible
+    />
 
-          <UserList
-            nom={user.first_name}
-            prenom={user.last_name}
-            email={user.email}
-            role={user.role}
-            imageUrl={user.imageUrl}
-            checked={user.checked}
-            onToggle={() => handleUserToggle(user.id)}
-            moreClick={() => console.log("Plus d'infos sur", user.last_name)}
-          />
         </div>
       ))}
     </div>
@@ -443,7 +486,7 @@ const allUsersSelected = selectedUserCount === users.length && users.length > 0;
             onBlockClick={() => {
               setMenuOpen(null);
               setSelectedUserId(user.id);
-              setIsBlockPopupVisible(true);
+              setIsBlockPopupVisible(true); 
             }}
             onUnblockClick={() => {
               setMenuOpen(null);
