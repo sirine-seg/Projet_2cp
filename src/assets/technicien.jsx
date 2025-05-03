@@ -2,15 +2,7 @@ import { useState, useEffect } from "react";
 import { MdEmail } from "react-icons/md";
 import { MdSearch } from "react-icons/md";
 import { MdAccountCircle } from "react-icons/md";
-
-import { FaChevronDown } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
-import { motion } from "framer-motion";
-
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import SearchBar from "../components/Searchbar"; // adapte le chemin selon ton arborescence
-import Filterbutton from "../components/Filterbutton"; // adapte le chemin selon ton arborescence
 import Header from "../components/Header";
 import AjouterButton from "../components/Ajouterbutton";
 import Button from "../components/buttonrectangle";
@@ -64,7 +56,14 @@ const AjoutPagee =  () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/`)
+      fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/`, {
+        method: "GET",
+        headers: {
+         // Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+        },
+    })
+
 
         // Modifier avec votre API
             .then((response) => response.json())
@@ -101,41 +100,8 @@ const AjoutPagee =  () => {
                            <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
                                Utilisateurs
                            </h1>
-                           {/* bare de recherhce  */}    
-                 <SearchBar
-                   value={searchTerm}
-                   onChange={e => setSearchTerm(e.target.value)}
-                   placeholder="Rechercher (nom, email, rôle...)"
-                 />
-       
-       
-       
-       
-       
-                 {/* Boutons de filtre – dans la partie bleue, au-dessus de la searchbar */}
-                 <div className="mx-auto w-full max-w-4xl px-4 mt-4 -mt-8  flex justify-center">
-                 <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar">
-           {roles.map((role) => (
-             <Filterbutton
-               key={role}
-               text={role}
-               selected={filter === role}
-               hasDropdown={role === "Technicien"} // ou autre logique si d’autres rôles ont un menu
-               isDropdownOpen={role === "Technicien" && isDropdownOpen}
-               onClick={() => {
-                 if (role === "Technicien") {
-                   setFilter(role);
-                   setIsDropdownOpen(!isDropdownOpen);
-                 } else {
-                   setFilter(role);
-                   setIsDropdownOpen(false);
-                 }
-               }}
-             />
-           ))}
-         </div>
-       </div>
-              
+                         
+                
                            </div>
        
        
@@ -196,25 +162,32 @@ const AjoutPagee =  () => {
             </div>
 
     
-      <div >
-  {/* Téléphone toujours visible */}
-  <div className="flex-1 w-full">
-    <DisplayContainer title="Téléphone" content={user.numero_tel || "Non renseigné"} />
-  </div>
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
 
- 
-  {/* Boutons visibles uniquement si l'utilisateur est un technicien */}
+
+
+
+
+
   {user.role?.toLowerCase() === "technicien" && (
-    <div className="flex gap-4 flex-wrap justify-start lg:justify-end ">
+    <div className="flex gap-4 flex-wrap  mr-4 order-1 sm:order-2">
       <Button
         text="Voir Tâches"
         bgColor="#F09C0A"
         onClick={() => navigate(`/Tacheechnicien/${id}`)}
+        className="mr-auto sm:mr-0" // Ajout de la classe pour aligner à gauche
       />
-    
     </div>
   )}
+  <div className="flex-1 w-full order-2 sm:order-1">
+    <DisplayContainer title="Téléphone" content={user.numero_tel || "Non renseigné"} />
+  </div>
+
+ 
+ 
 </div>
+
+
 
     </div>
   </div>
