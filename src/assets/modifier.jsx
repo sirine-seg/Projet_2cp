@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PopupMessage from "../components/Popupcheck";
@@ -27,7 +28,13 @@ const ModifierPagesss = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/`);
+        const response = await fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/`, {
+          method: "GET",
+          headers: {
+         // Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
         const data = await response.json();
 
         if (response.ok) {
@@ -57,7 +64,13 @@ const ModifierPagesss = () => {
   useEffect(() => {
     const fetchPostes = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/accounts/postes/");
+        const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/', {
+          method: "GET",
+          headers: {
+           // Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+          },
+      });
         if (!response.ok) throw new Error("Erreur lors du chargement des postes");
 
         const data = await response.json();
@@ -77,7 +90,7 @@ const ModifierPagesss = () => {
 
   const handleAddUser = async () => {
     // Vérifier si tous les champs sont remplis
-    if (!newUser.nom || !newUser.prenom || !newUser.email || !newUser.telephone) {
+    if (!newUser.nom || !newUser.prenom || !newUser.email ) {
       setErrorMessage("Veuillez remplir tous les champs.");
       return;
     }
@@ -244,4 +257,3 @@ const ModifierPagesss = () => {
 };
 
 export default ModifierPagesss;
-
