@@ -75,3 +75,19 @@ class EquipementSerializer(serializers.ModelSerializer):
 
     def get_localisation_nom(self, obj):
         return obj.localisation.nom if obj.localisation else None
+
+
+class EquipementChangeEtatSerializer(serializers.ModelSerializer):
+    etat_display = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Equipement
+        fields = ['etat', 'etat_display']
+
+    def validate_etat(self, value):
+        if not value:
+            raise serializers.ValidationError("L'état est requis.")
+        return value
+
+    def get_etat_display(self, obj):
+        return obj.etat.nom if obj.etat else None

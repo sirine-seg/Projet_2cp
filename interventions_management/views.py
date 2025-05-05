@@ -9,6 +9,8 @@ from equipements_management.models import EtatEquipement, Equipement
 from .models import InterventionPreventive, InterventionCurrative, Intervention, StatusIntervention
 from accounts_management.permissions import IsAdmin, IsTechnician, IsPersonnel
 from .serializers import InterventionPreventiveSerializer, InterventionCurrativeSerializer, InterventionSerializer, StatusInterventionSerializer
+from notifications_management.models import Notification
+from django.utils import timezone
 
 
 class InterventionDetailView(APIView):
@@ -157,7 +159,7 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
-
+        print(user.role)
         # Admin logic
         if IsAdmin().has_permission(self.request, self):
             try:
@@ -165,7 +167,27 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
             except StatusIntervention.DoesNotExist:
                 raise ValueError("Le statut 'affectée' n'existe pas.")
 
-            serializer.save(admin=user.admin, statut=statut)
+            intervention = serializer.save(
+                admin=user.admin, statut=statut, date_debut=timezone.now() +
+                timezone.timedelta(hours=1)
+            )
+
+            Notification.objects.create(
+                user=user.admin.user,
+                title="Nouvelle intervention curative créée",
+                related_intervention=intervention,
+                notification_type="assignment",
+                message=f"Une nouvelle intervention curative a été créée sur l'équipement {intervention.equipement.nom}.",
+            )
+            # Notification for all assigned techniciens
+            for technicien in intervention.technicien.all():
+                Notification.objects.create(
+                    user=technicien.user,
+                    title="Nouvelle intervention curative assignée",
+                    related_intervention=intervention,
+                    notification_type="assignment",
+                    message=f"Vous avez été assigné une nouvelle intervention sur l'équipement {intervention.equipement.nom}.",
+                )
 
             equipement = serializer.validated_data.get('equipement')
             try:
@@ -178,20 +200,23 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
 
         # Personnel logic
         elif IsPersonnel().has_permission(self.request, self):
+            print ("i am here")
             allowed_fields = ['id', 'user',
-                              'equipement', 'description', 'statut']
+                              'equipement', 'description', 'statut' , 'urgence' , 'type_intervention' , 'title']
             validated_data = {field: value for field, value in serializer.validated_data.items(
             ) if field in allowed_fields}
-
+            print (validated_data)
             for field in serializer.validated_data.keys():
+                print (field)
                 if field not in allowed_fields:
+                    print("field not in allowed_fields" , field)
                     raise PermissionDenied(
                         f"Le personnel ne peut pas définir le champ '{field}'.")
 
             statut, _ = StatusIntervention.objects.get_or_create(
                 name="en attente")
             serializer.save(user=user.personnel, statut=statut)
-
+            print ("i am here 2")
             equipement = serializer.validated_data.get('equipement')
             equipement_etat, _ = EtatEquipement.objects.get_or_create(
                 nom="En panne")
@@ -310,3 +335,31 @@ class StatusInterventionCreateView(generics.CreateAPIView):
         else:
             raise PermissionDenied(
                 "Seul un administrateur peut créer un statut d'intervention.")
+        
+
+class InterventionsByEquipementView(APIView):
+    """
+    View to retrieve all interventions for a specific equipment.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, equipement_id, *args, **kwargs):
+        # Retrieve the equipment instance using the correct field name
+        equipement = get_object_or_404(Equipement, id_equipement=equipement_id)
+
+        # Filter interventions related to the equipment
+        interventions = Intervention.objects.filter(
+            equipement=equipement).order_by('-date_debut')
+
+        # Serialize the interventions
+        serializer = InterventionSerializer(interventions, many=True)
+
+        # Return the response
+        return Response({
+            "equipement": {
+                "id": equipement.id_equipement,  # Use the correct field name
+                "nom": equipement.nom,
+                "etat": equipement.etat.nom,
+            },
+            "interventions": serializer.data
+        })

@@ -74,7 +74,7 @@ class Equipement(models.Model):
     )
     manuel = models.FileField(upload_to="manuals/", null=True, blank=True)
     image = models.ImageField(
-        upload_to="equipements_pics/", verbose_name="Photo équipement", null=True, blank=True
+        upload_to="images/", verbose_name="Photoéquipement", null=True, blank=True
     )
 
     def __str__(self):

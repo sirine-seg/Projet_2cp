@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Admin, Technicien, Personnel, User, Poste
-from .serializers import AdminSerializer, TechnicienSerializer, PersonnelSerializer, UserSerializer, PosteSerializer , AdminCreationSerializer , PersonnelCreationSerializer , TechnicienCreationSerializer
+from .serializers import AdminSerializer, TechnicienSerializer, PersonnelSerializer, UserSerializer, PosteSerializer , AdminCreationSerializer , PersonnelCreationSerializer , TechnicienCreationSerializer,TechnicienUpdateSerializer
 from .filters import UserFilter, TechnicienFilter
 from accounts_management.permissions import IsAdmin, IsTechnician, IsPersonnel
 from rest_framework.views import APIView
@@ -63,15 +63,28 @@ class AdminDetailView(generics.RetrieveAPIView):
 #    serializer_class = AdminSerializer
 #    permission_classes = [IsAdmin, IsAuthenticated]
 
-
-class AdminUpdateView(generics.UpdateAPIView):
+class UserUpdateView(generics.UpdateAPIView):
     """
-    API view to update an Admin account.
+    API view to update any User account.
     """
-    queryset = Admin.objects.all()
-    serializer_class = AdminSerializer
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
     lookup_field = 'id'
     permission_classes = [IsAdmin, IsAuthenticated]
+
+  #  def perform_update(self, serializer):
+      #  """
+       # Override perform_update to handle role changes.
+     #   """
+     #   user = serializer.save()
+      #  print(f"Updated user role: {user.role}")  # Debugging
+     #   if user.role == "Administrateur" and not Admin.objects.filter(user=user).exists():
+       #     Personnel.objects.filter(user=user).delete()
+       #     Admin.objects.create(user=user)
+      #  elif user.role == "Personnel" and not Personnel.objects.filter(user=user).exists():
+      #      Admin.objects.filter(user=user).delete()
+      #      Personnel.objects.create(user=user)
+
 
 
 # Technicien Views
@@ -104,17 +117,16 @@ class TechnicienDetailView(generics.RetrieveAPIView):
 #    serializer_class = TechnicienSerializer
 #    permission_classes = [IsAdmin, IsAuthenticated]
 
-
 class TechnicienUpdateView(generics.UpdateAPIView):
     """
     API view to update a Technicien account.
     """
     queryset = Technicien.objects.all()
-    serializer_class = TechnicienSerializer
-    lookup_field = 'id'
+    serializer_class = TechnicienUpdateSerializer
+   # lookup_field = 'id'
+    lookup_field = 'user_id'
+    lookup_url_kwarg ='id'
     permission_classes = [IsTechnician | IsAdmin, IsAuthenticated]
-
-
 # Personnel Views
 class PersonnelListView(generics.ListAPIView):
     """
@@ -144,14 +156,6 @@ class PersonnelDetailView(generics.RetrieveAPIView):
 #    permission_classes = [IsAdmin, IsAuthenticated]
 
 
-class PersonnelUpdateView(generics.UpdateAPIView):
-    """
-    API view to update a Personnel account.
-    """
-    queryset = Personnel.objects.all()
-    serializer_class = PersonnelSerializer
-    lookup_field = 'id'
-    permission_classes = [IsPersonnel | IsAdmin, IsAuthenticated]
 
 
 # Poste Views
@@ -166,16 +170,17 @@ class PosteCreateView(generics.CreateAPIView):
 
 class UserCreationAPIView (generics.CreateAPIView):
     queryset = User.objects.all()
-    permission_classes = [AllowAny]  # This allows any user, authenticated or not
+    permission_classes = [AllowAny] # This allows any user, authenticated or not
     def get_serializer_class(self):
         role = self.request.data.get("role")
-        if   role == "Technicien": return TechnicienCreationSerializer
-        elif role == "Personnel":  return PersonnelCreationSerializer
-        else:                      return AdminCreationSerializer
+        if role == "Technicien": return TechnicienCreationSerializer
+        elif role == "Personnel": return PersonnelCreationSerializer
+        else: return AdminCreationSerializer
 
+  
 # this view is used to block or unblock the user
 class BlockUserView(APIView):
-    #permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAdminUser]
 
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
@@ -224,3 +229,15 @@ class MeAPIView (generics.RetrieveAPIView):
         elif user.role == User.PERSONNEL:
             return Personnel.objects.filter (user=  user).first ()  # ← likewise
         return Admin.objects.filter (user = user).first ()  # ← likewise
+    
+
+
+
+
+class PosteListView(generics.ListAPIView):
+    """
+  API view to list all Poste objects.
+    """
+    queryset = Poste.objects.all()
+    serializer_class = PosteSerializer
+    permission_classes = [IsAdmin, IsAuthenticated]

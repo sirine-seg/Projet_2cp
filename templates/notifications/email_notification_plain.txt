@@ -1,0 +1,20 @@
+{{ notification.title }}
+
+Bonjour {{ notification.user.first_name }},
+
+{{ notification.message }}
+
+{% if intervention %}
+Intervention Details:
+- Équipement: {{ intervention.equipement.nom }}
+- Date de début: {% if intervention.date_debut %}{{ intervention.date_debut|date:"d/m/Y H:i" }}{% else %}Non défini{% endif %}
+- Type d'intervention: {{ intervention.get_type_intervention_display }}
+- Urgence: {{ intervention.get_urgence_display }}
+{% endif %}
+
+{% if notification.url %}
+Voir les détails: {{ frontend_url }}{{ notification.url }}
+{% endif %}
+
+Cette notification a été envoyée par ESI Track.
+Si vous avez des questions, veuillez contacter l'administrateur.

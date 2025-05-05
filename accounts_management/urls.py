@@ -1,16 +1,16 @@
 from django.urls import path
 from .views import (
-    UserListView, UserDetailView,
-    AdminListView, AdminDetailView,
+    UserListView, UserDetailView,UserUpdateView,
+    AdminListView, AdminDetailView,TechnicienUpdateView,
     TechnicienListView, TechnicienDetailView,
     PersonnelListView, PersonnelDetailView, PosteCreateView, UserCreationAPIView,
-    BlockUserView, UnblockUserView, MeAPIView
+    BlockUserView, UnblockUserView, MeAPIView, PosteListView,
 )
 
 urlpatterns = [
     path('users/', UserListView.as_view(), name='user-list'),
     path('users/<int:id>/', UserDetailView.as_view(), name='user-detail'),
-
+    path('users/<int:id>/update/', UserUpdateView.as_view(), name='user-update'),
     path('postes/create/', PosteCreateView.as_view(), name='poste-create'),
 
     path('admins/', AdminListView.as_view(), name='admin-list'),
@@ -22,6 +22,9 @@ urlpatterns = [
          name='technicien-detail'),
     #path('techniciens/create/', TechnicienCreateView.as_view(),
          #name='technicien-create'),
+    path('techniciens/<int:id>/update/', TechnicienUpdateView.as_view(),
+         name='technicien-update'),
+
 
     path('personnels/', PersonnelListView.as_view(), name='personnel-list'),
     path('personnels/<int:id>/', PersonnelDetailView.as_view(),
@@ -33,4 +36,5 @@ urlpatterns = [
     path('user/<int:pk>/block/', BlockUserView.as_view(), name='user-block'),
     path('users/<int:pk>/unblock/', UnblockUserView.as_view(), name='user-unblock'),
     path ('me/'  , MeAPIView.as_view(), name='me'),
+    path('postes/', PosteListView.as_view(), name='poste-list'),
 ]

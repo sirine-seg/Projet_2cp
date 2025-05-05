@@ -5,6 +5,7 @@ from .views import (
     EquipementCreateView,
     EquipementUpdateView,
     EquipementDeleteView,
+    EquipementChangeEtatView,
     EtatEquipementListView,
     EtatEquipementCreateView,
     EtatEquipementUpdateView,
@@ -34,6 +35,8 @@ urlpatterns = [
          EquipementUpdateView.as_view(), name='equipement-update'),
     path('equipement/<int:id_equipement>/delete/',
          EquipementDeleteView.as_view(), name='equipement-delete'),
+    path('equipement/<int:id_equipement>/change-etat/',
+         EquipementChangeEtatView.as_view(), name='equipement-change-etat'),
 
     # EtatEquipement URLs
     path('etat/', EtatEquipementListView.as_view(), name='etat-list'),

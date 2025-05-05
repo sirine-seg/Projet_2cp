@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'equipements_management',
     'interventions_management',
     'notifications_management',
-    'stats',
     'phonenumber_field',
     'allauth',
     'allauth.account',
@@ -59,7 +58,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     "corsheaders" ,
     'dj_rest_auth',
-    'dj_rest_auth.registration'
+    'dj_rest_auth.registration' ,
+    'drf_yasg',
+    'stats'
 ]
 
 SPAGHETTI_SAUCE = {
@@ -164,7 +165,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'accounts_management.permissions.IsNotBlockedUser',
-        'rest_framework.permissions.IsAuthenticated',
+        #'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
@@ -182,11 +183,9 @@ REST_AUTH = {
     'USE_JWT' : True  ,
     'JWT_AUTH_COOKIE' : 'my-app-auth' ,
     'JWT_AUTH_REFRESH_COOKIE' : 'my-refresh-token' ,
-    'JWT_AUTH_SAMESITE ' : "None" ,
-    'JWT_AUTH_SECURE' : True  ,
-    'JWT_AUTH_HTTPONLY':False
-
-
+    'JWT_AUTH_SAMESITE ' : 'None' ,
+    'JWT_AUTH_SECURE' : False  ,
+    'JWT_AUTH_HTTPONLY':True
 }
 
 #SOCIALACCOUNT_PROVIDERS = {
@@ -238,3 +237,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'esitrack@esi.dz'  # Replace with your email address
 EMAIL_HOST_PASSWORD = 'fhol grax wgpt rrbt '  # Replace with your email password
+FRONTEND_URL = "http://localhost:3000/"  # Replace with your actual frontend URL

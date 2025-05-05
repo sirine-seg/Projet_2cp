@@ -1,16 +1,17 @@
 import django_filters
-from .models import User, Technicien
-
+from .models import User, Technicien,Poste
 
 class UserFilter(django_filters.FilterSet):
     """
-    Filter for User model to filter by role.
+    Filter for User model to filter by role and poste.
     """
     role = django_filters.ChoiceFilter(choices=User.ROLE_CHOICES)
+    poste = django_filters.ModelChoiceFilter(queryset=Poste.objects.all(), field_name='technicien__poste')
+    disponibilite = django_filters.BooleanFilter(field_name='technicien__disponibilite')
 
     class Meta:
         model = User
-        fields = ['role']
+        fields = ['role', 'poste']
 
 
 class TechnicienFilter(django_filters.FilterSet):

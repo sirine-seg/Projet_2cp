@@ -37,8 +37,8 @@ class UserCountAPIView(APIView):
 # this view is for the number of interventions by mounths
 class InterventionsByMonthAPIView(APIView):
     def get(self, request):
-        # Annotate interventions by month (using date_debut)
-        interventions = Intervention.objects.annotate(
+        # Filter out interventions with no date_debut
+        interventions = Intervention.objects.filter(date_debut__isnull=False).annotate(
             month=TruncMonth('date_debut')
         ).values('month').annotate(
             preventive_count=Count('id', filter=Q(type_intervention=Intervention.TYPE_PREVENTIVE)),
@@ -49,7 +49,7 @@ class InterventionsByMonthAPIView(APIView):
         response_data = []
         for item in interventions:
             response_data.append({
-                'month': item['month'].strftime('%Y-%m'),  # Format YYYY-MM
+                'month': item['month'].strftime('%Y-%m'),
                 'preventive_count': item['preventive_count'],
                 'currative_count': item['currative_count']
             })

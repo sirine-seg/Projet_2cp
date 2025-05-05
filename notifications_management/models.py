@@ -9,7 +9,7 @@ class Notification(models.Model):
     """
 
     NOTIFICATION_TYPES = (
-        ('assignment', 'Nouvelle Intervention Assignée'),
+        ('assignment', 'Nouvelle Intervention AssignÃ©e'),
         ('reminder', "Rappel d'Intervention"),
     )
 
@@ -19,6 +19,10 @@ class Notification(models.Model):
         related_name="notifications"
     )
     title = models.CharField(max_length=255)
+    related_intervention = models.ForeignKey(
+        'interventions_management.Intervention',
+        on_delete=models.CASCADE, blank=True, null=True
+    )
     notification_type = models.CharField(
         max_length=10, choices=NOTIFICATION_TYPES
     )
@@ -26,7 +30,6 @@ class Notification(models.Model):
     created_at = models.DateTimeField(default=now)
     is_read = models.BooleanField(default=False)
     url = models.URLField(blank=True, null=True)
-    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Notification for {self.user.email}: {self.title}"
@@ -36,11 +39,4 @@ class Notification(models.Model):
         Mark the notification as read.
         """
         self.is_read = True
-        self.save()
-
-    def toggle_active(self):
-        """
-        Toggle the active state of the notification.
-        """
-        self.is_active = not self.is_active
         self.save()
