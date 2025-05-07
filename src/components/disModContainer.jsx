@@ -43,7 +43,7 @@ export default function DisModContainer({
                 selected={startDate}
                 onChange={handleDateChange}
                 showTimeSelect
-                dateFormat="yyyy-MM-dd HH:mm"
+                dateFormat="yyyy-MM-dd "
                 timeFormat="HH:mm"
                 timeIntervals={15}
                 timeCaption="Heure"

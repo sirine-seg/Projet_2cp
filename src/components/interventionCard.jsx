@@ -7,17 +7,17 @@ import calendar from '../assets/calendar.svg';
 
 const InterventionCard = ({ nom, urgence, statut, id, equipement, date, onClick, moreClick }) => {
   const urgenceColors = {
-    "Urgence vitale": "#F09C0A",
-    "Urgence élevée": "#20599E",
-    "Urgence modérée": "#FF4423",
+    "Urgence vitale": "#FF4423",
+    "Urgence élevée": "#F09C0A",
+    "Urgence modérée": "#20599E",
     "Faible urgence": "#49A146",
   };
     
   const statusColors = {
-    "Affecte": "#F09C0A",
-    "En cours": "#20599E",
-    "En attente": "#FF4423",
-    "Terminé": "#49A146",
+    "affectée": "#F09C0A",
+    "en cours": "#20599E",
+    "en attente": "#FF4423",
+    "terminée": "#49A146",
   };
 
   const handleMoreClick = (e) => {

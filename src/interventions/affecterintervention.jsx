@@ -172,7 +172,7 @@ const addTechnicien = (technicien) => {
                 date_fin: selectedDate, 
               };
           
-              const response = await fetch(`http://127.0.0.1:8000/api/interventions/interventions/currative/update/${id_intervention}/  `, {
+              const response = await fetch(`http://127.0.0.1:8000/api/interventions/interventions/affecter/${id_intervention}/  `, {
                 method: "PATCH",
                 headers: {
                   "Content-Type": "application/json",
@@ -226,7 +226,7 @@ const addTechnicien = (technicien) => {
     }
 
     return (
-                 <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
+                 <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E]">
                                    
                                {/* Logo en haut à gauche */}
                                <Header />
@@ -236,10 +236,10 @@ const addTechnicien = (technicien) => {
                               
                               
                                                   {/* En-tête */}
-                                                  <div className="w-full bg-[#20599E] text-white py-16 text-center">
+                                                  <div className="w-full bg-[#20599E] text-white pb-16 text-center">
                                                  
-                                                  <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
-                                                 Intervention
+                                                  <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4">
+                                                 Interventions
                                                   </h1>
                                                   {/* bare de recherhce  
                                       <SearchBar

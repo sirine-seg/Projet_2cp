@@ -1,6 +1,6 @@
-
 import { useState } from "react";
-import Options from "./options"
+import Options from "./options";
+import HorizontalDropdown from "./horizontalDropdown";
 
 export default function ChoiceContainer({
   title,
@@ -8,8 +8,8 @@ export default function ChoiceContainer({
   selectedOption = "",
   onSelect = () => {},
   placeholder = "--",
-  bgColor="bg-white",
-  maxWidth="max-w-xs",
+  bgColor = "bg-white",
+  maxWidth = "max-w-xs",
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -29,7 +29,9 @@ export default function ChoiceContainer({
           open={isOpen}
           onToggle={(e) => setIsOpen(e.target.open)}
         >
-          <summary className={`flex w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[0.8125rem] font-regular font-poppins justify-between ${bgColor} transition-colors duration-200 focus:outline-0 focus:ring-0`}>
+          <summary
+            className={`flex w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[0.8125rem] font-regular font-poppins justify-between ${bgColor} transition-colors duration-200 focus:outline-0 focus:ring-0`}
+          >
             <span>{selectedOption || placeholder}</span>
             <svg
               className="h-5 w-5 text-gray-400 transition-transform duration-200"
@@ -44,7 +46,11 @@ export default function ChoiceContainer({
               />
             </svg>
           </summary>
-          <Options options={options} handleSelect={handleSelect} />
+          {title === "Localisation" || title === "Type" ? (
+            <HorizontalDropdown options={options} handleSelect={handleSelect} />
+          ) : (
+            <Options options={options} handleSelect={handleSelect} />
+          )}
         </details>
       </div>
     </div>

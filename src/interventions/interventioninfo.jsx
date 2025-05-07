@@ -20,9 +20,9 @@ import AjouterButton from "../components/Ajouterbutton";
 import Buttonrec from "../components/buttonrectangle";
 import Popupdelete from "../components/Popupdelet";
 import Options from "../components/options";
-import InterventionCard from "../components/InterventionCard"; 
+import InterventionCard from "../components/interventionCard.jsx";
 import PopupMessage from "../components/Popupcheck";
-import PopupChange from "../components/PopupChange";
+import PopupChange from "../components/popupChange.jsx";
 import Headerbar from "../components/Arrowleftt";
 import DisplayContainer from "../components/displayContainer";
 import InfoIntervUser from "../components/infoIntervUser";
@@ -56,7 +56,10 @@ const Userspageee= () => {
 
 const { id } = useParams(); // Récupère l'ID depuis l'URL
 const [intervention, setIntervention] = useState(null);
-// Appel des hooks TOUJOURS EN HAUT
+
+// integration de fetch des detail  :
+
+
 useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".menu-container")) {
@@ -67,34 +70,42 @@ useEffect(() => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
   
-  // L'autre useEffect aussi
-  useEffect(() => {
-    const fetchIntervention = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:8000/api/interventions/interventions/${id}/`);
-        if (!response.ok) throw new Error("Erreur lors du chargement");
-        const data = await response.json();
-        setIntervention(data);
-      } catch (error) {
-        console.error("Erreur :", error);
-      }
-    };
-  
-    fetchIntervention();
-  }, [id]);
-  
-        
-    
-       
-   
-    
-    
-     
-    
-      
-        
-    
-  const urgenceColors = {
+  // L'autre useEffect aussinpm 
+    useEffect(() => {
+        const fetchIntervention = async () => {
+            try {
+                const accessToken = localStorage.getItem("access_token");
+                const response = await fetch(`http://127.0.0.1:8000/api/interventions/interventions/${id}/`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
+                    },
+                });
+                if (!response.ok) throw new Error("Erreur lors du chargement");
+                const data = await response.json();
+                setIntervention(data);
+            } catch (error) {
+                console.error("Erreur :", error);
+            }
+        };
+
+        fetchIntervention();
+    }, [id]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const urgenceColors = {
     "tres urgent": "bg-[#F09C0A] ",
     "urgence moyenne": "bg-[#20599E] ",
     "Urgence critique": "bg-[#FF4423] ",
@@ -114,7 +125,7 @@ const statusColors = {
 
       
             return (
-              <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
+              <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E]">
                     
               {/* Logo en haut à gauche */}
               <Header />
@@ -126,29 +137,11 @@ const statusColors = {
                   
                                   {/* bare de recherhce  */}    
                       
-                                  <div className="w-full bg-[#20599E] text-white py-16 text-center">
-                                  <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
-                                 Intervention
+                                  <div className="w-full bg-[#20599E] text-white pb-16 text-center">
+                                  <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-6">
+                                 Interventions
                                   </h1>
-                    {/* Barre de recherche */}
-                
-
-                
-                    <div className="flex justify-center space-x-6 my-4">
-   {["Tout", "Curative", "Préventive"].map((category) => (
-       <button
-           key={category}
-           className={`text-lg font-semibold pb-1 transition duration-300 ${
-               filter === category ? "text-white underline" : "text-white"
-           }`}
-           onClick={() => setFilter(category)}
-       >
-           {category}
-       </button>
-   ))}
-
-
-</div>  
+                    {/* Barre de recherche */} 
 
 </div>  
 
@@ -156,208 +149,150 @@ const statusColors = {
  
 
   {intervention && (
-    <>
+  <>
     <div className="w-full">
-        <Headerbar
-          title={`Intervention #${intervention.id}`}
-          showPen={false} // If you want to show an edit button
-        />
-        {/* The rest of your content */}
-      </div>
-
-      {/* Première ligne : Equipement + Urgence */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-2 mb-2">
-      
-
-
-      <DisplayContainer
-  title="Type de l'intervention"
-  content={intervention.type_intervention || "---"}
-   className=" px-8"
-/>
-
-
-
-
-      <DisplayContainer
-  title="Équipement"
-  content={
-    <div className="flex items-center text-black">
-      {/* Image du Cube */}
-      <img src={cube} alt="Cube" className="w-5 h-5 flex-shrink-0 mr-2" />
-      
-      {/* Nom de l'équipement */}
-      <span className="mr-2">{intervention.equipement_name}</span>
-      
-      {/* Numéro d'équipement */}
-      <span className="font-semibold">{`#${intervention.equipement}`}</span>
+      <Headerbar
+        title={`Intervention #${intervention.id}`}
+        showPen={false}
+      />
     </div>
 
-   
-  }
-   className=" px-8"
-/>
-
-
-
-
+    {/* Conteneur principal à deux colonnes */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 px-8 mt-6">
+      {/* Colonne de gauche */}
+      <div className="space-y-6">
+        {/* Type */}
         <DisplayContainer
-  title="Urgence"
-  content={intervention?.urgence_display || "---"}
-   className=" px-8"
-/>
-      </div>
+          title="Type de l'intervention"
+          content={intervention.type_intervention || "---"}
+        />
 
-      {/* Deuxième ligne : Technicien(s) + Statut */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4  mb-2">
-      <DisplayContainer
-                title="Technicien(s)"
-                content={
-                  Array.isArray(intervention?.technicien_name) && intervention.technicien_name.length > 0 ? (
-                    intervention.technicien_name.map((name, index) => (
-                      <InfoIntervUser
-                        key={index}
-                        nom={name}
-                        prenom="" // Le prénom n'est pas directement disponible dans ce serializer
-                        email={intervention?.technicien_email?.[index] || "---"}
-                        // imageUrl={/* Gérer l'image si disponible */}
-                     //   poste=""
-                      />
-                    ))
-                  ) : (
-                    <InfoIntervUser
-                      nom={intervention?.technicien_name?.[0] || intervention?.technicien_name || "---"}
-                      prenom=""
-                      email={intervention?.technicien_email?.[0] || intervention?.technicien_email || "---"}
-                    //  poste="Technicien"
-                    />
-                  )
-                }
-                className=" px-8"
+        {/* Urgence */}
+        <DisplayContainer
+          title="Urgence"
+          content={intervention?.urgence_display || "---"}
+        />
+
+        {/* Technicien(s) */}
+        <DisplayContainer
+          title="Technicien(s)"
+          content={
+            Array.isArray(intervention?.technicien_name) && intervention.technicien_name.length > 0 ? (
+              intervention.technicien_name.map((name, index) => (
+                <InfoIntervUser
+                  key={index}
+                  nom={name}
+                  prenom=""
+                  email={intervention?.technicien_email?.[index] || "---"}
+                />
+              ))
+            ) : (
+              <InfoIntervUser
+                nom={intervention?.technicien_name?.[0] || intervention?.technicien_name || "---"}
+                prenom=""
+                email={intervention?.technicien_email?.[0] || intervention?.technicien_email || "---"}
               />
+            )
+          }
+        />
 
+        {/* Déclarée par (uniquement pour currative) */}
+        {intervention.type_intervention === 'currative' && (
+          <DisplayContainer
+            title="Déclarée par"
+            content={
+              <InfoIntervUser
+                nom={intervention.user_name || "---"}
+                prenom=""
+                email={intervention.user_email || "---"}
+                imageUrl={intervention.image_declarant}
+              />
+            }
+          />
+        )}
 
+        {/* Admin */}
         <DisplayContainer
-  title="Statut"
-  content={intervention?.statut_display || "---"}
-   className=" px-8"
-/>
-
-
+          title="Admin"
+          content={
+            <InfoIntervUser
+              nom={intervention?.admin_name}
+              email={intervention?.admin_email}
+              imageUrl={intervention?.admin?.photo}
+            />
+          }
+        />
       </div>
 
-      {/* Troisième ligne : Date Début + Date Fin */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-12 gap-x-2 mb-2">
-      {intervention.type_intervention === 'currative' && (
-  <>
-    <DisplayContainer
-      title="Déclarée par"
-      content={
-        <InfoIntervUser
-          nom={intervention.user_name|| "---"}
-          prenom="" // pas de prénom dispo pour le moment
-          email={intervention.user_email || "---"}
-          imageUrl={intervention.image_declarant}
+      {/* Colonne de droite */}
+      <div className="space-y-6">
+        {/* Équipement */}
+        <DisplayContainer
+          title="Équipement"
+          content={
+            <div className="flex items-center text-black">
+              <img src={cube} alt="Cube" className="w-5 h-5 flex-shrink-0 mr-2" />
+              <span className="mr-2">{intervention.equipement_name}</span>
+              <span className="font-semibold">{`#${intervention.equipement}`}</span>
+            </div>
+          }
         />
-      }
-      className="px-8"
-    />
 
-    <DisplayContainer
-      title="Date fin"
-      content={
-        <input
-          type="date"
-          value={intervention.date_fin?.slice(0, 10) || ""}
-          disabled
-          className="bg-white outline-none w-full"
+        {/* Statut */}
+        <DisplayContainer
+          title="Statut"
+          content={intervention?.statut_display || "---"}
         />
-      }
-      className="px-8"
-    />
+
+        {/* Date début */}
+        <DisplayContainer
+          title="Date début"
+          content={
+            <input
+              type="date"
+              value={intervention?.date_debut?.slice(0, 10) || ""}
+              disabled
+              className="bg-white outline-none w-full"
+            />
+          }
+        />
+
+        {/* Date fin (uniquement pour currative) */}
+        {intervention.type_intervention === 'currative' && (
+          <DisplayContainer
+            title="Date fin"
+            content={
+              <input
+                type="date"
+                value={intervention.date_fin?.slice(0, 10) || ""}
+                disabled
+                className="bg-white outline-none w-full"
+              />
+            }
+          />
+        )}
+
+        {/* Période (uniquement pour preventive) */}
+        {intervention.type_intervention === 'preventive' && (
+          <DisplayContainer
+            title="Période (durée)"
+            content={intervention.period || "---"}
+          />
+        )}
+
+        {/* Description */}
+        <DisplayContainer
+          title="Description"
+          content={
+            <div className="min-h-[80px] p-2 rounded-md">
+              {intervention?.description || "---"}
+            </div>
+          }
+        />
+      </div>
+    </div>
   </>
 )}
-
-
-        <DisplayContainer
-  title="Date début"
-  content={
-    <input
-      type="date"
-      value={intervention?.date_debut?.slice(0, 10) || ""}
-      disabled
-      className="bg-white outline-none w-full"
-    />
-  }
-   className=" px-8"
-/>
-
-
-
-     
-      
-      </div>
-
-      {/* Quatrième ligne : Déclarée par + Admin */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-1 mb-2">
-       
-
-      <DisplayContainer
-  title="Admin"
-  content={
-    <InfoIntervUser
-      nom={intervention?.admin_name}
-     // prenom={intervention?.admin?.first_name}
-      email={intervention?.admin_email}
-      imageUrl={intervention?.admin?.photo}
-   
-    />
-  }
-   className=" px-8"
-/>
-
-
-{intervention.type_intervention === 'preventive' && (
-  <DisplayContainer
-    title="Période (durée)"
-    content={intervention.period || "---"}
-    className="px-8"
-  />
-)}
-
-
-      
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-2 mb-2">
-      <div></div>
-      <DisplayContainer
-  title="Description"
-  content={intervention?.description || "---"}
-   className=" px-8"
-/>
-</div>
-
-      {/* Plus d'infos : Actions & Pièces */}
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold text-black mb-4">Plus d'Infos :</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-2 mb-2">
-        <DisplayContainer
-  title="Actions Effectuées"
-  content={intervention?.notes || "---"}
-   className=" px-8"
-/>
-
-<DisplayContainer
-  title="Pièces remplacées"
-  content={intervention?.pieces || "---"}
-   className=" px-8"
-/>
-
-        </div>
-      </div>
-    </>
-  )}
 
   
        
@@ -367,4 +302,3 @@ const statusColors = {
         };
         
         export default Userspageee;
-        

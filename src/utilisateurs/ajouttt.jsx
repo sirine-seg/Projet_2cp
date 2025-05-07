@@ -189,7 +189,7 @@ const AjoutPage = () => {
              
                     <div className="w-full max-w-5xl mx-auto mt-12 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
 
-
+<div className="mt-2">
   <ChoiceContainer
   title="Rôle"
   options={[
@@ -214,6 +214,7 @@ const AjoutPage = () => {
     onSelect={(val) => setNewUser({ ...newUser, poste: val })}
   />
 )}
+</div>
 
 
 

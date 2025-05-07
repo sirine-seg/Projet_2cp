@@ -123,7 +123,7 @@ export default function PieChartBase({
                     <ul className="flex flex-col gap-2 justify-center">
                       {payload?.map((entry, index) => {
                         const item = data.find((d) => d[nameKey] === entry.value)
-                        const percentage = item ? `${item[valueKey]}%` : ""
+                        const percentage = item ? `${item[valueKey]}` : ""
                         return (
                           <li
                             key={`item-${index}`}

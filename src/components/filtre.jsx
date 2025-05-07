@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import chevronFiltre from "../assets/chevronFiltre.svg";
 import FiltrePopUp from "./FiltrePopUp"; // Import the dropdown component
 
@@ -13,12 +13,18 @@ const Filtre = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const [alignRight, setAlignRight] = useState(false);
+  const buttonRef = useRef(null);
+
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
 
   const handleClose = () => {
-    setIsOpen(false);
+    if (!isOpen) {
+      // Only open if closed
+      setIsOpen(true);
+    }
   };
 
   const handleOptionSelect = (option) => {
@@ -26,9 +32,20 @@ const Filtre = ({
     setIsOpen(false); // Close the dropdown after selection
   };
 
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const screenMidpoint = window.innerWidth / 2;
+      setAlignRight(rect.right > screenMidpoint );
+    }
+  }, [isOpen]);
+
   return (
-    <div className="relative flex-shrink-0"> {/* Added flex-shrink-0 */}
+    <div className="relative flex-shrink-0">
+      {" "}
+      {/* Added flex-shrink-0 */}
       <button
+        ref={buttonRef}
         onClick={handleClick}
         className={`
           flex items-center justify-between gap-1 sm:gap-2
@@ -49,7 +66,10 @@ const Filtre = ({
           color: textColor,
         }}
       >
-        <span className="font-semibold truncate text-xxs sm:text-xs">{label}</span> {/* Even smaller label text on mobile */}
+        <span className="font-semibold truncate text-xxs sm:text-xs">
+          {label}
+        </span>{" "}
+        {/* Even smaller label text on mobile */}
         <img
           src={chevronFiltre}
           alt="Chevron"
@@ -58,7 +78,6 @@ const Filtre = ({
           }`}
         />
       </button>
-
       {/* Conditionally render the dropdown */}
       {isOpen && (
         <FiltrePopUp
@@ -66,6 +85,7 @@ const Filtre = ({
           options={options}
           onSelect={handleOptionSelect}
           onClose={handleClose}
+          alignRight={alignRight}
         />
       )}
     </div>

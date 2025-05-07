@@ -127,14 +127,6 @@ const Header = ({ bleu = false }) => {
     fetchUserProfile();
   }, []);
 
-  if (loading) {
-    return (
-        <div className="w-full min-h-screen flex items-center justify-center bg-[#20599E]">
-          <div className="text-white text-lg">Loading profile...</div>
-        </div>
-    );
-  }
-
   if (error) {
     return (
         <div className="w-full min-h-screen flex items-center justify-center bg-[#20599E]">
@@ -154,7 +146,7 @@ const Header = ({ bleu = false }) => {
           <img 
             src={bleu ? menuBlue : menu} 
             alt="Menu"
-            className="w-12 sm:w-16 h-12 sm:h-16"
+            className="w-12 sm:w-16 h-12 sm:h-16 cursor-pointer"
           />
         </button>
         <img 

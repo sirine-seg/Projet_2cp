@@ -518,7 +518,7 @@ const EquipementsPage = () => {
           placeholder="Rechercher (nom, code inventaire...)"
         />
         <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center">
-          <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar pb-2">
+          <div className="flex flex-nowrap space-x-2 no-scrollbar pb-2">
             <Filtre
               label={`Catégorie${filters['categorie__nom'] ? `: ${filters['categorie__nom']}` : ''}`}
               options={categories}

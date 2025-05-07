@@ -2,33 +2,44 @@ import React from "react";
 import CustomCheckbox from "./customCheckbox";
 import upload from "../assets/upload.svg";
 import quitter from "../assets/quitter.svg";
-import exportToPDF from "./exportPdfuser";
+import exportToPDF from "./exportPdfInter";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import excelExport from "../assets/excelExport.svg"
-const SelectionToolbar = ({
+const SelectionToolbarInter = ({
   selectedCount,
   allSelected,
   onSelectAll,
   onDeselectAll,
-  selectedEquipments, // <-- this should be passed as a prop
+  selectedInterventions, // <-- this should be passed as a prop
 }) => {
   if (selectedCount === 0) return null;
   const handleExportExcel = () => {
-    const selectedData = selectedEquipments.filter((e) => e.checked);
+    const selectedData = selectedInterventions.filter((e) => e.checked);
 
     console.log("Selected Data to Export:", selectedData);
 
-    const dataToExport = selectedData.map((user) => ({
-      Nom: user.first_name || "N/A",
-      Prénom: user.last_name || "N/A",
-      Email: user.email || "N/A",
-      Rôle: user.role || "N/A"
+    const dataToExport = selectedData.map((i) => ({
+      ID: i.id,
+      Type_Intervention: i.type_intervention,
+      Type_Intervention_Display: i.type_intervention_display,
+      Titre: i.title,
+      Equipement_ID: i.equipement,
+      Equipement_Nom: i.equipement_name,
+      Technicien: i.technicien_name || "Non assigné",
+      Email_Technicien: i.technicien_email || "N/A",
+      Admin: i.admin_name || "N/A",
+      Email_Admin: i.admin_email || "N/A",
+      Urgence: i.urgence_display,
+      Date_Debut: i.date_debut || "Non définie",
+      Statut: i.statut_display || "Non défini",
+      Description: i.description || "Aucune description",
+      Notes: i.notes || "Aucune note"
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Utilisateurs");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Équipements");
 
     const excelBuffer = XLSX.write(workbook, {
       bookType: "xlsx",
@@ -38,7 +49,7 @@ const SelectionToolbar = ({
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
     const date = new Date().toISOString().split("T")[0]; // format: YYYY-MM-DD
-    saveAs(file, `Utilisateurs_${date}.xlsx`);
+    saveAs(file, `selectedInterventions_${date}.xlsx`);
   };
 
   return (
@@ -81,7 +92,7 @@ const SelectionToolbar = ({
       </div>
       <div className="flex items-center space-x-3">
       <div
-        onClick={() => exportToPDF(selectedEquipments)}
+        onClick={() => exportToPDF(selectedInterventions)}
         className="cursor-pointer"
         title="Exporter en PDF"
       >
@@ -106,4 +117,4 @@ const SelectionToolbar = ({
   );
 };
 
-export default SelectionToolbar;
+export default SelectionToolbarInter;

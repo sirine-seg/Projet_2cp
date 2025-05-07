@@ -75,6 +75,9 @@ const Userspageee= () => {
     const [afficherDuree, setAfficherDuree] = useState(false);
     // use state for getting the entered data  :
     const [durationValue, setDurationValue] = useState('');
+
+    const [estCurrative  , setestCurrative] = useState(true) ;
+
     const handleChange = (event) => {
     setSelectedStatus(event.target.value);
 };
@@ -270,9 +273,11 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
     setSelectedTypeIntervention(selectedCHoice);
     if (selectedCHoice === "preventive") {
         setAfficherDuree(true);
+        setestCurrative(false);
     }
     else if (selectedCHoice === "currative") {
         setAfficherDuree(false);
+        setestCurrative(true);
     }
 }
 
@@ -365,6 +370,19 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
         description : description ,
     }
 
+    const days = parseInt(durationValue , 10)*7 ;
+    const formatedDays  = `${days} 00:00:00`;
+    const gatherDataPreventive = {
+        type_intervention: selectedTypeIntervention,
+        title: title,
+        equipement: selectedEquip ? selectedEquip.id_equipement : null ,
+        technicien : technicianIds ,
+        urgence : selectedUrgence-1  ,
+        period :  formatedDays ,
+        date_debut : selectedDatedebut ,
+        description : description ,
+    }
+
     const submitData = async () => {
 
         let data;
@@ -374,6 +392,8 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
 
             if (selectedTypeIntervention === "preventive") {
                 api_url = 'http://127.0.0.1:8000/api/interventions/interventions/preventive/create/';
+                data = gatherDataPreventive;
+                console.log (JSON.stringify(data))
             } else if (selectedTypeIntervention === "currative") {
                 api_url = 'http://127.0.0.1:8000/api/interventions/interventions/currative/create/';
                 data = gatherdDataCurrative;
@@ -395,6 +415,7 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
                 setTechnicians(responseData);
                 const filtered = responseData.filter(tech => tech.disponibilite === true);
                 setAvailableTechnicians(filtered);
+                setIsPopupVisible(true);
             }
         } catch (error) {
             console.error('Error fetching technicians:', error);
@@ -404,39 +425,19 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
 
 
 
-
-
     return (
-              <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] rounded-r-md">
+              <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E]">
                     
               {/* Logo en haut à gauche */}
               <Header />
-              <div className="w-full bg-[#20599E] text-white py-16 text-center">
+              <div className="w-full bg-[#20599E] text-white pb-16 text-center">
                                   
-                                  <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
-                                 Intervention
+                                  <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4">
+                                 Interventions
                                   </h1>
                                   {/* bare de recherhce  */}    
-                      
-              
-              
-               
-       <div className="flex justify-center space-x-6 my-4">
-   {["Tout", "Curative", "Préventive"].map((category) => (
-       <button
-           key={category}
-           className={`text-lg font-semibold pb-1 transition duration-300 ${
-               filter === category ? "text-white underline" : "text-white"
-           }`}
-           onClick={() => setFilter(category)}
-       >
-           {category}
-       </button>
-   ))}
-
-
-</div>  
-
+                                    
+            
 </div>  
 
   <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
@@ -450,11 +451,7 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
     </div>
 
 
-
-
-
-
-    <div className="w-full max-w-5xl mx-auto mt-12 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="w-full max-w-5xl mx-auto mt-4 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
 
         <div onClick={handleChoiceClick}>
             <DisModContainerEquip
@@ -483,7 +480,7 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
 
 
         <WriteContainer
-            title="title"
+            title="Titre"
             //  value={"---"}
             multiline
             onChange={(val) => settitle(val)}
@@ -507,13 +504,13 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
     />
 
 
-<DisModContainer
+    {estCurrative && <DisModContainer
       title="Date de fin"
       value={selectedDateFin}
       onSave={(value) => setSelectedDateFin(value)}
       type="date"
       className="py-2 px-3 text-sm"
-    />
+    />  }
 
 
 
@@ -601,6 +598,14 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
 
 
   </div>
+
+  {isPopupVisible && (
+  <PopupMessage
+    title="Intervention ajoutée avec succès!"
+    onClose={() => setIsPopupVisible(false)}
+  />
+)}
+
                 </div>
             );
         };

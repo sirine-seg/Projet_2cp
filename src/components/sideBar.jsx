@@ -17,7 +17,7 @@ import logo_bleu from "../assets/logo_bleu.svg";
 export default function SideBar({ isOpen, setIsOpen }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Récupérer le rôle de l'utilisateur depuis le localStorage ou une API
@@ -40,7 +40,7 @@ export default function SideBar({ isOpen, setIsOpen }) {
       } catch (error) {
         console.error("Error fetching user role:", error);
       } finally {
-        setLoading(false);
+        //setLoading(false);
       }
     };
 
@@ -137,22 +137,22 @@ export default function SideBar({ isOpen, setIsOpen }) {
               {settingsOpen && (
                 <div className="ml-5 flex flex-col gap-1">
                   <NavItem
-                    to="/general"
+                    to="/Generale"
                     icon={<ChevronRight size={20} />}
                     label="General"
-                    activeColor="#F09C0A"
+                    activeColor="#20599E"
                   />
                   <NavItem
                     to="/ChampsDynamiques"
                     icon={<ChevronRight size={20} />}
                     label="Champs Dynamiques"
-                    activeColor="#F09C0A"
+                    activeColor="#20599E"
                   />
                   <NavItem
                     to="/Utilisateurs"
                     icon={<ChevronRight size={20} />}
                     label="Utilisateurs"
-                    activeColor="#F09C0A"
+                    activeColor="#20599E"
                   />
                 </div>
               )}

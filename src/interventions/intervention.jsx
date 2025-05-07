@@ -23,7 +23,7 @@ import Filtre from "../components/filtre.jsx";
 import ViewToggle from "../components/viewToggle";
 import InterventionList from "../components/interventionList";
 import InterventionListHeader from "../components/interventionListHeader";
-import SelectionToolbar from "../components/selectionToolBar";
+import SelectionToolbarInter from "../components/selectionToolBarInter";
 
 const Userspageee= () => {
     const [interventions, setInterventions] = useState([]);  // Stocke toutes les interventions
@@ -48,7 +48,7 @@ const Userspageee= () => {
     const isSmall = useIsSmallScreen();
     const [interventionsPreventives, setInterventionsPreventives] = useState([]);
 
-    const [selectedStatus, setSelectedStatus] = useState("En attente");
+    const [selectedStatus, setSelectedStatus] = useState("");
     const safeTrim = (val) => typeof val === "string" ? val.trim() : "";
     const [isCancelPopupVisible, setIsCancelPopupVisible] = useState(false);
     const [selectedTechniciens, setSelectedTechniciens] = useState([]);
@@ -60,6 +60,8 @@ const Userspageee= () => {
 
     const [userRole, setUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const [menuData, setMenuData] = useState(null);
 
     const handleChange = (event) => {
         setSelectedStatus(event.target.value);
@@ -79,6 +81,16 @@ const Userspageee= () => {
       ];
     const [selectedUrgence, setSelectedUrgence] = useState([]);
 
+    const convertStatus  = (value) => {
+      switch (value) {
+          case "En attente":
+              return 1;
+          case "En cours":
+              return 3;
+          case "Terminé":
+              return 4;
+      }
+  }
 
     const handleCancelClick = () => {
         setIsCancelPopupVisible(true);
@@ -96,6 +108,20 @@ const Userspageee= () => {
           ? { ...intervention, checked: !intervention.checked } 
           : intervention
       ));
+
+      setSelectedInterventions(prev => {
+        const intervention = interventions.find(e => e.id === id);
+        if (!intervention) return prev;
+        
+        // If equipment is being checked, add it to selectedEquipements
+        if (!intervention.checked) {
+          return [...prev, intervention];
+        } 
+        // If equipment is being unchecked, remove it from selectedEquipements
+        else {
+          return prev.filter(e => e.id !== id);
+        }
+      });
     };
     
     // Sélectionner toutes les interventions
@@ -104,6 +130,7 @@ const Userspageee= () => {
         ...intervention,
         checked: true
       })));
+      setSelectedInterventions([...interventions]);
     };
     
     // Désélectionner toutes les interventions
@@ -112,16 +139,14 @@ const Userspageee= () => {
         ...intervention,
         checked: false
       })));
+      setSelectedInterventions([])
     };
     
     // Action groupée sur les interventions sélectionnées
-    const handleInterventionActionClick = () => {
+    const handleInterventionActionClick = (action) => {
       const selected = interventions.filter(i => i.checked);
-      alert(`Action sur ${selected.length} interventions(s)`);
+      alert(`Action "${action}" sur ${selected.length} interventions(s)`, selected);
     };
-
-    const selectedInterventionCount = interventions.filter(i => i.checked).length;
-    const allInterventionsSelected = selectedInterventionCount === interventions.length && interventions.length > 0;
 
 
 
@@ -412,6 +437,33 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
         setSelectedUrgence(Array.isArray(selectedOptions) ? selectedOptions : [selectedOptions]);
       };
 
+      const handleConfirmCancel = async (interventionid) => {
+        try {
+            console.log ("i am here") ;
+            const accessToken = localStorage.getItem("access_token");
+            console.log ("the id of the intervention"  , selectedInterventionid)
+            console.log ("the type of the intervention" , menuData.type) ;
+            const response = await fetch(`http://127.0.0.1:8000//api/interventions/interventions/cancel/${menuData.type}/${selectedInterventionid}/`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
+                },
+            });
+
+            if (!response.ok) throw new Error("Erreur lors de la suppression");
+
+            // Mise à jour de l'état après suppression
+            setInterventions((prev) => prev.filter((intervention) => intervention.id !== interventionid));
+            setDisplayedInterventions((prev) => prev.filter((intervention) => intervention.id !== interventionid));
+
+            setIsSuccessPopupVisible(true);
+        } catch (error) {
+            console.error("Erreur :", error);
+            alert("Une erreur est survenue !");
+        }
+    };
+
 
 
 
@@ -518,6 +570,14 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
     }
 
 
+    useEffect(() => {
+      const selected = interventions.filter(e => e.checked);
+      setSelectedInterventions(selected);
+    }, [interventions]);
+  
+    const selectedInterventionCount = interventions.filter(e => e.checked).length;
+    const allInterventionsSelected = selectedInterventionCount === interventions.length && interventions.length > 0;
+
 
     const handleTabSelect = (category) => {
         setFilter(category);
@@ -533,22 +593,25 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
 
 
     const handleOptionSelect = (value, id) => {
-        setMenuOpenId(null); // close menu
+      setMenuOpenId(null); // close menu
 
-        if (value === "modifier") {
-            navigate(`/ModifierIntervention/${id}`);
-        } else if (value === "changer le statut") {
-            setSelectedInterventionid(id);
-            setIsPopupVisible(true); // Assurez-vous que isPopupVisible est remis à true ici
-        } else if (value === "cancel") {
-            // Quand "Supprimer" est sélectionné
-            setSelectedInterventionid(id); // Stocke l'ID de l'intervention à supprimer
-            setIsCancelPopupVisible(true); // Affiche le popup de suppression
-        }
-        else if (value === "Affecter") {
-            navigate(`/AffecterIntervention/${id}`);
-        }
-    };
+      if (value === "modifier") {
+          navigate(`/ModifierIntervention/${id}`);
+      } else if (value === "changer le statut") {
+          setSelectedInterventionid(id);
+          setIsPopupVisible(true); // Assurez-vous que isPopupVisible est remis à true ici
+      } else if (value === "Cancel") {
+          // Quand "Supprimer" est sélectionné
+          setSelectedInterventionid(id); // Stocke l'ID de l'intervention à canceler
+          setIsCancelPopupVisible(true); // Affiche le popup de cancel
+          console.log ("Cancel clicked, selectedInterventionid:", id); // Ajout de console.log pour le débogage
+          console.log ("selected type : " , menuData.type) ;
+      }
+      else if (value === "Affecter") {
+          navigate(`/AffecterIntervention/${id}`);
+      }
+  };
+
 
 
 
@@ -634,39 +697,56 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
 
 
     // integration de la mise a jour du status
-    const updateStatus = async (currentStatus) => { // MODIFICATION ICI : ajout de l'argument currentStatus
-        if (!selectedInterventionid) {
-            console.error("Aucune intervention sélectionnée !");
-            return;
-        }
+    const updateStatus = async (currentStatus) => {
+      if (!selectedInterventionid) {
+          console.error("Aucune intervention sélectionnée !");
+          return;
+      }
+      const typeInter = menuData.type;
+      let api_url;
 
-        try {
-            const response = await fetch(`http://127.0.0.1:8000/intervention/update/${selectedInterventionid}/`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ statut: currentStatus }), // MODIFICATION ICI : utilisation de l'argument
-            });
+      try {
+          console.log("this is the data : ", menuData);
+          console.log("the id of intervention is : ", selectedInterventionid);
+          if (typeInter === "currative") {
+              api_url = `http://127.0.0.1:8000/api/interventions/interventions/currative/update/${selectedInterventionid}/`;
+              console.log("successfully entered");
+          } else if (typeInter === "preventive") {
+              api_url = `http://127.0.0.1:8000/api/interventions/interventions/preventive/update/${selectedInterventionid}/`;
+          }
+          console.log("selectedStatus:", selectedStatus);
 
-            if (response.ok) {
-                setIsSuccessPopupVisible(true);
-                setIsPopupVisible(false);
+          const accessToken = localStorage.getItem("access_token");
 
-                setInterventions((prev) =>
-                    prev.map((intervention) =>
-                        intervention.id === selectedInterventionid
-                            ? { ...intervention, statut: currentStatus } // MODIFICATION ICI : utilisation de l'argument
-                            : intervention
-                    )
-                );
-            } else {
-                console.error("Erreur lors de la mise à jour du statut");
-            }
-        } catch (error) {
-            console.error("Erreur de requête :", error);
-        }
-    };
+          const response = await fetch(api_url, {
+              method: "PATCH",
+              headers: {
+                  "Content-Type": "application/json",
+                  ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
+              },
+              body: JSON.stringify({
+                  statut: convertStatus(selectedStatus), // un int, par ex. 1, 2, 3...
+              }),
+          });
+
+          if (response.ok) {
+              setIsSuccessPopupVisible(true);
+              setIsPopupVisible(false);
+
+              setInterventions((prev) =>
+                  prev.map((intervention) =>
+                      intervention.id === selectedInterventionid
+                          ? { ...intervention, statut: currentStatus }
+                          : intervention
+                  )
+              );
+          } else {
+              console.error("Erreur lors de la mise à jour du statut");
+          }
+      } catch (error) {
+          console.error("Erreur de requête :", error);
+      }
+  };
 
 
 
@@ -691,7 +771,7 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
             <div className="w-full bg-[#20599E] text-white pb-16 text-center">
 
                 <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
-                    Intervention
+                    Interventions
                 </h1>
 
 
@@ -705,41 +785,42 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
                     placeholder="Rechercher..."
                 />
 
-                <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center">
-                <div className="flex flex-nowrap space-x-2 overflow-x-auto no-scrollbar pb-2">
-                  <Filtre
-                    label={`Équipement${selectedEquipements ? `: ${selectedEquipements}` : ''}`}
-                    options={equipementsList}
-                    onSelectFilter={handleEquipementFilter}
-                    titre="Filtrer par Équipement"
-                    isActive={!!selectedEquipements}
-                  />
+<div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center items-center">
+  <div className="flex flex-row space-x-2 pb-2 items-center">
+    <Filtre
+      label={`Équipement`}
+      options={equipementsList}
+      onSelectFilter={handleEquipementFilter}
+      titre="Filtrer par Équipement"
+      isActive={!!selectedEquipements}
+    />
 
-                  <Filtre
-                    label={`Technicien${selectedTechniciens ? `: ${selectedTechniciens}` : ''}`}
-                    options={technicienOptions}
-                    onSelectFilter={handleTechnicienFilter}
-                    titre="Filtrer par Technicien"
-                    isActive={!!selectedTechniciens}
-                  />
+    <Filtre
+      label={`Urgence`}
+      options={urgenceOptions}
+      onSelectFilter={handleUrgenceFilter}
+      titre="Filtrer par Urgence"
+      isActive={!!selectedUrgence}
+    />
 
-                  <Filtre
-                    label={`Urgence${selectedUrgence ? `: ${selectedUrgence}` : ''}`}
-                    options={urgenceOptions}
-                    onSelectFilter={handleUrgenceFilter}
-                    titre="Filtrer par Urgence"
-                    isActive={!!selectedUrgence}
-                  />
+    <Filtre
+      label={`Technicien`}
+      options={technicienOptions}
+      onSelectFilter={handleTechnicienFilter}
+      titre="Filtrer par Technicien"
+      isActive={!!selectedTechniciens}
+    />
 
-                  <Filtre
-                    label={`Status${selectedStatus ? `: ${selectedStatus}` : ''}`}
-                    options={statusList}
-                    onSelectFilter={handleStatusFilter}
-                    titre="Filtrer par Status"
-                    isActive={!!selectedStatus}
-                  />
-                </div>
-                </div>
+    <Filtre
+      label={`Status`}
+      options={statusList}
+      onSelectFilter={handleStatusFilter}
+      titre="Filtrer par Status"
+      isActive={!!selectedStatus}
+    />
+  </div>
+</div>
+
 
 
                 {/*tout  , currative  , preventive*/}
@@ -802,13 +883,14 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
                 <div className="flex justify-between items-center w-full">
                             {currentView === "list" && (
                               <div className="sm:py-2 w-full">
-                                <SelectionToolbar
+                                <SelectionToolbarInter
                                   selectedCount={selectedInterventionCount}
                                   allSelected={allInterventionsSelected}
                                   onSelectAll={handleSelectAllInterventions}
                                   onDeselectAll={handleDeselectAllInterventions}
                                   onActionClick={handleInterventionActionClick}
-                                  selectedEquipments={selectedInterventions}
+                                  selectedInterventions={selectedInterventions} // You might need to adjust this based on your logic
+                                                  
                                 />
                               </div>
                             )}
@@ -851,18 +933,35 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
                     {displayedInterventions.map((intervention) => (
                       <div key={intervention.id} className="relative">
                         <InterventionCard
-                          id={intervention.id}
-                          nom={intervention.title}
-                          urgence={intervention.urgence_display}
-                          statut={intervention.statut_display}
-                          equipement={intervention.equipement}
-                          date={new Date(intervention.date_debut).toLocaleDateString("fr-FR")}
-                          onClick={() => navigate(`/DetailsIntervention/${intervention.id}`)}
-                          moreClick={() => setMenuOpenId(menuOpenId === intervention.id ? null : intervention.id)}
-                        />
+                                id={intervention.id}
+                                nom={intervention.title}
+                                urgence={intervention.urgence_display}
+                                statut={intervention.statut_display}
+                                equipement={intervention.equipement}
+                                date={new Date(intervention.date_debut || '06/05/2025').toLocaleDateString("fr-FR")}
+                                onClick={() => navigate(`/DetailsIntervention/${intervention.id}`)}
+                                moreClick={() => {
+                                    // Si vous souhaitez fermer le menu, vous pouvez aussi gérer cela
+                                    if (menuOpenId === intervention.id) {
+                                        setMenuData(null); // Fermer ou réinitialiser
+                                    } else {
+                                        setMenuOpenId(intervention.id); // Ouvrir le menu
+                                        setMenuData({
+                                            title: intervention.title,
+                                            urgence: intervention.urgence_display,
+                                            statut: intervention.statut_display,
+                                            equipement: intervention.equipement,
+                                            date: intervention.date_debut,
+                                            type : intervention.type_intervention,
+                                            id : intervention.id,
+                                        });
+                                    }
+                                }}
+
+                            />
 
                         {!loading && isAdmin && menuOpenId === intervention.id && (
-                          <div className="absolute top-12 right-3 z-[9999]">
+                          <div className="absolute top-10 left-30 z-[9999]">
                             <Options
                               options={getStatusOption(intervention.statut_display)}
                               handleSelect={(value) => handleOptionSelect(value, intervention.id)}
@@ -881,7 +980,7 @@ const isAdmin = ["ADMIN", "ADMINISTRATEUR"].includes(userRole?.toUpperCase());
                 {visibleCount < interventions.length && (
                     <h3
                         className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
-                        onClick={() => setVisibleCount(visibleCount + 3)}
+                        onClick={() => setVisibleCount(visibleCount + 100)}
                     >
                         Afficher plus
                     </h3>

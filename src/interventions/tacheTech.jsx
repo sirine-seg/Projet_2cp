@@ -18,6 +18,7 @@ import PopupChange from "../components/popupChange.jsx"; // casse correcte
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import AddMobile  from "../components/addMobile";
 import TabSelector from "../components/tabSelector";
+import Filtre from "../components/filtre";
 
 const Mestaches= () => {
     const [interventions, setInterventions] = useState([]);  // Stocke toutes les interventions
@@ -159,41 +160,55 @@ const handleCancelClick = () => {
             "Terminé": "bg-[#49A146]",
         };
 
-        
-        const updateStatus = async (currentStatus) => {
-          if (!selectedInterventionid) {
-            console.error("Aucune intervention sélectionnée !");
-            return;
+        const convertStatus  = (value) => {
+          switch (value) {
+              case "En attente":
+                  return 1;
+              case "En cours":
+                  return 3;
+              case "Terminé":
+                  return 4;
           }
+      }
+
         
-          try {
-            const response = await fetch(`http://127.0.0.1:8000/intervention/update/${selectedInterventionid}/`, {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ statut: currentStatus }), // MODIFICATION ICI : utilisation de l'argument
-            });
-        
-            if (response.ok) {
-              setIsSuccessPopupVisible(true);
-              setIsPopupVisible(false);
-        
-              setInterventions((prev) =>
-                prev.map((intervention) =>
-                  intervention.id === selectedInterventionid
-                    ? { ...intervention, statut: currentStatus } // MODIFICATION ICI : utilisation de l'argument
-                    : intervention
-                )
-              );
-            } else {
-              console.error("Erreur lors de la mise à jour du statut");
+        const [selectedTypeIntervention  , setSelectedTypeIntervention]  = useState("");
+    const [ MenuData , setMenuData] = useState(null);
+    const updateStatus = async () => {
+
+        let data;
+        try {
+            const token = localStorage.getItem('access_token'); // retrieve token
+            let api_url = '';
+
+            if (MenuData.type === "preventive") {
+                api_url = `http://127.0.0.1:8000/api/interventions/interventions/preventive/update/${MenuData.id}/`;
+            } else if (MenuData.type === "currative") {
+                api_url = `http://127.0.0.1:8000/api/interventions/interventions/currative/update/${MenuData.id}/`;
             }
-          } catch (error) {
-            console.error("Erreur de requête :", error);
-          }
-        };
-      
+
+            if (api_url) {
+                const response = await fetch(api_url, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        statut: convertStatus(selectedStatus), // un int, par ex. 1, 2, 3...
+                    }),
+                });
+                if (!response.ok) throw new Error('Failed to fetch technicians');
+                const responseData = await response.json();
+                console.log(responseData);
+                //setTechnicians(responseData);
+                //const filtered = responseData.filter(tech => tech.disponibilite === true);
+                //setAvailableTechnicians(filtered);
+            }
+        } catch (error) {
+            console.error('Error fetching technicians:', error);
+        }
+    };
       
             return (
               
@@ -214,6 +229,25 @@ const handleCancelClick = () => {
                            onChange={e => setSearchTerm(e.target.value)}
                            placeholder="Rechercher..."
                          />
+
+                         <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center items-center">
+                                           <div className="flex flex-row space-x-2 pb-2 items-center">
+                                             <Filtre
+                                               label="Équipement"
+                                               titre="Filtrer par Équipement"
+                                             />
+                                         
+                                             <Filtre
+                                               label={`Urgence`}
+                                               titre="Filtrer par Urgence"
+                                             />
+                         
+                                             <Filtre
+                                               label={`Status`}
+                                               titre="Filtrer par Status"
+                                             />
+                                           </div>
+                                         </div>
                
 
 </div>  
@@ -255,12 +289,23 @@ const handleCancelClick = () => {
             statut={intervention.statut_display}
             equipement={intervention.equipement}
             date={new Date(intervention.date_debut).toLocaleDateString("fr-FR")}
-            onClick={() => navigate(`/Interventioninfo/${intervention.id}`)}
-            moreClick={() =>
-              setMenuOpenId(
-                menuOpenId === intervention.id ? null : intervention.id
-              )
-            }
+            onClick={() => navigate(`/DetailsIntervention/${intervention.id}`)}
+            moreClick={() =>{
+              if (menuOpenId === intervention.id) {
+              setMenuData(null); // Fermer ou réinitialiser
+          } else {
+              setMenuOpenId(intervention.id); // Ouvrir le menu
+              setMenuData({
+              title: intervention.title,
+              urgence: intervention.urgence_display,
+              statut: intervention.statut_display,
+              equipement: intervention.equipement,
+              date: intervention.date_debut,
+              type : intervention.type_intervention,
+              id : intervention.id,
+          });
+          }
+          }}
           />
          {menuOpenId === intervention.id && (
   <div className="menu-container  ">

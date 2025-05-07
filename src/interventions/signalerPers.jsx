@@ -310,7 +310,7 @@ body: formData,
 
             <div onClick={handleChoiceClick}>
                 <DisModContainerEquip
-                    initialName="salem"
+                    initialName=""
                     title = "Equipement"
                     equipements={equipments}
                     onAssignEquip={(equip) => {

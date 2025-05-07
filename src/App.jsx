@@ -26,6 +26,7 @@ import Info from "./equipements/info.jsx";
 import Signaler from "./equipements/signaler.jsx"
 import SignalerAdmin from "./equipements/signalerAdmin.jsx";
 
+import GeneralPage from './pages/GeneralPage.jsx';
 import ChampsDynamiquesPage from './pages/ChampsDynamique.jsx';
 import AideEtSupportPage from './pages/AideEtSupport.jsx';
 
@@ -46,8 +47,8 @@ function App() {
         <Route path="/AjouterEquipement" element={< AjoutPage/>} />
         <Route path="/ModifierEquipement/:id" element={< EditPage/>} />
         <Route path="/DetailsEquipement/:id_equipement" element={<Info />} />
-        <Route path="/Signaler/:id" element={< Signaler />} />
-        <Route path="/signalerAdmin/:id" element={< SignalerAdmin />} />
+        <Route path="/Signaler/:id_equipement" element={< Signaler />} />
+        <Route path="/signalerAdmin/:id_equipement" element={< SignalerAdmin />} />
 
 
         <Route path="/Interventions" element={< Intervention />} />
@@ -55,7 +56,7 @@ function App() {
         <Route path="/AjouterPers" element={<SignalerPers />} />
         <Route path="/ModifierIntervention/:id" element={< Modifierintervention />} />
         <Route path="/AffecterIntervention/:id_intervention" element={< Affecterintervention />} />
-        <Route path="/DetailsIntervention/:id_equipement" element={< Interventioninfo />} />
+        <Route path="/DetailsIntervention/:id" element={< Interventioninfo />} />
 
 
         <Route path="/MesTaches" element={<TacheTech />} />     
@@ -67,6 +68,7 @@ function App() {
         <Route path="/DetailsUtilisateur/:id" element={< DetailsUser />} />
 
 
+        <Route path="/Generale" element={< GeneralPage />} />
         <Route path="/ChampsDynamiques" element={< ChampsDynamiquesPage />} />
         <Route path="/Aide" element={< AideEtSupportPage />} />
         

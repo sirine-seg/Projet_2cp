@@ -23,7 +23,7 @@ const TabSelector = ({
               : '2px solid transparent',
           }}
         >
-          <div className="flex items-center justify-center gap-x-2">
+          <div className="flex items-center justify-center gap-x-2 cursor-pointer">
             <span>{option.label}</span>
             {option.count > 0 && (
               <span className="w-5 h-5 bg-[#DFDFDF] text-[#5F6368] text-xs flex items-center justify-center rounded-full">

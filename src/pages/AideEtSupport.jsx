@@ -36,7 +36,7 @@ export default function AideEtSupportPage({}) {
         </h3>
         <div className="flex items-center mb-12 mt-4">
           <Mail className="text-[#202124] h-5 w-5" />
-          <span className="ml-2 text-[#202124] font-semibold">esiTrack@esi.dz</span>
+          <span className="ml-2 text-[#202124] font-semibold">esitrack@esi.dz</span>
         </div>
         </div>
 

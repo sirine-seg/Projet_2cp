@@ -6,7 +6,8 @@ function FiltrePopUp({
   titre,
   options = [],
   onSelect = () => {},
-  onClose = () => {}
+  onClose = () => {},
+  alignRight = false
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -49,8 +50,8 @@ function FiltrePopUp({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center p-4 z-999">
-      <div ref={popupRef} className="bg-white rounded-[1rem] shadow-xl w-60 sm:w-64 max-h-60 flex flex-col overflow-hidden">
+    <div className={`absolute mt-1 z-999 ${alignRight ? 'right-0' : 'left-0'}`}>
+      <div ref={popupRef} className="bg-white rounded-[1rem] shadow-xl w-[16rem] max-w-[calc(100vw-1rem)] max-h-60 flex flex-col overflow-hidden">
 
         {/* Barre de recherche */}
         <div className="px-4 pb-1">

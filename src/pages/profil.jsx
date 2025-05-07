@@ -48,14 +48,6 @@ export default function ProfilePage() {
         window.location.href = '/login';
     };
 
-    if (loading) {
-        return (
-            <div className="w-full min-h-screen flex items-center justify-center bg-[#20599E]">
-                <div className="text-white text-lg">Loading profile...</div>
-            </div>
-        );
-    }
-
     if (error) {
         return (
             <div className="w-full min-h-screen flex items-center justify-center bg-[#20599E]">
