@@ -51,6 +51,11 @@ class User(AbstractUser):
     photo = models.URLField(verbose_name='Photo de profil', null=True, blank=True)
     is_blocked = models.BooleanField(default=False)
 
+    active_notif = models.BooleanField(
+        default=True, verbose_name='Notifications actives')
+    active_notif_email = models.BooleanField(
+        default=True, verbose_name='Notifications par email actives')
+
     username = None
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

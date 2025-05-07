@@ -12,7 +12,11 @@ from .views import (
     InterventionCurrativeUpdateView,
     InterventionCancelView,
     StatusInterventionListView,
-    StatusInterventionCreateView,
+    StatusInterventionCreateView ,
+    InterventionCurrativeAffecterView,
+    InterventionListAllView,
+    InterventionPreventiveListAllView,
+    InterventionCurrativeListAllView,
     InterventionsByEquipementView
 )
 
@@ -39,13 +43,22 @@ urlpatterns = [
          InterventionCurrativeDetailView.as_view(), name='intervention-currative-detail'),
     path('interventions/currative/update/<int:pk>/',
          InterventionCurrativeUpdateView.as_view(), name='intervention-currative-update'),
-    path('interventions/cancel/<str:type>/<int:pk>/',
+    path('interventions/cancel/<str:type_intervention>/<int:id>/',
          InterventionCancelView.as_view(), name='intervention-cancel'),
 
     path('interventions/status/', StatusInterventionListView.as_view(),
          name='status-intervention-list'),
     path('interventions/status/create/', StatusInterventionCreateView.as_view(),
          name='status-intervention-create'),
+    path ('interventions/affecter/<int:id>/' , InterventionCurrativeAffecterView.as_view(),
+          name='status-intervention-create'),
+
+    path('interventions/all/', InterventionListAllView.as_view(),
+         name='intervention-list-all'),
+    path('interventions/preventive/all/', InterventionPreventiveListAllView.as_view(),
+         name='intervention-preventive-list-all'),
+    path('interventions/currative/all/', InterventionCurrativeListAllView.as_view(),
+         name='intervention-currative-list-all'),
 
     path('equipements/<int:equipement_id>/interventions/',
          InterventionsByEquipementView.as_view(), name='interventions-by-equipement'),

@@ -4,7 +4,7 @@ from .views import (
     AdminListView, AdminDetailView,TechnicienUpdateView,
     TechnicienListView, TechnicienDetailView,
     PersonnelListView, PersonnelDetailView, PosteCreateView, UserCreationAPIView,
-    BlockUserView, UnblockUserView, MeAPIView, PosteListView,
+    BlockUserView, UnblockUserView, MeAPIView, PosteListView, ToggleActivateNotificationView, ToggleActivateNotificationEmailView
 )
 
 urlpatterns = [
@@ -37,4 +37,9 @@ urlpatterns = [
     path('users/<int:pk>/unblock/', UnblockUserView.as_view(), name='user-unblock'),
     path ('me/'  , MeAPIView.as_view(), name='me'),
     path('postes/', PosteListView.as_view(), name='poste-list'),
+
+    path('toggle-notification/<int:id>/', ToggleActivateNotificationView.as_view(),
+         name='toggle-notification'),
+    path('toggle-notification-email/<int:id>/', ToggleActivateNotificationEmailView.as_view(),
+         name='toggle-notification-email'),
 ]

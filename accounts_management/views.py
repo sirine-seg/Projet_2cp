@@ -241,3 +241,55 @@ class PosteListView(generics.ListAPIView):
     queryset = Poste.objects.all()
     serializer_class = PosteSerializer
     permission_classes = [IsAdmin, IsAuthenticated]
+
+
+class ToggleActivateNotificationView(generics.RetrieveAPIView):
+    """
+    API view to retrieve and toggle the activation status of notifications for a specific user.
+    """
+    queryset = User.objects.all()
+    lookup_field = 'id'
+    permission_classes = [AllowAny]
+    serializer_class = UserSerializer
+
+    def get(self, request, args, **kwargs):
+        """
+        Retrieve the current notification activation status for a specific user.
+        """
+        user = self.get_object()
+        return Response({'is_notification_active': user.active_notif}, status=status.HTTP_200_OK)
+
+    def post(self, request,args, kwargs):
+        """
+        Toggle the activation status of notifications for a specific user.
+        """
+        user = self.get_object()
+        user.toggle_activate_notif()
+        user.save()
+        return Response({'is_notification_active': user.active_notif}, status=status.HTTP_200_OK)
+
+
+class ToggleActivateNotificationEmailView(generics.RetrieveAPIView):
+    """
+    API view to retrieve and toggle the activation status of email notifications for a specific user.
+    """
+    queryset = User.objects.all()
+    lookup_field = 'id'
+    permission_classes = [AllowAny]
+    serializer_class = UserSerializer
+
+    def get(self, request, *args, kwargs):
+        """
+        Retrieve the current email notification activation status for a specific user.
+        """
+        user = self.get_object()
+        return Response({'is_email_notification_active': user.active_notif_email}, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Toggle the activation status of email notifications for a specific user.
+        """
+        user = self.get_object()
+        user.toggle_activate_notif_email()
+        user.save()
+        return Response({'is_email_notification_active': user.active_notif_email}, status=status.HTTP_200_OK)

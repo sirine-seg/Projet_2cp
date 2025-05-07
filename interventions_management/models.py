@@ -81,7 +81,7 @@ class Intervention(models.Model):
 class InterventionPreventive(Intervention):
     """Extension model for preventive intervention specific fields."""
     period = models.DurationField(
-        blank=True, verbose_name="Période d'intervention préventive"
+        blank=True, null=True, verbose_name="Période d'intervention préventive"
     )
 
     def __str__(self):

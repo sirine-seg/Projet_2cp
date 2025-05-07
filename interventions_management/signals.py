@@ -46,19 +46,19 @@ def initialize_defaults(sender, **kwargs):
     create_default_equipement_states()
 
 
-@receiver(post_save  , sender=InterventionCurrative)
-@receiver(post_save  , sender=InterventionPreventive)
-def set_status_affecetee (sender , instance , created  , **kwargs) :
-    logger.info(f"post_save signal received for {sender} instance {instance.pk}")
-    print(f"post_save signal received for {sender} instance {instance.pk}")
-    affectee_status  = StatusIntervention.objects.get(name="affectée")
-    if affectee_status is None  :
-        print ("status not found")
-        return # Status not found  , do nothing
-    # check if techniciens are assigned
-    if instance.technicien.exists () :
-        print ("techniciens assigned")
-        # update status if not already 'affectée'
-        if instance.statut != affectee_status :
-            instance.statut = affectee_status
-            instance.save(update_fields=["statut"])
+#@receiver(post_save  , sender=InterventionCurrative)
+#@receiver(post_save  , sender=InterventionPreventive)
+#def set_status_affecetee (sender , instance , created  , **kwargs) :
+#    logger.info(f"post_save signal received for {sender} instance {instance.pk}")
+#    print(f"post_save signal received for {sender} instance {instance.pk}")
+#    affectee_status  = StatusIntervention.objects.get(name="affectée")
+#    if affectee_status is None  :
+#        print ("status not found")
+#        return # Status not found  , do nothing
+#    # check if techniciens are assigned
+#    if instance.technicien.exists () :
+#        print ("techniciens assigned")
+#        # update status if not already 'affectée'
+#        if instance.statut != affectee_status :
+#            instance.statut = affectee_status
+#            instance.save(update_fields=["statut"])
