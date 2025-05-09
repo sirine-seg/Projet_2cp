@@ -1,49 +1,49 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import chevronFiltre from "../assets/chevronFiltre.svg";
-import FiltrePopUp from "./FiltrePopUp"; // Import the dropdown component
+import FiltrePopUp from "./FiltrePopUp";
 
 const Filtre = ({
+  id,
   label,
   bgColor = "#F4F4F4",
   textColor = "#202124",
-  options = [], // Add options prop for the dropdown content
-  onSelectFilter = () => {}, // Callback for when an option is selected
+  options = [],
+  onSelectFilter = () => {},
   className = "",
-  titre = "Filtrer par", // Default title for the dropdown
+  titre = "Filtrer par",
+  isOpen,
+  setOpenFilterId,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const [alignRight, setAlignRight] = useState(false);
   const buttonRef = useRef(null);
 
-  const handleClick = () => {
-    setIsOpen(!isOpen);
+  const handleToggle = () => {
+    setOpenFilterId(isOpen ? null : id); // Ferme si déjà ouvert, sinon ouvre
   };
 
-  const handleClose = () => {
-    if (!isOpen) {
-      // Only open if closed
-      setIsOpen(true);
+  const handleClick = () => {
+    if (isOpen) {
+      setOpenFilterId(null);
+    } else {
+      setOpenFilterId(id);
     }
   };
 
   const handleOptionSelect = (option) => {
-    onSelectFilter(option); // Call the provided callback
-    setIsOpen(false); // Close the dropdown after selection
+    onSelectFilter(option);
+    setOpenFilterId(null);
   };
 
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const screenMidpoint = window.innerWidth / 2;
-      setAlignRight(rect.right > screenMidpoint );
+      setAlignRight(rect.right > screenMidpoint);
     }
   }, [isOpen]);
 
   return (
     <div className="relative flex-shrink-0">
-      {" "}
-      {/* Added flex-shrink-0 */}
       <button
         ref={buttonRef}
         onClick={handleClick}
@@ -68,8 +68,7 @@ const Filtre = ({
       >
         <span className="font-semibold truncate text-xxs sm:text-xs">
           {label}
-        </span>{" "}
-        {/* Even smaller label text on mobile */}
+        </span>
         <img
           src={chevronFiltre}
           alt="Chevron"
@@ -78,13 +77,13 @@ const Filtre = ({
           }`}
         />
       </button>
-      {/* Conditionally render the dropdown */}
+
       {isOpen && (
         <FiltrePopUp
           titre={titre}
           options={options}
           onSelect={handleOptionSelect}
-          onClose={handleClose}
+          onClose={() => setOpenFilterId(null)}
           alignRight={alignRight}
         />
       )}

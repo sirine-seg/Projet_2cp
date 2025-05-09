@@ -7,6 +7,7 @@ import InterventionCard from "../components/interventionCard.jsx";
 import PopupChange from "../components/popupChange.jsx"; // casse correcte
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import Filtre from "../components/filtre";
+import AddMobile from "../components/addMobile";
 
 import ViewToggle from "../components/viewToggle";
 import InterventionList from "../components/interventionList";
@@ -31,6 +32,8 @@ const Mestaches = () => {
   const isSmall = useIsSmallScreen();
 
   const [loading, setLoading] = useState(true);
+
+  const [openFilterId, setOpenFilterId] = useState(null);
 
   const safeTrim = (val) => (typeof val === "string" ? val.trim() : "");
   const [isCancelPopupVisible, setIsCancelPopupVisible] = useState(false);
@@ -401,28 +404,35 @@ const Mestaches = () => {
         <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center items-center">
           <div className="flex flex-row space-x-2 pb-2 items-center">
             <Filtre
-              label={`Équipement`}
-              options={equipementsList}
-              onSelectFilter={handleEquipementFilter}
-              titre="Filtrer par Équipement"
-              isActive={!!selectedEquipements}
-            />
+        id="equipement"
+        label="Équipement"
+        options={equipementsList}
+        onSelectFilter={handleEquipementFilter}
+        titre="Filtrer par Équipement"
+        isOpen={openFilterId === "equipement"}
+        setOpenFilterId={setOpenFilterId}
+      />
 
-            <Filtre
-              label={`Urgence`}
-              options={urgenceOptions}
-              onSelectFilter={handleUrgenceFilter}
-              titre="Filtrer par Urgence"
-              isActive={!!selectedUrgence}
-            />
+      <Filtre
+        id="urgence"
+        label="Urgence"
+        options={urgenceOptions}
+        onSelectFilter={handleUrgenceFilter}
+        titre="Filtrer par Urgence"
+        isOpen={openFilterId === "urgence"}
+        setOpenFilterId={setOpenFilterId}
+      />
 
-            <Filtre
-              label={`Status`}
-              options={statusList}
-              onSelectFilter={handleStatusFilter}
-              titre="Filtrer par Status"
-              isActive={!!selectedStatus}
-            />
+      <Filtre
+        id="status"
+        label="Status"
+        options={statusList}
+        onSelectFilter={handleStatusFilter}
+        titre="Filtrer par Status"
+        isOpen={openFilterId === "status"}
+        setOpenFilterId={setOpenFilterId}
+      />
+
           </div>
         </div>
       </div>
@@ -562,7 +572,7 @@ const Mestaches = () => {
         {visibleCount < interventions.length && (
           <h3
             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
-            onClick={() => setVisibleCount(visibleCount + 3)}
+            onClick={() => setVisibleCount(visibleCount + 60)}
           >
             Afficher plus
           </h3>

@@ -19,7 +19,7 @@ import InterventionList from "../components/interventionList";
 import InterventionListHeader from "../components/interventionListHeader";
 import SelectionToolbarInter from "../components/selectionToolBarInter";
 
-const Userspageee = () => {
+const Intervention = () => {
   const [interventions, setInterventions] = useState([]); // Stocke toutes les interventions
   const [displayedInterventions, setDisplayedInterventions] = useState([]); // Stocke les interventions affichées
   const [filter, setFilter] = useState("Tout");
@@ -48,6 +48,8 @@ const Userspageee = () => {
 
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [openFilterId, setOpenFilterId] = useState(null);
 
   const [menuData, setMenuData] = useState(null);
 
@@ -675,36 +677,49 @@ const Userspageee = () => {
         <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center items-center">
           <div className="flex flex-row space-x-2 pb-2 items-center">
             <Filtre
-              label={`Équipement`}
+              id="equipement"
+              label="Équipement"
               options={equipementsList}
               onSelectFilter={handleEquipementFilter}
               titre="Filtrer par Équipement"
               isActive={!!selectedEquipements}
+              isOpen={openFilterId === "equipement"}
+              setOpenFilterId={setOpenFilterId}
             />
 
             <Filtre
-              label={`Urgence`}
+              id="urgence"
+              label="Urgence"
               options={urgenceOptions}
               onSelectFilter={handleUrgenceFilter}
               titre="Filtrer par Urgence"
               isActive={!!selectedUrgence}
+              isOpen={openFilterId === "urgence"}
+              setOpenFilterId={setOpenFilterId}
             />
 
             <Filtre
-              label={`Technicien`}
+              id="technicien"
+              label="Technicien"
               options={technicienOptions}
               onSelectFilter={handleTechnicienFilter}
               titre="Filtrer par Technicien"
               isActive={!!selectedTechniciens}
+              isOpen={openFilterId === "technicien"}
+              setOpenFilterId={setOpenFilterId}
             />
 
             <Filtre
-              label={`Status`}
+              id="status"
+              label="Status"
               options={statusList}
               onSelectFilter={handleStatusFilter}
               titre="Filtrer par Status"
               isActive={!!selectedStatus}
+              isOpen={openFilterId === "status"}
+              setOpenFilterId={setOpenFilterId}
             />
+
           </div>
         </div>
 
@@ -873,7 +888,7 @@ const Userspageee = () => {
         {visibleCount < interventions.length && (
           <h3
             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
-            onClick={() => setVisibleCount(visibleCount + 100)}
+            onClick={() => setVisibleCount(visibleCount + 60)}
           >
             Afficher plus
           </h3>
@@ -924,4 +939,4 @@ const Userspageee = () => {
   );
 };
 
-export default Userspageee;
+export default Intervention;
