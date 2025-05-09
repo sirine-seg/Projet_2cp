@@ -770,10 +770,10 @@ const Intervention = () => {
         </div>
         {/* Liste des utilisateurs    ::: gap pour espace entre les cartes et grid pour si la carte prend un colone .. ect     ;;;;.map((user) => ( ... )) permet de générer une carte pour chaque utilisateur. */}
 
-        <div className="flex flex-wrap space-y-4 px-4 py-3">
+        <div className="flex flex-wrap space-y-4 p-4">
           <div className="flex justify-between items-center w-full">
             {currentView === "list" && (
-              <div className="sm:py-2 w-full">
+              <div className="sm:py-0 w-full">
                 <SelectionToolbarInter
                   selectedCount={selectedInterventionCount}
                   allSelected={allInterventionsSelected}

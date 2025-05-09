@@ -15,7 +15,7 @@ const Buttonrec = ({
         className={`
          flex items-center space-x-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200
           px-4 py-2 text-base
-          md:px-6 md:py-2 md:text-lg
+          md:px-4 md:py-2 md:text-md
           cursor-pointer
 ${className}
           ${className}

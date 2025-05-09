@@ -10,14 +10,14 @@ const AjouterButton = ({
   return (
     <div className="flex justify-center items-center">
       <motion.button
-        whileHover={{ scale: 1.1 }}
+        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.9 }}
         onClick={onClick}
         className={`
           flex items-center space-x-2 rounded-lg shadow-md transition duration-200
           px-2 py-1 text-sm
           sm:px-3 sm:py-2 sm:text-base
-          md:px-4 md:py-2 md:text-lg
+          md:px-4 md:py-2 md:text-md
           cursor-pointer
         `}
         style={{

@@ -11,7 +11,7 @@ const Button = ({
       <motion.button
         whileTap={{ scale: 0.9 }}
         onClick={onClick}
-        className="px-4 py-2 rounded-md font-bold transition duration-200 cursor-pointer"
+        className="px-4 py-2 rounded-md font-bold text-md transition duration-200 cursor-pointer"
         style={{ 
             backgroundColor: bgColor,
             color: textColor
