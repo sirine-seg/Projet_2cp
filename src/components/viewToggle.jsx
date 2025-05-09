@@ -2,7 +2,7 @@ import React, { useState , useEffect} from "react";
 import viewList from '../assets/viewList.svg';
 import viewCard from '../assets/viewCard.svg';
 
-const ViewToggle = ({  onChange, initialValue = "grid"  }) => {
+const ViewToggle = ({  onChange, initialValue = "list"  }) => {
   const [view, setView] = useState(initialValue);
   
   useEffect(() => {

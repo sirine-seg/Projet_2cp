@@ -1,24 +1,19 @@
 import { useState, useEffect } from "react";
-import { FaUser, FaCube } from "react-icons/fa";
-import { MdEmail, MdCalendarToday } from "react-icons/md";
-import { BsThreeDotsVertical } from "react-icons/bs"
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import SearchBar from "../components/Searchbar"; 
-import Filterbutton from "../components/Filterbutton"; 
 import Header from "../components/Header";
-import AjouterButton from "../components/Ajouterbutton";
-import Buttonrec from "../components/buttonrectangle";
-import Popupdelete from "../components/Popupdelet";
 import Options from "../components/options";
 import InterventionCard from "../components/interventionCard.jsx";
 import PopupMessage from "../components/Popupcheck";
 import PopupChange from "../components/popupChange.jsx"; // casse correcte
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
-import AddMobile  from "../components/addMobile";
-import TabSelector from "../components/tabSelector";
 import Filtre from "../components/filtre";
+
+import ViewToggle from "../components/viewToggle";
+import InterventionList from "../components/interventionList";
+import InterventionListHeader from "../components/interventionListHeader";
+import SelectionToolbarInter from "../components/selectionToolBarInter";
 
 const Mestaches= () => {
     const [interventions, setInterventions] = useState([]);  // Stocke toutes les interventions
@@ -42,14 +37,29 @@ const Mestaches= () => {
     const [interventionsCuratives, setInterventionsCuratives] = useState([]);
     const isSmall = useIsSmallScreen();
     const [interventionsPreventives, setInterventionsPreventives] = useState([]);
+
+    const [loading, setLoading] = useState(true);
    
-    const [selectedStatus, setSelectedStatus] = useState("En cours");
     const safeTrim = (val) => typeof val === "string" ? val.trim() : "";
     const [isCancelPopupVisible, setIsCancelPopupVisible] = useState(false);
 
+    const [statusList, setStatusList] = useState([]);
+    const [equipementsList, setEquipementsList] = useState([]);
+    const urgenceOptions= [
+        { value: 0, label: 'Urgence vitale' },
+        { value: 1, label: 'Urgence élevée' },
+        { value: 2, label: 'Urgence modérée' },
+        { value: 3, label: 'Faible urgence' },
+      ];
+
+    const [selectedStatus, setSelectedStatus] = useState("En cours");
+    const [selectedEquipements, setSelectedEquipements] = useState([]);
+    const [selectedUrgence, setSelectedUrgence] = useState([]);
+
+
     const handleChange = (event) => {
     setSelectedStatus(event.target.value);
-};
+    };
 
 const etatOptions = [
   { label: "En cours", value: "En cours" },
@@ -62,6 +72,73 @@ const handleCancelClick = () => {
   setIsCancelPopupVisible(true);
   console.log("Bouton Annuler cliqué, isCancelPopupVisible:", isCancelPopupVisible); // Ajout de console.log pour le débogage
 };
+
+
+    const selectedInterventionCount = interventions.filter(e => e.checked).length;
+    const allInterventionsSelected = selectedInterventionCount === interventions.length && interventions.length > 0;
+// State et handlers pour la sélection des interventions
+    const [currentView, setCurrentView] = useState("list"); // "list" ou "grid"
+    const [selectedInterventions, setSelectedInterventions] = useState([]);
+    
+    // Toggle sélection d'une intervention
+    const handleInterventionToggle = (id) => {
+      setInterventions(interventions.map(intervention =>
+        intervention.id === id 
+          ? { ...intervention, checked: !intervention.checked } 
+          : intervention
+      ));
+
+      setSelectedInterventions(prev => {
+        const intervention = interventions.find(e => e.id === id);
+        if (!intervention) return prev;
+        
+        // If equipment is being checked, add it to selectedEquipements
+        if (!intervention.checked) {
+          return [...prev, intervention];
+        } 
+        // If equipment is being unchecked, remove it from selectedEquipements
+        else {
+          return prev.filter(e => e.id !== id);
+        }
+      });
+    };
+    
+    // Sélectionner toutes les interventions
+    const handleSelectAllInterventions = () => {
+      setInterventions(interventions.map(intervention => ({
+        ...intervention,
+        checked: true
+      })));
+      setSelectedInterventions([...interventions]);
+    };
+    
+    // Désélectionner toutes les interventions
+    const handleDeselectAllInterventions = () => {
+      setInterventions(interventions.map(intervention => ({
+        ...intervention,
+        checked: false
+      })));
+      setSelectedInterventions([])
+    };
+    
+    // Action groupée sur les interventions sélectionnées
+    const handleInterventionActionClick = (action) => {
+      const selected = interventions.filter(i => i.checked);
+      alert(`Action "${action}" sur ${selected.length} interventions(s)`, selected);
+    };
+
+
+      const handleStatusFilter = (selectedOptions) => {
+        setSelectedStatus(Array.isArray(selectedOptions) ? selectedOptions : [selectedOptions]);
+      };
+      
+      const handleEquipementFilter = (selectedOptions) => {
+        setSelectedEquipements(Array.isArray(selectedOptions) ? selectedOptions : [selectedOptions]);
+      };
+      
+      const handleUrgenceFilter = (selectedOptions) => {
+        setSelectedUrgence(Array.isArray(selectedOptions) ? selectedOptions : [selectedOptions]);
+      };
 
 
     useEffect(() => {
@@ -96,16 +173,35 @@ const handleCancelClick = () => {
                         return item.statut_display?.trim() === "en attente" && (titleMatch || equipementMatch || statutMatch || urgenceMatch);
                     }
                     // If filter is "En attente", filter those only
-                    // Your existing filters for "Curative", "Préventive", etc.
-                    if (filter === "Curative") {
-                        return item.type_intervention === "currative" && (titleMatch || equipementMatch || statutMatch || urgenceMatch);
+
+                    let statusFilterMatch = true;
+                    if (Array.isArray(selectedStatus) && selectedStatus.length > 0) {
+                      statusFilterMatch = selectedStatus.some(status => 
+                        safeTrim(item.statut_display).toLowerCase() === status.label.toLowerCase()
+                      );
                     }
-                    if (filter === "Préventive") {
-                        return item.type_intervention === "preventive" && (titleMatch || equipementMatch || statutMatch || urgenceMatch);
+
+                    let urgenceFilterMatch = true;
+                    if (Array.isArray(selectedUrgence) && selectedUrgence.length > 0) {
+                      urgenceFilterMatch = selectedUrgence.some(urgence => 
+                        safeTrim(item.urgence_display).toLowerCase() === urgence.label.toLowerCase()
+                      );
+                    }
+
+                    let equipementFilterMatch = true;
+                    if (Array.isArray(selectedEquipements) && selectedEquipements.length > 0) {
+                      equipementFilterMatch = selectedEquipements.some(equip =>
+                        item.equipement === equip.value || 
+                        (item.equipement && item.equipement.id === equip.value) ||
+                        (item.equipement_id === equip.value)
+                      );
                     }
 
                     // Default: no special filter, just search filter
-                    return titleMatch || equipementMatch || statutMatch || urgenceMatch;
+                    return (titleMatch || equipementMatch || statutMatch || urgenceMatch) &&
+                           urgenceFilterMatch &&
+                           equipementFilterMatch &&
+                           statusFilterMatch;
                 });
 
 
@@ -117,7 +213,66 @@ const handleCancelClick = () => {
         };
 
         fetchInterventions();
-    }, [filter, searchTerm, visibleCount]);
+    }, [filter, searchTerm, visibleCount, selectedUrgence, selectedEquipements, selectedStatus]);
+
+    useEffect(() => {
+            const fetchStatusList = async () => {
+              try {
+                const token = localStorage.getItem('access_token'); // or wherever you store your token
+                const response = await fetch('http://127.0.0.1:8000/api/interventions/interventions/status/', {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                  },
+                });
+                
+                if (!response.ok) throw new Error("Failed to fetch statuses");
+                const data = await response.json();
+                // Format status list for filter dropdown
+                const statusOptions = data.map(status => ({
+                  value: status.id || status.value,
+                  label: status.name || status.label
+                }));
+                setStatusList(statusOptions);
+              } catch (error) {
+                console.error("Error fetching statuses:", error);
+              }
+            };
+          
+            fetchStatusList();
+          }, []);
+          
+          useEffect(() => {
+            const fetchEquipements = async () => {
+              try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch('http://127.0.0.1:8000/api/equipements/equipement/', {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                  },
+                });
+            
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                // Format équipements for dropdown, comme pour les techniciens
+                const options = data.map(equip => ({
+                  value: equip.id_equipement || equip.value,
+                  label: equip.nom  || equip.label,
+                }));
+                setEquipementsList(options);
+                console.log("Liste des équipements récupérée :", options);
+              } catch (error) {
+                console.error("Erreur lors de la récupération des équipements :", error);
+              }
+            };
+          
+            fetchEquipements();
+          }, []);
 
 
     // Références pour détecter les clics en dehors
@@ -232,20 +387,29 @@ const handleCancelClick = () => {
 
                          <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center items-center">
                                            <div className="flex flex-row space-x-2 pb-2 items-center">
-                                             <Filtre
-                                               label="Équipement"
-                                               titre="Filtrer par Équipement"
-                                             />
-                                         
-                                             <Filtre
-                                               label={`Urgence`}
-                                               titre="Filtrer par Urgence"
-                                             />
+                                              <Filtre
+                                                   label={`Équipement`}
+                                                   options={equipementsList}
+                                                   onSelectFilter={handleEquipementFilter}
+                                                   titre="Filtrer par Équipement"
+                                                   isActive={!!selectedEquipements}
+                                                 />
+                                             
+                                                 <Filtre
+                                                   label={`Urgence`}
+                                                   options={urgenceOptions}
+                                                   onSelectFilter={handleUrgenceFilter}
+                                                   titre="Filtrer par Urgence"
+                                                   isActive={!!selectedUrgence}
+                                                 />
                          
-                                             <Filtre
-                                               label={`Status`}
-                                               titre="Filtrer par Status"
-                                             />
+                                                <Filtre
+                                                   label={`Status`}
+                                                   options={statusList}
+                                                   onSelectFilter={handleStatusFilter}
+                                                   titre="Filtrer par Status"
+                                                   isActive={!!selectedStatus}
+                                                 />
                                            </div>
                                          </div>
                
@@ -264,10 +428,115 @@ const handleCancelClick = () => {
       {Math.min(visibleCount, interventions.length)} Résultats affichés sur {interventions.length}
     </div>
 
+    <div className="flex space-x-2 mt-2 sm:mt-0">
+      <div className="flex items-center">
+        <ViewToggle onChange={(view) => setCurrentView(view)} />
+      </div>
+    </div>
+
   </div>
 </div>
-                {/* Liste des utilisateurs    ::: gap pour espace entre les cartes et grid pour si la carte prend un colone .. ect     ;;;;.map((user) => ( ... )) permet de générer une carte pour chaque utilisateur. */}
                   
+                <div className="flex flex-wrap space-y-4 p-4">
+                
+                                <div className="flex justify-between items-center w-full">
+                                            {currentView === "list" && (
+                                              <div className="sm:py-2 w-full">
+                                                <SelectionToolbarInter
+                                                  selectedCount={selectedInterventionCount}
+                                                  allSelected={allInterventionsSelected}
+                                                  onSelectAll={handleSelectAllInterventions}
+                                                  onDeselectAll={handleDeselectAllInterventions}
+                                                  onActionClick={handleInterventionActionClick}
+                                                  selectedInterventions={selectedInterventions} // You might need to adjust this based on your logic
+                                                                  
+                                                />
+                                              </div>
+                                            )}
+                                          </div>
+                
+                                {currentView === 'list' ? (
+                                  /* Vue liste */
+                                  <div className="space-y-2 w-full">
+                                    <InterventionListHeader /> 
+                
+                                    {displayedInterventions.map((intervention) => (
+                                      <div key={intervention.id} className="relative">
+                                        <InterventionList
+                                          nom={intervention.title}
+                                          equipement={intervention.equipement}
+                                          urgence={intervention.urgence_display}
+                                          statut={intervention.statut_display}
+                                          moreClick={() => setMenuOpenId(menuOpenId === intervention.id ? null : intervention.id)}
+                                          checked={intervention.checked || false}
+                                          onToggle={() => handleInterventionToggle(intervention.id)}
+                                        />
+                
+                                        {!loading && isAdmin && menuOpenId === intervention.id && (
+                                          <div className="absolute right-6 top-6 z-50">
+                                            <Options
+                                              options={getStatusOption(intervention.statut_display)}
+                                              handleSelect={(value) => handleOptionSelect(value, intervention.id)}
+                                              className="bg-white shadow-xl rounded-lg text-black w-48 sm:w-56 border"
+                                              setMenuOpen={setMenuOpenId}
+                                              isActive={!isPopupVisible}
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  /* Vue grille */
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3 md:gap-6 w-full">
+                                    {displayedInterventions.map((intervention) => (
+                                      <div key={intervention.id} className="relative">
+                                        <InterventionCard
+                                                id={intervention.id}
+                                                nom={intervention.title}
+                                                urgence={intervention.urgence_display}
+                                                statut={intervention.statut_display}
+                                                equipement={intervention.equipement}
+                                                date={new Date(intervention.date_debut || '06/05/2025').toLocaleDateString("fr-FR")}
+                                                onClick={() => navigate(`/DetailsIntervention/${intervention.id}`)}
+                                                moreClick={() => {
+                                                    // Si vous souhaitez fermer le menu, vous pouvez aussi gérer cela
+                                                    if (menuOpenId === intervention.id) {
+                                                        setMenuData(null); // Fermer ou réinitialiser
+                                                    } else {
+                                                        setMenuOpenId(intervention.id); // Ouvrir le menu
+                                                        setMenuData({
+                                                            title: intervention.title,
+                                                            urgence: intervention.urgence_display,
+                                                            statut: intervention.statut_display,
+                                                            equipement: intervention.equipement,
+                                                            date: intervention.date_debut,
+                                                            type : intervention.type_intervention,
+                                                            id : intervention.id,
+                                                        });
+                                                    }
+                                                }}
+                
+                                            />
+                
+                                        {!loading && isAdmin && menuOpenId === intervention.id && (
+                                          <div className="absolute top-10 left-30 z-[9999]">
+                                            <Options
+                                              options={getStatusOption(intervention.statut_display)}
+                                              handleSelect={(value) => handleOptionSelect(value, intervention.id)}
+                                              className="bg-white shadow-xl rounded-lg w-48 sm:w-56 border"
+                                              setMenuOpen={setMenuOpenId}
+                                              isActive={!isPopupVisible}
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                            </div>
+
+
                     {visibleCount < interventions.length && (
                         <h3
                             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
@@ -277,50 +546,6 @@ const handleCancelClick = () => {
                         </h3>
                     )}
                        
-                       <div className="grid grid-cols-1  relative overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4">
-                        
-        {displayedInterventions.map((intervention) => (
-
-        <div key={intervention.id} className="relative">
-          <InterventionCard
-            id={intervention.id}
-            nom={intervention.title}
-            urgence={intervention.urgence_display}
-            statut={intervention.statut_display}
-            equipement={intervention.equipement}
-            date={new Date(intervention.date_debut).toLocaleDateString("fr-FR")}
-            onClick={() => navigate(`/DetailsIntervention/${intervention.id}`)}
-            moreClick={() =>{
-              if (menuOpenId === intervention.id) {
-              setMenuData(null); // Fermer ou réinitialiser
-          } else {
-              setMenuOpenId(intervention.id); // Ouvrir le menu
-              setMenuData({
-              title: intervention.title,
-              urgence: intervention.urgence_display,
-              statut: intervention.statut_display,
-              equipement: intervention.equipement,
-              date: intervention.date_debut,
-              type : intervention.type_intervention,
-              id : intervention.id,
-          });
-          }
-          }}
-          />
-         {menuOpenId === intervention.id && (
-  <div className="menu-container  ">
-    <Options
-      options={statusOptions}
-      handleSelect={(value) => handleOptionSelect(value, intervention.id)}
-      className="absolute top-12 right-3 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border"
-      setMenuOpen={setMenuOpenId}
-      isActive={!isPopupVisible} // Le menu est actif seulement si le PopupChange n'est pas visible
-    />
-  </div>
-)}
-        </div>
-      ))}
-    </div>
             
     {isPopupVisible && (
   <PopupChange
