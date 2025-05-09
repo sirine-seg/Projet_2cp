@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
+# Import dj_database_url for easier database URL handling
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,17 +22,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'o51#8oksqfs(*zbawv0pi=k-9)#0c_3#+_sb*258x-2!6rb_wi'
 DEBUG = True
 
-# Database settings for local development
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bddprojet2',
-        'USER': 'postgres',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
-        'PORT': '5432',
+# Get environment variable for DATABASE_URL or use local fallback
+DATABASE_URL = "postgresql://postgres:yrUZonARaNTsPWCEmqXowJzPTpWeaUmd@shuttle.proxy.rlwy.net:50733/railway"
+
+if DATABASE_URL:
+    # Use Railway's connection URL if available
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    # Local development database settings
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'railway',
+            'USER': 'postgres',
+            'PASSWORD': 'yrUZonARaNTsPWCEmqXowJzPTpWeaUmd',
+            'HOST': 'postgres.railway.internal',
+            'PORT': '5432',  # Replace with your actual port from Railway
+        }
+    }
 
 # Application definition
 INSTALLED_APPS = [
@@ -56,9 +67,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    "corsheaders" ,
+    "corsheaders",
     'dj_rest_auth',
-    'dj_rest_auth.registration' ,
+    'dj_rest_auth.registration',
     'drf_yasg',
     'stats'
 ]
@@ -68,7 +79,6 @@ SPAGHETTI_SAUCE = {
     'show_fields': False,
     'exclude': {'auth': ['user']}
 }
-
 
 
 MIDDLEWARE = [
@@ -87,28 +97,28 @@ ROOT_URLCONF = 'backend.urls'
 
 
 # jwt settings
-REST_USE_JWT = True # enable the use of JWT
-#SIMPLE_JWT = {
-    #"ACCESS_TOKEN_LIFETIME": timedelta(days=5),
-    #"REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    #"ROTATE_REFRESH_TOKENS": False,
-    #"BLACKLIST_AFTER_ROTATION": False,
-    #"UPDATE_LAST_LOGIN": False,
-    # 'AUTH_COOKIE': 'access_token',  # Cookie name for the access token
-    # 'AUTH_COOKIE_REFRESH': 'refresh_token',  # Cookie name for the refresh token
-    # 'AUTH_COOKIE_SECURE': False,  # Set to True if using HTTPS
-    # 'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HTTP only
-    # 'AUTH_COOKIE_PATH': '/',  # Root path for the cookie
-    # 'AUTH_COOKIE_SAMESITE': 'Lax',  # Adjust according to your needs
+REST_USE_JWT = True  # enable the use of JWT
+# SIMPLE_JWT = {
+# "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
+# "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+# "ROTATE_REFRESH_TOKENS": False,
+# "BLACKLIST_AFTER_ROTATION": False,
+# "UPDATE_LAST_LOGIN": False,
+# 'AUTH_COOKIE': 'access_token',  # Cookie name for the access token
+# 'AUTH_COOKIE_REFRESH': 'refresh_token',  # Cookie name for the refresh token
+# 'AUTH_COOKIE_SECURE': False,  # Set to True if using HTTPS
+# 'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HTTP only
+# 'AUTH_COOKIE_PATH': '/',  # Root path for the cookie
+# 'AUTH_COOKIE_SAMESITE': 'Lax',  # Adjust according to your needs
 
-#}
+# }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=120) ,
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=120),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "AUTH_HEADER_TYPES": ("Bearer",),  # Use 'Bearer' in the Authorization header
+    # Use 'Bearer' in the Authorization header
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
-
 
 
 TEMPLATES = [
@@ -165,7 +175,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'accounts_management.permissions.IsNotBlockedUser',
-        #'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
@@ -175,20 +185,20 @@ REST_FRAMEWORK = {
 ROOT_URLCONF = 'backend.urls'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://localhost:5174",# frontend dev server
+    "http://localhost:5174",  # frontend dev server
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 REST_AUTH = {
-    'USE_JWT' : True  ,
-    'JWT_AUTH_COOKIE' : 'my-app-auth' ,
-    'JWT_AUTH_REFRESH_COOKIE' : 'my-refresh-token' ,
-    'JWT_AUTH_SAMESITE ' : 'None' ,
-    'JWT_AUTH_SECURE' : False  ,
-    'JWT_AUTH_HTTPONLY':True
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'my-app-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'my-refresh-token',
+    'JWT_AUTH_SAMESITE ': 'None',
+    'JWT_AUTH_SECURE': False,
+    'JWT_AUTH_HTTPONLY': True
 }
 
-#SOCIALACCOUNT_PROVIDERS = {
+# SOCIALACCOUNT_PROVIDERS = {
 #    'google': {
 #        'APP': {
 #            'client_id': '746021296567-ps7a99uvjgduiic1536edgo26tajha98.apps.googleusercontent.com',
@@ -202,7 +212,7 @@ REST_AUTH = {
 #            'access_type': 'online',
 #        }
 #    }
-#}
+# }
 
 SITE_ID = 1
 
@@ -213,8 +223,8 @@ AUTHENTICATION_BACKENDS = [
 
 # social account settings
 SOCIALACCOUNT_ADAPTER = 'authentification.adapters.ESIDZSocialAccountAdapter'
-#LOGIN_REDIRECT_URL = 'login_success'
-#LOGIN_URL = 'account_login'
+# LOGIN_REDIRECT_URL = 'login_success'
+# LOGIN_URL = 'account_login'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -237,4 +247,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'esitrack@esi.dz'  # Replace with your email address
 EMAIL_HOST_PASSWORD = 'fhol grax wgpt rrbt '  # Replace with your email password
-FRONTEND_URL = "http://localhost:3000/"  # Replace with your actual frontend URL
+# Replace with your actual frontend URL
+FRONTEND_URL = "http://localhost:3000/"

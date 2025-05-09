@@ -83,13 +83,13 @@ class InterventionPreventiveCreateView(generics.CreateAPIView):
         if IsAdmin().has_permission(self.request, self):
             statut = StatusIntervention.objects.get(name="affectée")
             serializer.save(statut=statut, admin=user.admin)
-            #here
+            # here
             equipement = serializer.validated_data.get('equipement')
-            try :
+            try:
                 equipement.etat = EtatEquipement.objects.get(nom="En panne")
             except EtatEquipement.DoesNotExist:
                 raise ValueError("L'état 'En panne' n'existe pas.")
-            equipement.save ()
+            equipement.save()
         else:
             raise PermissionDenied(
                 "Seul un administrateur peut créer une intervention préventive.")
@@ -207,23 +207,23 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
 
         # Personnel logic
         elif IsPersonnel().has_permission(self.request, self):
-            print ("i am here")
+            print("i am here")
             allowed_fields = ['id', 'user',
-                              'equipement', 'description', 'statut' , 'urgence' , 'type_intervention' , 'title', 'technicien']
+                              'equipement', 'description', 'statut', 'urgence', 'type_intervention', 'title', 'technicien']
             validated_data = {field: value for field, value in serializer.validated_data.items(
             ) if field in allowed_fields}
-            print (validated_data)
+            print(validated_data)
             for field in serializer.validated_data.keys():
-                print (field)
+                print(field)
                 if field not in allowed_fields:
-                    print("field not in allowed_fields" , field)
+                    print("field not in allowed_fields", field)
                     raise PermissionDenied(
                         f"Le personnel ne peut pas définir le champ '{field}'.")
 
             statut, _ = StatusIntervention.objects.get_or_create(
                 name="en attente")
             serializer.save(user=user.personnel, statut=statut)
-            print ("i am here 2")
+            print("i am here 2")
             equipement = serializer.validated_data.get('equipement')
             equipement_etat, _ = EtatEquipement.objects.get_or_create(
                 nom="En panne")
@@ -306,6 +306,7 @@ class InterventionCurrativeDetailView(generics.RetrieveAPIView):
 class InterventionCancelView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
     lookup_field = 'id'
+
     def patch(self, request, type_intervention, id, *args, **kwargs):
         """
         Cancel an intervention based on its type (preventive or currative).
@@ -319,12 +320,13 @@ class InterventionCancelView(APIView):
             return Response({"detail": "Invalid intervention type."}, status=HTTP_403_FORBIDDEN)
 
         if IsAdmin().has_permission(request, self):
-            status  = StatusIntervention.objects.get (name="annulée")
+            status = StatusIntervention.objects.get(name="annulée")
             intervention.statut = status
             intervention.save()
             return Response({"detail": "Le statut de l'intervention a été mis à jour en annulé."}, status=HTTP_200_OK)
         else:
             return Response({"detail": "Seuls les administrateurs peuvent annuler des interventions."}, status=HTTP_403_FORBIDDEN)
+
 
 class StatusInterventionListView(generics.ListAPIView):
     """
@@ -364,6 +366,7 @@ class InterventionCurrativeAffecterView(generics.UpdateAPIView):
     serializer_class = InterventionCurrativeSerializer
     queryset = InterventionCurrative.objects.all()
     lookup_field = 'id'
+
     def perform_update(self, serializer):
         user = self.request.user
         if IsAdmin().has_permission(self.request, self):
@@ -374,7 +377,7 @@ class InterventionCurrativeAffecterView(generics.UpdateAPIView):
             affecter_status = StatusIntervention.objects.get(name="affectée")
             intervention.statut = affecter_status
             intervention.admin = user.admin
-            intervention.save(update_fields=['statut' , 'admin'])
+            intervention.save(update_fields=['statut', 'admin'])
 
             # Set equipment state to "En maintenance"
             en_maintenance_etat = EtatEquipement.objects.get(nom="En panne")
@@ -394,11 +397,12 @@ class InterventionPreventiveListAllView(generics.ListAPIView):
     serializer_class = InterventionPreventiveSerializer
     permission_classes = [IsAuthenticated]
 
+
 class InterventionCurrativeListAllView(generics.ListAPIView):
     queryset = InterventionCurrative.objects.all()
     serializer_class = InterventionCurrativeSerializer
     permission_classes = [IsAuthenticated]
-        
+
 
 class InterventionsByEquipementView(APIView):
     """

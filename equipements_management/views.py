@@ -124,12 +124,13 @@ class TypeEquipementListView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = TypeEquipement.objects.all()
-        categorie_id = self.request.query_params.get('categorie_id', None)
+        # Filter by category if provided
+        categorie_id = self.request.query_params.get('categorie_id')
         if categorie_id:
             try:
                 queryset = queryset.filter(categorie__id=categorie_id)
-            except ValidationError:
-                raise ValidationError("Invalid category ID")
+            except CategorieEquipement.DoesNotExist:
+                raise ValidationError("Categorie not found.")
         return queryset
 
 
