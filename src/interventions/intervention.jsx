@@ -663,7 +663,7 @@ const Intervention = () => {
 
       {/* En-tête */}
       <div className="w-full bg-[#20599E] text-white pb-16 text-center">
-        <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
+        <h1 className="text-3xl sm:text-3xl md:text-2xl lg:text-4xl font-bold text-[#F4F4F4] mb-4 mt-2">
           Interventions
         </h1>
 
@@ -731,16 +731,15 @@ const Intervention = () => {
         />
       </div>
 
-      <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
+      <div className="w-full min-h-screen rounded-t-[35px] sm:rounded-t-[45px] px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-4 sm:py-6 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
         {/* Résultats et bouton Ajouter */}
 
         <div className="relative w-full px-4 my-0">
           {/* Conteneur principal avec flex pour aligner les éléments */}
           <div className="flex justify-between items-center flex-wrap">
             {/* Message des résultats */}
-            <div className="text-gray-600 font-semibold text-sm sm:text-base md:text-lg">
-              {Math.min(visibleCount, interventions.length)} Résultats affichés
-              sur {interventions.length}
+            <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
+              {Math.min(visibleCount, interventions.length)} Résultats affichés sur {interventions.length}
             </div>
 
             {/* Conteneur des boutons */}
@@ -771,7 +770,7 @@ const Intervention = () => {
         </div>
         {/* Liste des utilisateurs    ::: gap pour espace entre les cartes et grid pour si la carte prend un colone .. ect     ;;;;.map((user) => ( ... )) permet de générer une carte pour chaque utilisateur. */}
 
-        <div className="flex flex-wrap space-y-4 p-4">
+        <div className="flex flex-wrap space-y-4 px-4 py-3">
           <div className="flex justify-between items-center w-full">
             {currentView === "list" && (
               <div className="sm:py-2 w-full">
@@ -809,7 +808,7 @@ const Intervention = () => {
                   />
 
                   {!loading && isAdmin && menuOpenId === intervention.id && (
-                    <div className="absolute right-6 top-6 z-50">
+                    <div className="absolute right-62 top-8 z-50">
                       <Options
                         options={getStatusOption(intervention.statut_display)}
                         handleSelect={(value) =>
@@ -826,7 +825,7 @@ const Intervention = () => {
             </div>
           ) : (
             /* Vue grille */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3 md:gap-6 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3 md:gap-4 w-full">
               {displayedInterventions.map((intervention) => (
                 <div key={intervention.id} className="relative">
                   <InterventionCard

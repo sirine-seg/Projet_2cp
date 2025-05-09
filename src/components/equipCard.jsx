@@ -22,7 +22,7 @@ const EquipCard = ({ nom, etat, code, localisation, onClick, moreClick }) => {
     <motion.div 
       className="
         bg-white rounded-xl shadow-md
-        pr-5 pl-7 pt-4 pb-6
+        pr-4 pl-5 pt-4 pb-5
         w-full 
         relative cursor-pointer
       "
@@ -43,17 +43,17 @@ const EquipCard = ({ nom, etat, code, localisation, onClick, moreClick }) => {
       }}
     >
       {/* Header avec badge et ID */}
-      <div className="flex items-center justify-between mb-2 sm:mb-3">
+      <div className="flex items-center justify-between mb-2 sm:mb-2">
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-          <Badge 
-            text={etat} 
-            bgColor={badgeColor} 
-            className="text-xs sm:text-sm max-w-[120px] sm:max-w-[140px] truncate" 
-          />
           <Badge 
             text={`#${code}`} 
             bgColor="#9AA0A6" 
-            className="text-xs sm:text-sm" 
+            className="text-[0.7rem] sm:text-[12px]" 
+          />
+          <Badge 
+            text={etat} 
+            bgColor={badgeColor} 
+            className="text-[0.7rem] sm:text-[12px] max-w-[120px] sm:max-w-[140px] truncate" 
           />
         </div>
 
@@ -73,7 +73,7 @@ const EquipCard = ({ nom, etat, code, localisation, onClick, moreClick }) => {
       <div className="flex flex-col gap-1 sm:gap-2">
         {/* Nom de l'équipement */}
         <h2 className="
-          text-xl sm:text-2xl md:text-[28px]
+          text-lg sm:text-xl md:text-2xl
           font-bold text-[#202124]
           truncate
         ">
@@ -87,7 +87,7 @@ const EquipCard = ({ nom, etat, code, localisation, onClick, moreClick }) => {
             alt="Localisation"
             className="h-4 w-4 sm:h-5 sm:w-5"
           />
-          <span className="font-bold text-sm sm:text-base truncate">
+          <span className="font-bold text-xs sm:text-sm truncate">
             {localisation}
           </span>
         </div>

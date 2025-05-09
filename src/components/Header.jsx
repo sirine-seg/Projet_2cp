@@ -139,20 +139,20 @@ const Header = ({ bleu = false }) => {
 
   return (
     <>
-    <header className="flex items-center justify-between pl-4 pr-4 sm:pr-10 py-3 h-12 sm:h-16 w-full">
+    <header className="flex items-center justify-between pl-4 pr-4 sm:pr-10 py-[0.6rem] h-10 sm:h-13 w-full">
       {/* Partie gauche : Menu + Logo */}
       <div className="flex items-center space-x-1 sm:space-x-2">
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
           <img 
             src={bleu ? menuBlue : menu} 
             alt="Menu"
-            className="w-12 sm:w-16 h-12 sm:h-16 cursor-pointer"
+            className="w-10 sm:w-13 h-10 sm:h-13 cursor-pointer"
           />
         </button>
         <img 
           src={bleu ? logoBlue : logo} 
           alt="Logo"
-          className="w-18 sm:w-20 md:w-22 lg:w-24 h-auto"
+          className="w-[3.6rem] sm:w-[4rem] md:w-[4.4rem] lg:w-[4.8rem] h-auto"
         />
       </div>
       
@@ -162,7 +162,7 @@ const Header = ({ bleu = false }) => {
         <div ref={notifRef} className="relative flex items-center h-full">
           <button 
             onClick={toggleNotifPopup}
-            className="flex items-center justify-center w-9 h-9"
+            className="flex items-center justify-center w-7 h-7"
           >
             <img src={notif} alt="Notifications" className="w-full h-full" />
           </button>
@@ -192,14 +192,14 @@ const Header = ({ bleu = false }) => {
             <img
                 src={userData?.user?.photo || Profil}
                 alt="Profil"
-                className="w-9 h-9 flex-shrink-0 rounded-full object-cover"
+                className="w-7 h-7 flex-shrink-0 rounded-full object-cover"
                 onError={(e) => {
                   e.target.src = Profil;
                   e.target.onerror = null;
                 }}
             />
 
-            <span className={`hidden sm:inline ${textColor} sm:text-lg font-semibold`}>
+            <span className={`hidden sm:inline ${textColor} sm:text-base font-semibold`}>
               {userData?.user?.last_name || "anonyme"}
             </span>
           </button>
