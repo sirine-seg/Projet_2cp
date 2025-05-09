@@ -124,56 +124,55 @@ useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+
+  const accessToken = localStorage.getItem("access_token");
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${accessToken}`,
+  };
   
-  // L'autre useEffect aussi
+   
   useEffect(() => {
-    const fetchIntervention = async () => {
+    const fetchStatusList = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/intervention/intervention/${id}/`);
-        if (!response.ok) throw new Error("Erreur lors du chargement");
+        const response = await fetch('http://127.0.0.1:8000/api/interventions/interventions/status/', {
+          headers: headers,
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch statuses");
         const data = await response.json();
-        setIntervention(data);
+        setStatusList(data);
+      } catch (error) {
+        console.error("Error fetching statuses:", error);
+      }
+    };
+
+    fetchStatusList();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/accounts/users/", {
+          headers: headers,
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
+
+        const data = await response.json();
+        setUsers(data);
+        setDisplayedUsers(data.slice(0, visibleCount));
       } catch (error) {
         console.error("Erreur :", error);
       }
     };
-  
-    fetchIntervention();
-  }, [id]);
-  
-   
-
-  useEffect(() => {
-  const fetchStatusList = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/interventions/interventions/status/'); // Make sure the URL matches your backend
-      if (!response.ok) throw new Error("Failed to fetch statuses");
-      const data = await response.json();
-      setStatusList(data);
-    } catch (error) {
-      console.error("Error fetching statuses:", error);
-    }
-  };
-
-  fetchStatusList();
-}, []);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-        try {
-            const response = await fetch(" http://127.0.0.1:8000/api/accounts/users/");
-            if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
-
-            const data = await response.json();
-            setUsers(data);
-            setDisplayedUsers(data.slice(0, visibleCount));
-        } catch (error) {
-            console.error("Erreur :", error);
-        }
-    };
 
     fetchUsers();
-}, [visibleCount]); 
+  }, [visibleCount]);
+
 
 
 
