@@ -129,7 +129,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchIntervention = async () => {
       try {
-        const response = await fetch(`http://127.0.0.0:8000/intervention/intervention/${id}/`);
+        const response = await fetch(`http://127.0.0.1:8000/intervention/intervention/${id}/`);
         if (!response.ok) throw new Error("Erreur lors du chargement");
         const data = await response.json();
         setIntervention(data);
@@ -146,7 +146,7 @@ useEffect(() => {
   useEffect(() => {
   const fetchStatusList = async () => {
     try {
-      const response = await fetch('http://127.0.0.0:8000/api/interventions/interventions/status/'); // Make sure the URL matches your backend
+      const response = await fetch('http://127.0.0.1:8000/api/interventions/interventions/status/'); // Make sure the URL matches your backend
       if (!response.ok) throw new Error("Failed to fetch statuses");
       const data = await response.json();
       setStatusList(data);
@@ -161,7 +161,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchUsers = async () => {
         try {
-            const response = await fetch(" http://127.0.0.0:8000/api/accounts/users/");
+            const response = await fetch(" http://127.0.0.1:8000/api/accounts/users/");
             if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
 
             const data = await response.json();
@@ -412,9 +412,7 @@ const handlePreventiveChoice  = (selectedCHoice) =>{
                 if (!response.ok) throw new Error('Failed to fetch technicians');
                 const responseData = await response.json();
                 console.log(responseData);
-                setTechnicians(responseData);
-                const filtered = responseData.filter(tech => tech.disponibilite === true);
-                setAvailableTechnicians(filtered);
+                
                 setIsPopupVisible(true);
             }
         } catch (error) {
