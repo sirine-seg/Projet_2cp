@@ -48,7 +48,8 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, verbose_name='Nom')
     password = models.CharField(
         max_length=100, verbose_name='Mot de passe', null=True, blank=True)
-    photo = models.URLField(verbose_name='Photo de profil', null=True, blank=True)
+    photo = models.URLField(
+        verbose_name='Photo de profil', null=True, blank=True)
     is_blocked = models.BooleanField(default=False)
 
     active_notif = models.BooleanField(
@@ -64,6 +65,20 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.email})"
+
+    def toggle_activate_notif(self):
+        """
+        Toggle the active_notif field.
+        """
+        self.active_notif = not self.active_notif
+        self.save()
+
+    def toggle_activate_notif_email(self):
+        """
+        Toggle the active_notif_email field.
+        """
+        self.active_notif_email = not self.active_notif_email
+        self.save()
 
 
 class Admin(models.Model):
