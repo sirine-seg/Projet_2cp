@@ -3,6 +3,7 @@ import {
   Line,
   LineChart,
   XAxis,
+  YAxis,
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
@@ -13,13 +14,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/card.jsx";
+} from "../components/card.jsx";
 
 import {
   ChartContainer,
-} from "@/components/chart.jsx";
+} from "../components/chart.jsx";
 
-import CustomTooltip from "@/components/CustomTooltip";
+import CustomTooltip from "../components/CustomTooltip";
 
 export default function LineChartCard({
   title,
@@ -45,6 +46,25 @@ export default function LineChartCard({
     return config;
   };
 
+  // Trouver la valeur maximale pour définir les ticks de l'axe Y
+  const getMaxValue = (data, xAxisKey) => {
+    let max = 0;
+    data.forEach(item => {
+      Object.keys(item).forEach(key => {
+        if (key !== xAxisKey && item[key] > max) {
+          max = item[key];
+        }
+      });
+    });
+    return max;
+  };
+
+  const maxValue = getMaxValue(data, xAxisKey);
+  const yAxisTicks = [];
+  for (let i = 0; i <= maxValue; i += 3) {
+    yAxisTicks.push(i);
+  }
+
   const chartConfig = generateLineChartConfig(data, colorMap, xAxisKey);
 
   return (
@@ -52,22 +72,49 @@ export default function LineChartCard({
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
+        <div className="flex space-x-4">
+            {Object.entries(chartConfig).map(([dataKey, { color, label }]) => (
+              <div key={dataKey} className="flex items-center">
+                <div 
+                  className="w-3 h-3 rounded-full mr-2" 
+                  style={{ backgroundColor: color }}
+                />
+                <span className="text-sm">{label}</span>
+              </div>
+            ))}
+          </div>
       </CardHeader>
 
       <CardContent className="flex-1">
         <ChartContainer config={chartConfig} className="w-full">
-          {/* Adjust the aspect ratio for responsiveness */}
           <div className="w-full aspect-[5/6] sm:aspect-[3/2] md:aspect-[30/9] overflow-visible">
-
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data} margin={{ left: 12, right: 12 }}>
-                <CartesianGrid vertical={false} />
+              <LineChart 
+                data={data} 
+                margin={{ 
+                  right: 12,
+                  top: 10,
+                  bottom: 10
+                }}
+              >
+                <CartesianGrid 
+                  vertical={false} 
+                  horizontal={true}
+                  strokeDasharray="3 3"
+                />
                 <XAxis
                   dataKey={xAxisKey}
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  ticks={yAxisTicks}
+                  tick={{ fontSize: 12 }}
+                  interval={0}
+                  width={30}  // Réduire cette valeur pour rapprocher les labels
                 />
 
                 {Object.entries(chartConfig).map(([dataKey, { color }]) => (

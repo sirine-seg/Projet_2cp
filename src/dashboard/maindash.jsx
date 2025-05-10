@@ -7,11 +7,10 @@ import Header from "../components/Header";
 import CategoryBarChart from "../dashboard/barchart.jsx";
 import PieChartWithLegend from "../dashboard/piechart.jsx";
 import LineChartCard from "../dashboard/linechart.jsx";
-import BarChartCard from "../dashboard/mixedbarchart.jsx"; // ✅ Make sure this path matches your project structure
+import BarChartCard from "../dashboard/mixedbarchart.jsx";
 import TechnicianInterventionChart from "../dashboard/multiplebarchart.jsx";
 import InterventionProgressCard from "../dashboard/percentagechart.jsx";
-import InfoCard from '../components/InfoCard.jsx';
-import PieChartBase from "../dashboard/piechart.jsx";
+import InfoCard from "../components/InfoCard.jsx";
 
 // Utility function to transform technician intervention data
 const transformTechnicianData = (apiData) => {
@@ -45,60 +44,80 @@ export default function DashboardPage() {
       fetch("/data/linechart.json").then((res) => res.json()),
       fetch("/data/mixedbar.json").then((res) => res.json()),
       fetch("/data/multiplebar.json").then((res) => res.json()),
-      fetch("http://127.0.0.1:8000/api/stats/interventions/count/").then((res) => res.json()),
-      fetch("http://127.0.0.1:8000/api/stats/equipements/count/").then((res) => res.json()),
-      fetch("http://127.0.0.1:8000/api/stats/interventions/average-resolution-time/").then((res) => {
+      fetch("http://127.0.0.1:8000/api/stats/interventions/count/").then(
+        (res) => res.json()
+      ),
+      fetch("http://127.0.0.1:8000/api/stats/equipements/count/").then((res) =>
+        res.json()
+      ),
+      fetch(
+        "http://127.0.0.1:8000/api/stats/interventions/average-resolution-time/"
+      ).then((res) => {
         if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
         return res.json();
       }),
-      fetch("http://127.0.0.1:8000/api/stats/technicians/intervention-status-percentage/").then((res) => {
+      fetch(
+        "http://127.0.0.1:8000/api/stats/technicians/intervention-status-percentage/"
+      ).then((res) => {
         if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
         return res.json();
       }),
-      fetch("http://127.0.0.1:8000/api/stats/equipements/percentage-by-etat/").then((res) => res.json()),
-      fetch("http://127.0.0.1:8000/api/stats/interventions/percentage-by-status/").then((res) => res.json()),
-      fetch("http://127.0.0.1:8000/api/stats/interventions/by-month/").then((res) => res.json()),
+      fetch(
+        "http://127.0.0.1:8000/api/stats/equipements/percentage-by-etat/"
+      ).then((res) => res.json()),
+      fetch(
+        "http://127.0.0.1:8000/api/stats/interventions/percentage-by-status/"
+      ).then((res) => res.json()),
+      fetch("http://127.0.0.1:8000/api/stats/interventions/by-month/").then(
+        (res) => res.json()
+      ),
     ])
-      .then(([
-        delaysData,
-        pieData,
-        lineData,
-        mixedBarData,
-        multipleBar,
-        interventionsCount,
-        equipmentsCount,
-        resolutionTimeRawData,
-        technicianRawData,
-        equipmentRawData,
-        statusPercentageRawData,
-        interventionsByMonthRawData,
-      ]) => {
-        setBarChartData(delaysData);
-        setPieChartData(pieData);
-        setLineChartData(lineData);
-        setMixedBarChartData(mixedBarData);
-        setMultipleBarChartData(multipleBar);
+      .then(
+        ([
+          delaysData,
+          pieData,
+          lineData,
+          mixedBarData,
+          multipleBar,
+          interventionsCount,
+          equipmentsCount,
+          resolutionTimeRawData,
+          technicianRawData,
+          equipmentRawData,
+          statusPercentageRawData,
+          interventionsByMonthRawData,
+        ]) => {
+          setBarChartData(delaysData);
+          setPieChartData(pieData);
+          setLineChartData(lineData);
+          setMixedBarChartData(mixedBarData);
+          setMultipleBarChartData(multipleBar);
 
-        const formattedStatusData = statusPercentageRawData.map((item) => ({
-          label: item.status.charAt(0).toUpperCase() + item.status.slice(1),
-          value: Math.round(item.percentage),
-        }));
-        setPercentageBarChartData(formattedStatusData);
+          const formattedStatusData = statusPercentageRawData.map((item) => ({
+            label: item.status.charAt(0).toUpperCase() + item.status.slice(1),
+            value: Math.round(item.percentage),
+          }));
+          setPercentageBarChartData(formattedStatusData);
 
-        setStats({
-          interventions: interventionsCount.intervention_count || 0,
-          equipements: equipmentsCount.equipment_count || 0,
-        });
-        setResolutionTimeData(formatResolutionTimeData(resolutionTimeRawData));
-        setTechnicianChartData(transformTechnicianData(technicianRawData));
-        setEquipmentData(formatEquipmentData(equipmentRawData));
-        setInterventionsByMonth(interventionsByMonthRawData.map(item => ({
-          month: item.month,
-          Preventives: item.preventive_count,
-          Curatives: item.currative_count
-        })));
-        setLoading(false);
-      })
+          setStats({
+            interventions: interventionsCount.intervention_count || 0,
+            equipements: equipmentsCount.equipment_count || 0,
+          });
+          setResolutionTimeData(
+            formatResolutionTimeData(resolutionTimeRawData)
+          );
+          setTechnicianChartData(transformTechnicianData(technicianRawData));
+          setEquipmentData(formatEquipmentData(equipmentRawData));
+          setInterventionsByMonth(
+            interventionsByMonthRawData.map((item) => ({
+              month: item.month,
+              Preventives: item.preventive_count,
+              Curatives: item.currative_count,
+            }))
+          );
+          setLoading(false);
+        }
+      )
       .catch((error) => {
         console.error("Erreur lors du chargement des données :", error);
         setError(error);
@@ -112,12 +131,17 @@ export default function DashboardPage() {
       const isInHours = days < 1;
       const value = isInHours ? Math.round(days * 24) : Math.round(days);
       const displayTime = isInHours ? `${value}h` : `${value}j`;
-      return { category: item.category, avgTime: value, displayTime, originalDays: days };
+      return {
+        category: item.category,
+        avgTime: value,
+        displayTime,
+        originalDays: days,
+      };
     });
   };
 
   const formatEquipmentData = (rawData) => {
-    const hasAutres = rawData.some(item => item.name === "Autres");
+    const hasAutres = rawData.some((item) => item.name === "Autres");
     if (!hasAutres) {
       rawData.push({ name: "Autres", value: 0 });
     }
@@ -125,14 +149,14 @@ export default function DashboardPage() {
   };
 
   const pieColorMap = {
-    "En service": "#0B57D0",
-    "En maintenance": "#4F87D9",
-    "En panne": "#B1CFF3",
-    "Autres": "#D6E6FA",
+    "En service": "#20599E",
+    "En maintenance": "#5883B6",
+    "En panne": "#8FACCF",
+    Autres: "#C7D5E7",
   };
   const lineColorMap = {
-    Preventives: "#facc15",
-    Curatives: "#2563eb",
+    Preventives: "#F09C0A",
+    Curatives: "#20599E",
   };
 
   if (loading) {
@@ -147,65 +171,61 @@ export default function DashboardPage() {
     <div className="w-full min-h-screen">
       <Header bleu />
 
-    <div className="dashboard-grid max-w-full p-6">
-      
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 pb-4 sm:pb-6">
-        <InfoCard
-          label="Nombre des interventions"
-          value={stats.interventions}
-          bgColorClass="bg-blue-200"
-          textColorClass="text-black"
-        />
-        <InfoCard
-          label="Nombre des équipements"
-          value={stats.equipements}
-          bgColorClass="bg-yellow-200"
-          textColorClass="text-black"
-        />
-      </div>
+      <div className="dashboard-grid max-w-full p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 pb-4 sm:pb-6">
+          <InfoCard
+            label="Nombre des interventions"
+            value={stats.interventions}
+            bgColorClass="bg-[#B4C6DA]"
+            textColorClass="text-black"
+          />
+          <InfoCard
+            label="Nombre des équipements"
+            value={stats.equipements}
+            bgColorClass="bg-[#F3DAAE]"
+            textColorClass="text-black"
+          />
+        </div>
 
-      <div className="flex flex-row justify-between flex-wrap sm:flex-wrap lg:flex-nowrap gap-4 sm:gap-6">
-        <LineChartCard
-          title="Interventions par mois"
-          description="Préventives vs Curatives"
-          data={interventionsByMonth}
-          colorMap={lineColorMap}
-          xAxisKey="month"
-        />
-        <InterventionProgressCard data={percentageChartData} />
-      </div>
+        <div className="flex flex-row justify-between flex-wrap sm:flex-wrap lg:flex-nowrap gap-4 sm:gap-6">
+          <LineChartCard
+            title="Interventions par mois"
+            data={interventionsByMonth}
+            colorMap={lineColorMap}
+            xAxisKey="month"
+          />
+          <InterventionProgressCard data={percentageChartData} />
+        </div>
 
-      <div className="flex flex-row justify-between flex-wrap sm:flex-wrap lg:flex-nowrap py-4 sm:py-6">
-        <PieChartWithLegend
-          title="Suivi des Équipements"
-          description=""
-          data={equipmentData}
-          value="value"
-          nameKey="name"
-          colorMap={pieColorMap}
-        />
-      </div>
+        <div className="flex flex-row justify-between flex-wrap sm:flex-wrap lg:flex-nowrap py-4 sm:py-6">
+          <PieChartWithLegend
+            title="Suivi des Équipements"
+            description=""
+            data={equipmentData}
+            value="value"
+            nameKey="name"
+            colorMap={pieColorMap}
+          />
+        </div>
 
-      <div className="mb-4 sm:mb-6">
-        <TechnicianInterventionChart
-          title="Répartition des interventions par technicien"
-          data={technicianChartData}
-        />
-      </div>
+        <div className="mb-4 sm:mb-6">
+          <TechnicianInterventionChart
+            title="Répartition des interventions par technicien"
+            data={technicianChartData}
+          />
+        </div>
 
-      <div className="mb-4 sm:mb-6">
-        <CategoryBarChart
-          title="Délais moyens de résolution des tâches par catégorie d'équipement"
-          description="Mise à jour ce mois-ci"
-          data={resolutionTimeData}
-          dataKey="avgTime"
-          nameKey="category"
-          displayKey="displayTime"
-        />
+        <div className="mb-4 sm:mb-6">
+          <CategoryBarChart
+            title="Délais moyens de résolution des tâches par catégorie d'équipement"
+            description="Mise à jour ce mois-ci"
+            data={resolutionTimeData}
+            dataKey="avgTime"
+            nameKey="category"
+            displayKey="displayTime"
+          />
+        </div>
       </div>
-    </div>
     </div>
   );
 }
-

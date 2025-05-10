@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 import {
   Pie,
   PieChart,
@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Legend,
   Label,
-} from "recharts"
+} from "recharts";
 
 import {
   Card,
@@ -17,8 +17,8 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/card"
-import CustomTooltip from "@/components/CustomTooltip"
+} from "../components/card";
+import CustomTooltip from "../components/CustomTooltip";
 
 export default function PieChartBase({
   title,
@@ -33,7 +33,8 @@ export default function PieChartBase({
   const total = React.useMemo(
     () => data.reduce((acc, curr) => acc + curr[valueKey], 0),
     [data, valueKey]
-  )
+  );
+  const getPercentage = (value) => ((value / total) * 100).toFixed(1) + "%";
 
   return (
     <Card className="w-full max-w-full flex flex-col">
@@ -47,32 +48,34 @@ export default function PieChartBase({
       </CardHeader>
 
       <CardContent className="flex-1">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-          <div className="w-full max-w-sm aspect-square mx-auto min-h-[250px]">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20">
+          {/* Pie Chart */}
+          <div className="w-full max-w-[220px] aspect-square min-h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={data}
                   dataKey={valueKey}
                   nameKey={nameKey}
-                  outerRadius="80%"
-                  innerRadius={donut ? 60 : 0}
+                  outerRadius={100}
+                  innerRadius={donut ? 50 : 0} // Adjust if donut
                 >
                   {data.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={
-                        colorMap[entry[nameKey]] || entry.fill || "#cccccc"
-                      }
+                      fill={colorMap[entry[nameKey]] || entry.fill || "#cccccc"}
                     />
                   ))}
 
                   {donut && showCenterText && (
                     <Label
                       content={({ viewBox }) => {
-                        if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox))
-                          return null
-
+                        if (
+                          !viewBox ||
+                          !("cx" in viewBox) ||
+                          !("cy" in viewBox)
+                        )
+                          return null;
                         return (
                           <text
                             x={viewBox.cx}
@@ -83,12 +86,12 @@ export default function PieChartBase({
                             <tspan
                               x={viewBox.cx}
                               y={viewBox.cy}
-                              className="fill-foreground text-xl font-bold"
+                              className="fill-foreground text-base font-bold"
                             >
                               {total}
                             </tspan>
                           </text>
-                        )
+                        );
                       }}
                     />
                   )}
@@ -97,36 +100,47 @@ export default function PieChartBase({
                 <Tooltip
                   content={
                     <CustomTooltip
-                      formatter={(value) => `${value}`}
+                      valueFormatter={(value) => getPercentage(value)}
                       labelFormatter={(label) => `${label}`}
                     />
                   }
                 />
-
-                <Legend
-                  content={({ payload }) => (
-                    <ul className="flex flex-wrap justify-center gap-4 mt-4">
-                      {payload?.map((entry, index) => (
-                        <li
-                          key={`item-${index}`}
-                          className="flex items-center gap-2 text-sm"
-                        >
-                          <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: entry.color }}
-                          />
-                          <span className="text-xs sm:text-sm">{entry.value}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                />
               </PieChart>
             </ResponsiveContainer>
+          </div>
+
+          {/* Legend */}
+          <div className="flex flex-col gap-3 justify-center max-w-[320px]">
+            <ul className="flex flex-col gap-3 text-base">
+              {data.map((entry, index) => {
+                const value = entry[valueKey] || 0;
+                const percentage = total
+                  ? `${((value / total) * 100).toFixed(1)}%`
+                  : "0%";
+
+                return (
+                  <li
+                    key={`legend-item-${index}`}
+                    className="flex items-center justify-between gap-6 font-medium text-black"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{
+                          backgroundColor:
+                            colorMap[entry[nameKey]] || entry.fill || "#ccc",
+                        }}
+                      />
+                      <span>{entry[nameKey]}</span>
+                    </div>
+                    <span>{percentage}</span>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-
