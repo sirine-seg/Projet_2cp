@@ -14,12 +14,12 @@ const Logs = ({
                 <span className="w-[40%] sm:w-[30%] text-[#202124] overflow-hidden whitespace-nowrap">{title}</span>
             </div>
             <button 
-              className="flex-shrink-0 text-gray-500 hover:text-gray-700"
+              className="flex-shrink-0 text-gray-500 hover:text-gray-700 cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 // Check if id exists before navigating
                 if (id) {
-                  navigate(`DetailIntervention/${id}`);
+                  navigate(`../DetailsIntervention/${id}`);
                 } else {
                   console.error("Intervention ID is undefined");
                 }

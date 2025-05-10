@@ -12,6 +12,7 @@ import DisModContainerEquip from "../components/disModContainerEquip";
 import WriteContainer from "../components/writeContainer";
 import Buttonrec from "../components/buttonrectangle";
 import DurationInput from "../components/DurationInput.jsx";
+import ImageUploader from "../components/imageUploader";
 
 const AjouterIntervention = () => {
   // STATES FOP EQUIPEMENT CONTAINER
@@ -471,12 +472,12 @@ const AjouterIntervention = () => {
             />
           )}
 
-          <Buttonrec
-            text="Attacher une image"
-            bgColor="#20599E"
-            textColor="white"
-            className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
-          />
+          {/* Image upload section */}
+          <div className="flex flex-col justify-end items-center w-full py-4 px-7 mt-2">
+            <ImageUploader
+              onImageSelected={(image) => setSelectedImage(image)}
+            />
+          </div>
 
           <div className="technician-section">
             <Buttonrec

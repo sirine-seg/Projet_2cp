@@ -126,29 +126,29 @@ const Info = () => {
       </div>
 
       {/* Main content area */}
-      <div className="w-full min-h-screen rounded-t-[35px] sm:rounded-t-[45px] px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-4 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
-        {/* Loading state */}
+      <div className="w-full min-h-screen rounded-t-[35px] sm:rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 py-6 sm:py-10 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
+        {/* Loading State */}
         {loading && <p className="text-center py-4">Chargement...</p>}
 
-        {/* Error state */}
+        {/* Error State */}
         {error && <p className="text-red-500 text-center py-4">{error}</p>}
 
-        {/* Equipment details when data is loaded */}
+        {/* Equipment Details */}
         {equipement && (
-          <div className="w-full">
-            {/* Navigation header with equipment name and ID */}
+          <div className="w-full space-y-4">
+            {/* Header */}
             <Headerbar
-              title={`${equipement.nom} # ${equipement.id_equipement}`}
+              title={`${equipement.nom} #${equipement.id_equipement}`}
             />
 
-            <h1 className="text-lg font-semibold mb-4">
+            <h1 className="text-lg sm:text-xl lg:text-2xl text-[#202124] mt-6 mb-4 px-4">
               Détails de l'équipement
             </h1>
 
-            {/* Two-column layout for main information */}
-            <div className="flex flex-col-reverse sm:flex-row w-full mx-auto px-3.5 mt-12 gap-4">
-              {/* Left Column - Text information */}
-              <div className="w-full sm:w-1/2 px-1">
+            {/* Main Info Section */}
+            <section className="flex flex-col-reverse sm:flex-row w-full gap-6 mt-4 px-4">
+              {/* Left: Text Info */}
+              <div className="flex flex-col gap-3 w-full sm:w-1/2">
                 <DisplayContainer
                   title="Code Inventaire"
                   content={equipement.code}
@@ -158,58 +158,36 @@ const Info = () => {
                   title="Code-barres"
                   content={equipement.codebar}
                 />
-
-                {/* Manual download link if available */}
-                {equipement.manual && (
-                  <p className="mt-2">
-                    <strong>Manuel :</strong>{" "}
-                    <a
-                      href={equipement.manual}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 underline"
-                    >
-                      Voir le manuel
-                    </a>
-                  </p>
-                )}
               </div>
 
-              {/* Right Column - Image display */}
-              <div className="flex justify-center items-center w-full sm:w-1/2 py-4">
+              {/* Right: Image */}
+              <div className="flex justify-center items-center w-full sm:w-1/2">
                 <PicView equipement={equipement} />
               </div>
-            </div>
+            </section>
 
-            {/* Status and Location information */}
-            <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 gap-1">
-              <div className="w-full sm:w-1/2 px-1">
-                <DisplayContainer title="Etat" content={equipement.etat_nom} />
-              </div>
-              <div className="w-full sm:w-1/2 px-1">
-                <DisplayContainer
-                  title="Localisation"
-                  content={equipement.localisation_nom}
-                />
-              </div>
-            </div>
+            {/* Etat & Localisation */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
+              <DisplayContainer title="État" content={equipement.etat_nom} />
+              <DisplayContainer
+                title="Localisation"
+                content={equipement.localisation_nom}
+              />
+            </section>
 
-            {/* Category and Type information */}
-            <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5">
-              <div className="w-full sm:w-1/2 px-1">
-                <DisplayContainer
-                  title="Catégorie"
-                  content={equipement.categorie_nom}
-                />
-              </div>
-              <div className="w-full sm:w-1/2 px-1">
-                <DisplayContainer title="Type" content={equipement.typee_nom} />
-              </div>
-            </div>
-            {/* Manuel display if available and valid */}
+            {/* Catégorie & Type */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-4">
+              <DisplayContainer
+                title="Catégorie"
+                content={equipement.categorie_nom}
+              />
+              <DisplayContainer title="Type" content={equipement.typee_nom} />
+            </section>
+
+            {/* Manuel */}
             {typeof equipement.manuel === "string" &&
               equipement.manuel.trim() !== "" && (
-                <p className="text-gray-700 mb-2">
+                <p className="text-gray-700">
                   <strong>Manuel :</strong>{" "}
                   <a
                     href={equipement.manuel}
@@ -224,20 +202,24 @@ const Info = () => {
           </div>
         )}
 
-        <h2 className="text-xl font-semibold mt-8 mb-4 px-4 text-[#202124]">
-          Historique des interventions
-        </h2>
+        {/* Historique des interventions */}
+        <section className="mt-8 space-y-3 px-4">
+          <h2 className="text-lg sm:text-xl lg:text-2xl text-[#202124] mt-6 mb-4">
+            Historique des interventions
+          </h2>
 
-        <div className="w-full space-y-2">
           <LogsHeader />
-          {interventions.length === 0 ? (
-            <p>No interventions found.</p>
-          ) : (
-            interventions.map((interv) => (
-              <Logs key={interv.id} id={interv.id} title={interv.title} />
-            ))
-          )}
-        </div>
+
+          <div className="w-full space-y-2">
+            {interventions.length === 0 ? (
+              <p className="text-gray-600 px-2">Aucune intervention trouvée.</p>
+            ) : (
+              interventions.map((interv) => (
+                <Logs key={interv.id} id={interv.id} title={interv.title} />
+              ))
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );

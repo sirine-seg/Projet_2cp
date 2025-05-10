@@ -63,7 +63,9 @@ const EquipementsPage = () => {
     ];
 
     if (isAdmin) {
-      options.splice(1, 0,  // Ajoute entre "signaler" et "détails"
+      options.splice(
+        1,
+        0, // Ajoute entre "signaler" et "détails"
         { label: "Changer le statut", value: "changer" },
         { label: "Modifier", value: "modifier" }
       );
@@ -85,7 +87,6 @@ const EquipementsPage = () => {
       navigate(`/DetailsEquipement/${equipement.id_equipement}`);
     }
   };
-
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -625,49 +626,68 @@ const EquipementsPage = () => {
         <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center">
           <div className="flex flex-nowrap space-x-2 no-scrollbar pb-2">
             <Filtre
-  id="categorie"
-  label={`Catégorie${filters["categorie__nom"] ? `: ${filters["categorie__nom"]}` : ""}`}
-  options={categories}
-  onSelectFilter={(option) => handleFilterChange("categorie__nom", option)}
-  titre="Filtrer par Catégorie"
-  isActive={!!filters["categorie__nom"]}
-  isOpen={openFilterId === "categorie"}
-  setOpenFilterId={setOpenFilterId}
-/>
+              id="categorie"
+              label={`Catégorie${
+                filters["categorie__nom"]
+                  ? `: ${filters["categorie__nom"]}`
+                  : ""
+              }`}
+              options={categories}
+              onSelectFilter={(option) =>
+                handleFilterChange("categorie__nom", option)
+              }
+              titre="Filtrer par Catégorie"
+              isActive={!!filters["categorie__nom"]}
+              isOpen={openFilterId === "categorie"}
+              setOpenFilterId={setOpenFilterId}
+            />
 
-<Filtre
-  id="type"
-  label={`Type${filters["typee__nom"] ? `: ${filters["typee__nom"]}` : ""}`}
-  options={types}
-  onSelectFilter={(option) => handleFilterChange("typee__nom", option)}
-  titre="Filtrer par Type"
-  isActive={!!filters["typee__nom"]}
-  isOpen={openFilterId === "type"}
-  setOpenFilterId={setOpenFilterId}
-/>
+            <Filtre
+              id="type"
+              label={`Type${
+                filters["typee__nom"] ? `: ${filters["typee__nom"]}` : ""
+              }`}
+              options={types}
+              onSelectFilter={(option) =>
+                handleFilterChange("typee__nom", option)
+              }
+              titre="Filtrer par Type"
+              isActive={!!filters["typee__nom"]}
+              isOpen={openFilterId === "type"}
+              setOpenFilterId={setOpenFilterId}
+            />
 
-<Filtre
-  id="localisation"
-  label={`Localisation${filters["localisation__nom"] ? `: ${filters["localisation__nom"]}` : ""}`}
-  options={localisations}
-  onSelectFilter={(option) => handleFilterChange("localisation__nom", option)}
-  titre="Filtrer par Localisation"
-  isActive={!!filters["localisation__nom"]}
-  isOpen={openFilterId === "localisation"}
-  setOpenFilterId={setOpenFilterId}
-/>
+            <Filtre
+              id="localisation"
+              label={`Localisation${
+                filters["localisation__nom"]
+                  ? `: ${filters["localisation__nom"]}`
+                  : ""
+              }`}
+              options={localisations}
+              onSelectFilter={(option) =>
+                handleFilterChange("localisation__nom", option)
+              }
+              titre="Filtrer par Localisation"
+              isActive={!!filters["localisation__nom"]}
+              isOpen={openFilterId === "localisation"}
+              setOpenFilterId={setOpenFilterId}
+            />
 
-<Filtre
-  id="etat"
-  label={`État${filters["etat__nom"] ? `: ${filters["etat__nom"]}` : ""}`}
-  options={etats}
-  onSelectFilter={(option) => handleFilterChange("etat__nom", option)}
-  titre="Filtrer par État"
-  isActive={!!filters["etat__nom"]}
-  isOpen={openFilterId === "etat"}
-  setOpenFilterId={setOpenFilterId}
-/>
-
+            <Filtre
+              id="etat"
+              label={`État${
+                filters["etat__nom"] ? `: ${filters["etat__nom"]}` : ""
+              }`}
+              options={etats}
+              onSelectFilter={(option) =>
+                handleFilterChange("etat__nom", option)
+              }
+              titre="Filtrer par État"
+              isActive={!!filters["etat__nom"]}
+              isOpen={openFilterId === "etat"}
+              setOpenFilterId={setOpenFilterId}
+            />
           </div>
         </div>
       </div>
@@ -735,7 +755,11 @@ const EquipementsPage = () => {
                         handleEquipementToggle(equipement.id_equipement)
                       }
                       moreClick={() => {
-                        setMenuOpen(menuOpen === equipement.id_equipement ? null : equipement.id_equipement);
+                        setMenuOpen(
+                          menuOpen === equipement.id_equipement
+                            ? null
+                            : equipement.id_equipement
+                        );
                       }}
                     />
 
@@ -743,14 +767,15 @@ const EquipementsPage = () => {
                       <div className="menu-container">
                         <Options
                           options={getEquipementOptions(isAdmin)}
-                          handleSelect={(value) => handleEquipementOptionSelect(value, equipement)}
+                          handleSelect={(value) =>
+                            handleEquipementOptionSelect(value, equipement)
+                          }
                           className="absolute top-8 right-6 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border max-w-60"
                           setMenuOpen={setMenuOpen}
                           isActive={!isPopupVisible}
                         />
                       </div>
                     )}
-
                   </div>
                 ))
               ) : (
@@ -776,8 +801,15 @@ const EquipementsPage = () => {
                         )
                       }
                       moreClick={() => {
-                        console.log("Menu ouvert pour : ", equipement.id_equipement);
-                        setMenuOpen(prevMenu => (prevMenu === equipement.id_equipement ? null : equipement.id_equipement));
+                        console.log(
+                          "Menu ouvert pour : ",
+                          equipement.id_equipement
+                        );
+                        setMenuOpen((prevMenu) =>
+                          prevMenu === equipement.id_equipement
+                            ? null
+                            : equipement.id_equipement
+                        );
                       }}
                     />
 
@@ -786,14 +818,15 @@ const EquipementsPage = () => {
                       <div className="menu-container">
                         <Options
                           options={getEquipementOptions(isAdmin)}
-                          handleSelect={(value) => handleEquipementOptionSelect(value, equipement)}
+                          handleSelect={(value) =>
+                            handleEquipementOptionSelect(value, equipement)
+                          }
                           className="absolute top-8 right-6 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border max-w-60"
                           setMenuOpen={setMenuOpen}
                           isActive={!isPopupVisible}
                         />
                       </div>
                     )}
-
                   </div>
                 ))
               ) : (
