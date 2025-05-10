@@ -410,6 +410,25 @@ class StatusInterventionCreateView(generics.CreateAPIView):
                 "Seul un administrateur peut créer un statut d'intervention.")
 
 
+class StatusInterventionDeleteView(generics.DestroyAPIView):
+    """
+    API view to delete an intervention status.
+    Only accessible by administrators.
+    """
+    serializer_class = StatusInterventionSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+    lookup_field = 'id'
+    queryset = StatusIntervention.objects.all()
+
+    def perform_destroy(self, instance):
+        if IsAdmin().has_permission(self.request, self):
+            instance.delete()
+        else:
+            raise PermissionDenied(
+                "Seul un administrateur peut supprimer un statut d'intervention."
+            )
+
+
 class InterventionCurrativeAffecterView(generics.UpdateAPIView):
     """
     API view to assign a curative intervention to technicians.

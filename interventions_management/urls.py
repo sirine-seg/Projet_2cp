@@ -12,7 +12,8 @@ from .views import (
     InterventionCurrativeUpdateView,
     InterventionCancelView,
     StatusInterventionListView,
-    StatusInterventionCreateView ,
+    StatusInterventionCreateView,
+    StatusInterventionDeleteView,
     InterventionCurrativeAffecterView,
     InterventionListAllView,
     InterventionPreventiveListAllView,
@@ -50,8 +51,11 @@ urlpatterns = [
          name='status-intervention-list'),
     path('interventions/status/create/', StatusInterventionCreateView.as_view(),
          name='status-intervention-create'),
-    path ('interventions/affecter/<int:id>/' , InterventionCurrativeAffecterView.as_view(),
-          name='status-intervention-create'),
+    path('interventions/status/<int:id>/',
+         StatusInterventionDeleteView.as_view(), name='status-intervention-delete'),
+
+    path('interventions/affecter/<int:id>/', InterventionCurrativeAffecterView.as_view(),
+         name='status-intervention-affecter'),
 
     path('interventions/all/', InterventionListAllView.as_view(),
          name='intervention-list-all'),
