@@ -5,13 +5,14 @@ import {
   BarChart,
   Bar,
   XAxis,
+  YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   LabelList,
 } from "recharts";
 
-import CustomTooltip from "@/components/CustomTooltip"; // ✅ Ensure this path is correct
+import CustomTooltip from "../components/CustomTooltip";
 
 import {
   Card,
@@ -19,7 +20,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/card";
+} from "../components/card";
 
 const ChartCard = ({ data, title, description }) => {
   const [containerWidth, setContainerWidth] = useState(0);
@@ -43,6 +44,8 @@ const ChartCard = ({ data, title, description }) => {
   const chartWidth = data.length * barWidth;
   const isScrollable = chartWidth > containerWidth;
   const isMobile = typeof window !== "undefined" && window.innerWidth < 600;
+  const maxAvg = Math.max(...data.map((d) => d.avgTime));
+  const ticks = Array.from({ length: maxAvg + 1 }, (_, i) => i); // [0, 1, ..., max]
 
   return (
     <Card className="w-full max-w-full">
@@ -60,8 +63,24 @@ const ChartCard = ({ data, title, description }) => {
             }}
           >
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data} margin={{ top: 20 }}>
+              <BarChart data={data} margin={{ top: 25 }}>
                 <CartesianGrid vertical={false} />
+
+                <YAxis
+                  width={30}
+                  domain={[0, maxAvg]}
+                  ticks={ticks}
+                  interval={0}
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tick={{
+                    fontSize: isMobile ? 10 : 12,
+                    fontWeight: 500,
+                  }}
+                  tickFormatter={(value) => `${value} j`}
+                />
+
                 <XAxis
                   dataKey="category"
                   tickLine={false}
@@ -78,17 +97,12 @@ const ChartCard = ({ data, title, description }) => {
                 <Tooltip
                   content={
                     <CustomTooltip
-                      valueFormatter={(value) => `${value} day`}
-                      labelFormatter={(label) => `Category: ${label}`}
+                      valueFormatter={(value) => `${value} jours`}
+                      labelFormatter={(label) => `Categorie: ${label}`}
                     />
                   }
                 />
-                <Bar
-                  dataKey="avgTime"
-                  fill="#20599E"
-                  radius={8}
-                  barSize={40}
-                >
+                <Bar dataKey="avgTime" fill="#20599E" radius={8} barSize={40}>
                   <LabelList
                     position="top"
                     offset={12}
@@ -106,4 +120,3 @@ const ChartCard = ({ data, title, description }) => {
 };
 
 export default ChartCard;
-
