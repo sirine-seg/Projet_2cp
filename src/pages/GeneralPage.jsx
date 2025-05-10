@@ -132,7 +132,7 @@ export default function GeneralPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#F4F4F4]">
+    <div className="min-h-screen w-full bg-[#F4F4F4] font-poppins">
       <div className="fixed top-0 left-0 h-screen w-64 z-30">
         {/* Mobile - always closed or controlled differently */}
         <div className="lg:hidden">

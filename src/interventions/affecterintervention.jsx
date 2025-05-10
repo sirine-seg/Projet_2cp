@@ -8,7 +8,7 @@ import DisModContainer from "../components/disModContainer";
 import UserProfilMail from "../components/userProfilMail";
 import ChoiceContainer from "../components/choiceContainer";
 import AssignPopUp from "../components/assignPopUp";
-
+import PopupMessage from "../components/Popupcheck";
 
 const Affecter = () => {
   const [users, setUsers] = useState([]); // Stocke tous les utilisateurs
@@ -139,7 +139,7 @@ const Affecter = () => {
 
       const updatedData = await response.json();
       setIntervention(updatedData); // Mets à jour l’état avec les nouvelles données
-      alert("Intervention mise à jour avec succès !");
+      setIsPopupVisible(true);
     } catch (error) {
       console.error("Erreur lors de la mise à jour :", error);
       alert("Échec de la mise à jour !");
@@ -178,7 +178,7 @@ const Affecter = () => {
   }
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E]">
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       {/* Logo en haut à gauche */}
       <Header />
 
@@ -298,6 +298,13 @@ const Affecter = () => {
             }
           />
         )}
+
+        {isPopupVisible && (
+        <PopupMessage
+          title="Intervention affectée avec succès!"
+          onClose={() => setIsPopupVisible(false)}
+        />
+      )}
       </div>
     </div>
   );
