@@ -25,7 +25,7 @@ export default function InterventionProgressCard({
   return (
     <Card className="w-full max-w-md flex flex-col p-3 sm:p-4">
       <CardHeader>
-        <CardTitle className="text-base sm:text-lg md:text-xl lg:text-2xl">
+        <CardTitle className="text-base sm:text-lg md:text-xl">
           {title}
         </CardTitle>
         {description && (

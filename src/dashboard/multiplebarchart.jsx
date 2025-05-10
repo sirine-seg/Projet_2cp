@@ -52,16 +52,24 @@ export default function TechnicianInterventionChart({
 
   return (
     <Card className="w-full">
-      <CardHeader >
-        <CardTitle>{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
-        {showLegend && renderLegend()}
-      </CardHeader>
+      <CardHeader>
+  <div className="flex justify-between items-start gap-4">
+    <div>
+      <CardTitle className="text-base sm:text-lg md:text-xl">{title}</CardTitle>
+      {description && <CardDescription>{description}</CardDescription>}
+    </div>
+    {showLegend && (
+      <div className="flex-shrink-0">
+        {renderLegend()}
+      </div>
+    )}
+  </div>
+</CardHeader>
 
       <CardContent className="flex-1 overflow-visible">
         <ChartContainer config={{}} className="w-full ">
           <div className="w-full aspect-[2/1] md:aspect-[3/1] lg:aspect-[4/1] xl:aspect-[5/1] sm:aspect-auto">
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={300}>
               <BarChart
                 layout="vertical"
                 data={data}
