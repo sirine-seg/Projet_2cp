@@ -1,31 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import SearchBar from "../components/Searchbar";
 import Header from "../components/Header";
-import Options from "../components/options";
 import PopupMessage from "../components/Popupcheck";
-import useIsSmallScreen from "../hooks/useIsSmallScreen";
-import AddMobile from "../components/addMobile";
 import Headerbar from "../components/Arrowleftt";
-import InfoIntervUser from "../components/infoIntervUserContainer";
 import DisModContainer from "../components/disModContainer";
 import UserProfilMail from "../components/userProfilMail";
 import ChoiceContainer from "../components/choiceContainer";
-import Button from "../components/Button.jsx";
-import TechnicienAssign from "../components/technicienAssign";
 import AssignPopUp from "../components/assignPopUp";
 import DisModContainerEquip from "../components/disModContainerEquip";
-import Profil from "../assets/Profil.svg";
-import InfoIntervUserr from "../components/infoIntervUser";
-import EditIntervUser from "../components/editIntervUser";
 import WriteContainer from "../components/writeContainer";
 import Buttonrec from "../components/buttonrectangle";
-import EquipeModifierPopup from "../components/equipModifierPopUp.jsx";
-import DisModeCOntainerEquip from "../components/disModContainerEquip.jsx";
-import equip from "../equipements/equip.jsx";
 import DurationInput from "../components/DurationInput.jsx";
-const Userspageee = () => {
+
+const AjouterIntervention = () => {
   // STATES FOP EQUIPEMENT CONTAINER
   const [equipments, setEquipments] = useState([]); // the list of equipement instances
   const [selectedEquip, setSelectedEquip] = useState(null); // the selected equipement instance
@@ -65,10 +53,7 @@ const Userspageee = () => {
   const [showPopupadmin, setshowPopupadmin] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [dateDebut, setDateDebut] = useState("");
-  const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [description, setdescription] = useState("");
-  const [actions_effectuees, setactions_effectuees] = useState("");
-  const [pieces_remplacees, setpieces_remplacees] = useState("");
   const [selectedDatedebut, setSelectedDatedebut] = useState("");
   const [UrgenceLabel, setUrgenceLabel] = useState("");
   // use state for duration display  :
@@ -295,16 +280,6 @@ const Userspageee = () => {
         const data = await response.json();
         console.log(data);
         setEquipments(data);
-        // Instead of mapping to {label, value}, keep full objects with expected properties
-        /*const equipmentsFormatted = data.map((equip) => ({
-                    id: equip.id_equipement,        // Adjust id field name as needed
-                    name: equip.nom,                // Assuming 'nom' = name in your API
-                    localisation: equip.localisation || "", // Add localisation if available or empty string
-                    // add any other properties you might want to keep
-                })); */
-
-        /*const  equipmentsCopy = data.map(equip => equip);*/
-        /*await setEquipments(equipments => [...equipments , data])*/
       } catch (error) {
         console.error(error);
       }
@@ -312,8 +287,6 @@ const Userspageee = () => {
     fetchEquipments();
   }, []);
 
-  //
-  //console.log(equipments)
   /// integration des fetch des technician  :
   useEffect(() => {
     const fetchTechnicians = async () => {
@@ -424,9 +397,7 @@ const Userspageee = () => {
 
       <div className="w-full min-h-screen rounded-t-[35px] sm:rounded-t-[45px] px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-4 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
         <div className="w-full">
-          <Headerbar
-            title={"Ajouter une Intervention"}
-          />
+          <Headerbar title={"Ajouter une Intervention"} />
         </div>
 
         <div className="w-full max-w-5xl mx-auto mt-4 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -555,7 +526,6 @@ const Userspageee = () => {
             className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
           />
         </div>
-
       </div>
 
       {isPopupVisible && (
@@ -568,4 +538,4 @@ const Userspageee = () => {
   );
 };
 
-export default Userspageee;
+export default AjouterIntervention;
