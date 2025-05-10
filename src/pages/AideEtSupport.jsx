@@ -5,7 +5,7 @@ import { Download, Mail } from "lucide-react";
 
 export default function AideEtSupportPage({}) {
   return (
-    <div className="min-h-screen bg-[#F4F4F4]">
+    <div className="min-h-screen bg-[#F4F4F4] font-poppins">
       <div className="fixed top-0 left-0 h-screen w-64 z-30">
         <SideBar isOpen="true" />
       </div>

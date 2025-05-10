@@ -69,7 +69,8 @@ export default function GeneralPage() {
     })
       .then((res) => res.json())
       .then((userData) => {
-        const userID = userData.id;
+        const userID = userData.user.id;
+        console.log("User ID for toggle:", userID);
   
         fetch(`http://localhost:8000/api/accounts/toggle-notification/${userID}/`, {
           method: "POST",
@@ -79,7 +80,10 @@ export default function GeneralPage() {
         })
           .then((res) => {
             if (!res.ok) throw new Error("Failed to toggle general notifications");
-            setAllNotifications((prev) => !prev); // Toggle locally
+            return res.json();
+          })
+          .then((data) => {
+            setAllNotifications(data.active_notif);
           })
           .catch((err) => console.error(err));
       })
@@ -96,7 +100,8 @@ export default function GeneralPage() {
     })
       .then((res) => res.json())
       .then((userData) => {
-        const userID = userData.id;
+        const userID = userData.user.id;
+        console.log("User ID for toggle email:", userID);
   
         fetch(`http://localhost:8000/api/accounts/toggle-notification-email/${userID}/`, {
           method: "POST",
@@ -106,7 +111,10 @@ export default function GeneralPage() {
         })
           .then((res) => {
             if (!res.ok) throw new Error("Failed to toggle email notifications");
-            setEmailNotifications((prev) => !prev); // Toggle locally
+            return res.json();
+          })
+          .then((data) => {
+            setEmailNotifications(data.active_notif_email);
           })
           .catch((err) => console.error(err));
       })
@@ -124,7 +132,7 @@ export default function GeneralPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#F4F4F4]">
+    <div className="min-h-screen w-full bg-[#F4F4F4] font-poppins">
       <div className="fixed top-0 left-0 h-screen w-64 z-30">
         {/* Mobile - always closed or controlled differently */}
         <div className="lg:hidden">

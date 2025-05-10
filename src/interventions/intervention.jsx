@@ -657,7 +657,7 @@ const Intervention = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E]">
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       {/* Logo en haut à gauche */}
       <Header />
 
@@ -835,7 +835,7 @@ const Intervention = () => {
                     statut={intervention.statut_display}
                     equipement={intervention.equipement}
                     date={new Date(
-                      intervention.date_debut || "06/05/2025"
+                      intervention.date_debut
                     ).toLocaleDateString("fr-FR")}
                     onClick={() =>
                       navigate(`/DetailsIntervention/${intervention.id}`)

@@ -46,7 +46,7 @@ const Login = () => {
 
 
     return (
-      <div className="min-h-screen flex flex-col lg:flex-row bg-shalke04 lg:bg-marbri">
+      <div className="min-h-screen flex flex-col lg:flex-row bg-shalke04 lg:bg-marbri font-poppins">
       {/* blue panel */}  
       <aside className="bg-shalke04 text-white p-8 flex-shrink-0
                           w-full h-1/3 lg:w-1/2 lg:h-auto min-h-52 lg:rounded-r-[30px] lg:filter lg:drop-shadow-[5px_0_25px_rgba(32,33,36,0.8)]">

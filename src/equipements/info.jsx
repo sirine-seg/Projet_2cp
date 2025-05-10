@@ -115,7 +115,7 @@ const Info = () => {
   }, [id_equipement]);
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E]">
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       <Header />
 
       {/* Page title */}

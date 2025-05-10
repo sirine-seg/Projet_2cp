@@ -43,6 +43,8 @@ const EquipementsPage = () => {
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [openFilterId, setOpenFilterId] = useState(null);
+
   // FIXED: Define filters with name-based keys for both UI and API
   const [filters, setFilters] = useState({
     categorie__nom: "",
@@ -607,7 +609,7 @@ const EquipementsPage = () => {
 
   console.log("selected equipements:", selectedEquipements);
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] overflow-hidden">
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       <Header />
 
       <div className="w-full bg-[#20599E] text-white pb-16 text-center">
@@ -623,53 +625,49 @@ const EquipementsPage = () => {
         <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center">
           <div className="flex flex-nowrap space-x-2 no-scrollbar pb-2">
             <Filtre
-              label={`Catégorie${
-                filters["categorie__nom"]
-                  ? `: ${filters["categorie__nom"]}`
-                  : ""
-              }`}
-              options={categories}
-              onSelectFilter={(option) =>
-                handleFilterChange("categorie__nom", option)
-              }
-              titre="Filtrer par Catégorie"
-              isActive={!!filters["categorie__nom"]}
-            />
-            <Filtre
-              label={`Type${
-                filters["typee__nom"] ? `: ${filters["typee__nom"]}` : ""
-              }`}
-              options={types}
-              onSelectFilter={(option) =>
-                handleFilterChange("typee__nom", option)
-              }
-              titre="Filtrer par Type"
-              isActive={!!filters["typee__nom"]}
-            />
-            <Filtre
-              label={`Localisation${
-                filters["localisation__nom"]
-                  ? `: ${filters["localisation__nom"]}`
-                  : ""
-              }`}
-              options={localisations}
-              onSelectFilter={(option) =>
-                handleFilterChange("localisation__nom", option)
-              }
-              titre="Filtrer par Localisation"
-              isActive={!!filters["localisation__nom"]}
-            />
-            <Filtre
-              label={`État${
-                filters["etat__nom"] ? `: ${filters["etat__nom"]}` : ""
-              }`}
-              options={etats}
-              onSelectFilter={(option) =>
-                handleFilterChange("etat__nom", option)
-              }
-              titre="Filtrer par État"
-              isActive={!!filters["etat__nom"]}
-            />
+  id="categorie"
+  label={`Catégorie${filters["categorie__nom"] ? `: ${filters["categorie__nom"]}` : ""}`}
+  options={categories}
+  onSelectFilter={(option) => handleFilterChange("categorie__nom", option)}
+  titre="Filtrer par Catégorie"
+  isActive={!!filters["categorie__nom"]}
+  isOpen={openFilterId === "categorie"}
+  setOpenFilterId={setOpenFilterId}
+/>
+
+<Filtre
+  id="type"
+  label={`Type${filters["typee__nom"] ? `: ${filters["typee__nom"]}` : ""}`}
+  options={types}
+  onSelectFilter={(option) => handleFilterChange("typee__nom", option)}
+  titre="Filtrer par Type"
+  isActive={!!filters["typee__nom"]}
+  isOpen={openFilterId === "type"}
+  setOpenFilterId={setOpenFilterId}
+/>
+
+<Filtre
+  id="localisation"
+  label={`Localisation${filters["localisation__nom"] ? `: ${filters["localisation__nom"]}` : ""}`}
+  options={localisations}
+  onSelectFilter={(option) => handleFilterChange("localisation__nom", option)}
+  titre="Filtrer par Localisation"
+  isActive={!!filters["localisation__nom"]}
+  isOpen={openFilterId === "localisation"}
+  setOpenFilterId={setOpenFilterId}
+/>
+
+<Filtre
+  id="etat"
+  label={`État${filters["etat__nom"] ? `: ${filters["etat__nom"]}` : ""}`}
+  options={etats}
+  onSelectFilter={(option) => handleFilterChange("etat__nom", option)}
+  titre="Filtrer par État"
+  isActive={!!filters["etat__nom"]}
+  isOpen={openFilterId === "etat"}
+  setOpenFilterId={setOpenFilterId}
+/>
+
           </div>
         </div>
       </div>
