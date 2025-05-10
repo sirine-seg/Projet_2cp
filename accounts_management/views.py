@@ -215,14 +215,14 @@ class ToggleActivateNotificationView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
 
-    def get(self, request, args, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         Retrieve the current notification activation status for a specific user.
         """
         user = self.get_object()
         return Response({'is_notification_active': user.active_notif}, status=status.HTTP_200_OK)
 
-    def post(self, request, args, kwargs):
+    def post(self, request, *args, **kwargs):
         """
         Toggle the activation status of notifications for a specific user.
         """
@@ -241,7 +241,7 @@ class ToggleActivateNotificationEmailView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
 
-    def get(self, request, *args, kwargs):
+    def get(self, request, *args, **kwargs):
         """
         Retrieve the current email notification activation status for a specific user.
         """

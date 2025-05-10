@@ -121,16 +121,13 @@ class CategorieEquipementDeleteView(generics.DestroyAPIView):
 class TypeEquipementListView(generics.ListAPIView):
     serializer_class = TypeEquipementSerializer
     permission_classes = [IsAuthenticated]
+    queryset = TypeEquipement.objects.all()
 
     def get_queryset(self):
         queryset = TypeEquipement.objects.all()
-        # Filter by category if provided
-        categorie_id = self.request.query_params.get('categorie_id')
+        categorie_id = self.request.query_params.get('categorie')
         if categorie_id:
-            try:
-                queryset = queryset.filter(categorie__id=categorie_id)
-            except CategorieEquipement.DoesNotExist:
-                raise ValidationError("Categorie not found.")
+            queryset = queryset.filter(categorie__id=categorie_id)
         return queryset
 
 

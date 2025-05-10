@@ -7,7 +7,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_403_FORBIDDEN
 from django.shortcuts import get_object_or_404
 from equipements_management.models import EtatEquipement, Equipement
 from .models import InterventionPreventive, InterventionCurrative, Intervention, StatusIntervention
-from notifications.models import Notification
+from notifications_management.models import Notification
 from django.utils import timezone
 from accounts_management.permissions import IsAdmin, IsTechnician, IsPersonnel
 from .serializers import InterventionPreventiveSerializer, InterventionCurrativeSerializer, InterventionSerializer, StatusInterventionSerializer
@@ -389,15 +389,8 @@ class StatusInterventionListView(generics.ListAPIView):
     Only accessible by administrators.
     """
     serializer_class = StatusInterventionSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated]
     queryset = StatusIntervention.objects.all()
-
-    def get_queryset(self):
-        if IsAdmin().has_permission(self.request, self):
-            return StatusIntervention.objects.all()
-        else:
-            raise PermissionDenied(
-                "Seul un administrateur peut accéder à la liste des statuts d'intervention.")
 
 
 class StatusInterventionCreateView(generics.CreateAPIView):

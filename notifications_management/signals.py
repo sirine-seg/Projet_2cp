@@ -17,6 +17,10 @@ def send_email_notification(sender, instance, created, **kwargs):
         print("No email recipient")
         return False
 
+    if not instance.user.active_notif_email:
+        print("User has disabled email notifications")
+        return False
+
     try:
         # Fetch intervention details from the related field
         intervention = instance.related_intervention
