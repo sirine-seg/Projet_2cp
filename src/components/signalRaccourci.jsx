@@ -6,7 +6,7 @@ export default function SignalRaccourci() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/Ajoutintervention");
+    navigate("/AjouterIntervention");
   };
 
   return (

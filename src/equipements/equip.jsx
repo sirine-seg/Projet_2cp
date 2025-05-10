@@ -8,6 +8,7 @@ import EquipCard from "../components/equipCard";
 import AjouterButton from "../components/Ajouterbutton";
 import AddMobile from "../components/addMobile";
 import PopupChange from "../components/popupChange";
+import Options from "../components/options";
 
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import exportToPDF from "../components/exportPdf";
@@ -52,6 +53,37 @@ const EquipementsPage = () => {
 
   // Initialize currentView from localStorage or default to "list"
   const [currentView, setCurrentView] = useState("list");
+
+  const getEquipementOptions = (isAdmin) => {
+    const options = [
+      { label: "Signaler un problème", value: "signaler" },
+      { label: "Détails", value: "details" },
+    ];
+
+    if (isAdmin) {
+      options.splice(1, 0,  // Ajoute entre "signaler" et "détails"
+        { label: "Changer le statut", value: "changer" },
+        { label: "Modifier", value: "modifier" }
+      );
+    }
+
+    return options;
+  };
+
+  const handleEquipementOptionSelect = (value, equipement) => {
+    setMenuOpen(null); // Ferme le menu
+
+    if (value === "signaler") {
+      handlesignale(equipement);
+    } else if (value === "changer") {
+      handlestatus(equipement);
+    } else if (value === "modifier") {
+      handleEdit(equipement);
+    } else if (value === "details") {
+      navigate(`/DetailsEquipement/${equipement.id_equipement}`);
+    }
+  };
+
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -686,7 +718,7 @@ const EquipementsPage = () => {
             )}
           </div>
 
-          {/* ✅ Equipements */}
+          {/* Equipements */}
           {currentView === "list" ? (
             /* Vue liste */
             <div className="w-full space-y-2">
@@ -705,59 +737,22 @@ const EquipementsPage = () => {
                         handleEquipementToggle(equipement.id_equipement)
                       }
                       moreClick={() => {
-                        setMenuOpen(
-                          equipement.id_equipement === menuOpen
-                            ? null
-                            : equipement.id_equipement
-                        );
+                        setMenuOpen(menuOpen === equipement.id_equipement ? null : equipement.id_equipement);
                       }}
                     />
 
                     {!loading && menuOpen === equipement.id_equipement && (
-                      <div
-                        className="absolute top-10 right-2 bg-white shadow-lg rounded-md text-black w-64 z-50 menu-container"
-                        onClick={(e) => e.stopPropagation()}
-                        style={{ pointerEvents: "auto" }}
-                      >
-                        {/* Visible pour tous */}
-                        <button
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                          onClick={() => handlesignale(equipement)}
-                        >
-                          Signaler un problème
-                        </button>
-
-                        {/* Réservé à l'admin */}
-                        {isAdmin && (
-                          <>
-                            <button
-                              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                              onClick={() => handlestatus(equipement)}
-                            >
-                              Changer le status
-                            </button>
-                            <button
-                              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                              onClick={() => handleEdit(equipement)}
-                            >
-                              Modifier
-                            </button>
-                          </>
-                        )}
-
-                        {/* Visible pour tous */}
-                        <button
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                          onClick={() =>
-                            navigate(
-                              `/DetailsEquipement/${equipement.id_equipement}`
-                            )
-                          }
-                        >
-                          Détails
-                        </button>
+                      <div className="menu-container">
+                        <Options
+                          options={getEquipementOptions(isAdmin)}
+                          handleSelect={(value) => handleEquipementOptionSelect(value, equipement)}
+                          className="absolute top-8 right-6 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border max-w-60"
+                          setMenuOpen={setMenuOpen}
+                          isActive={!isPopupVisible}
+                        />
                       </div>
                     )}
+
                   </div>
                 ))
               ) : (
@@ -783,50 +778,24 @@ const EquipementsPage = () => {
                         )
                       }
                       moreClick={() => {
-                        setMenuOpen(
-                          equipement.id_equipement === menuOpen
-                            ? null
-                            : equipement.id_equipement
-                        );
-                        console.log(
-                          "Menu toggled for ID:",
-                          equipement.id_equipement
-                        );
+                        console.log("Menu ouvert pour : ", equipement.id_equipement);
+                        setMenuOpen(prevMenu => (prevMenu === equipement.id_equipement ? null : equipement.id_equipement));
                       }}
                     />
 
                     {/* Menu contextuel (si ouvert) */}
                     {!loading && menuOpen === equipement.id_equipement && (
-                      <div
-                        className="absolute top-10 right-2 bg-white shadow-lg rounded-md text-black w-64 z-50 menu-container"
-                        onClick={(e) => e.stopPropagation()}
-                        style={{ pointerEvents: "auto" }}
-                      >
-                        <button
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                          onClick={() => handlesignale(equipement)}
-                        >
-                          Signaler un problème
-                        </button>
-
-                        {isAdmin && (
-                          <>
-                            <button
-                              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                              onClick={() => handlestatus(equipement)}
-                            >
-                              Changer le status
-                            </button>
-                            <button
-                              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                              onClick={() => handleEdit(equipement)}
-                            >
-                              Modifier
-                            </button>
-                          </>
-                        )}
+                      <div className="menu-container">
+                        <Options
+                          options={getEquipementOptions(isAdmin)}
+                          handleSelect={(value) => handleEquipementOptionSelect(value, equipement)}
+                          className="absolute top-8 right-6 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border max-w-60"
+                          setMenuOpen={setMenuOpen}
+                          isActive={!isPopupVisible}
+                        />
                       </div>
                     )}
+
                   </div>
                 ))
               ) : (

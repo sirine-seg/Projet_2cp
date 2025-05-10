@@ -43,13 +43,13 @@ export default function NotificationPopUp({
         />
       </div>
 
-      <div className="flex flex-col gap-0 h-100 overflow-y-auto">
+      <div className="flex-1 flex-col overflow-y-auto">
         {filteredNotifications.length > 0 ? (
           filteredNotifications.map((notif, index) => (
             <NotificationCard key={index} {...notif} buttonTitle="Voir" />
           ))
         ) : (
-          <div className="h-full flex items-center justify-center text-gray-500 text-sm">
+          <div className="h-full my-16 flex items-center justify-center text-gray-500 text-sm">
             {activeTab === "Tout"
               ? "Aucune notification pour le moment"
               : "Aucune notification non lue"}

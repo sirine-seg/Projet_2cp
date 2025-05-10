@@ -4,7 +4,7 @@ import SearchBar from "../components/Searchbar";
 import Header from "../components/Header";
 import Options from "../components/options";
 import InterventionCard from "../components/interventionCard.jsx";
-import PopupChange from "../components/popupChange.jsx"; // casse correcte
+import PopupChange from "../components/popupChange.jsx";
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import Filtre from "../components/filtre";
 import AddMobile from "../components/addMobile";
@@ -391,7 +391,7 @@ const Mestaches = () => {
 
       {/* En-tête */}
       <div className="w-full bg-[#20599E] text-white pb-16 text-center">
-        <h1 className="text-4xl sm:text-4xl md:text-3xl lg:text-5xl font-bold text-[#F4F4F4] mb-4 mt-2">
+        <h1 className="text-3xl sm:text-3xl md:text-2xl lg:text-4xl font-bold text-[#F4F4F4] mb-4 mt-2">
           Mes taches
         </h1>
         {/* bare de recherhce  */}
@@ -404,45 +404,44 @@ const Mestaches = () => {
         <div className="mx-auto w-full max-w-4xl px-4 mt-4 flex justify-center items-center">
           <div className="flex flex-row space-x-2 pb-2 items-center">
             <Filtre
-        id="equipement"
-        label="Équipement"
-        options={equipementsList}
-        onSelectFilter={handleEquipementFilter}
-        titre="Filtrer par Équipement"
-        isOpen={openFilterId === "equipement"}
-        setOpenFilterId={setOpenFilterId}
-      />
+              id="equipement"
+              label="Équipement"
+              options={equipementsList}
+              onSelectFilter={handleEquipementFilter}
+              titre="Filtrer par Équipement"
+              isOpen={openFilterId === "equipement"}
+              setOpenFilterId={setOpenFilterId}
+            />
 
-      <Filtre
-        id="urgence"
-        label="Urgence"
-        options={urgenceOptions}
-        onSelectFilter={handleUrgenceFilter}
-        titre="Filtrer par Urgence"
-        isOpen={openFilterId === "urgence"}
-        setOpenFilterId={setOpenFilterId}
-      />
+            <Filtre
+              id="urgence"
+              label="Urgence"
+              options={urgenceOptions}
+              onSelectFilter={handleUrgenceFilter}
+              titre="Filtrer par Urgence"
+              isOpen={openFilterId === "urgence"}
+              setOpenFilterId={setOpenFilterId}
+            />
 
-      <Filtre
-        id="status"
-        label="Status"
-        options={statusList}
-        onSelectFilter={handleStatusFilter}
-        titre="Filtrer par Status"
-        isOpen={openFilterId === "status"}
-        setOpenFilterId={setOpenFilterId}
-      />
-
+            <Filtre
+              id="status"
+              label="Status"
+              options={statusList}
+              onSelectFilter={handleStatusFilter}
+              titre="Filtrer par Status"
+              isOpen={openFilterId === "status"}
+              setOpenFilterId={setOpenFilterId}
+            />
           </div>
         </div>
       </div>
 
-      <div className="w-full min-h-screen rounded-t-[45px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
+      <div className="w-full min-h-screen rounded-t-[35px] sm:rounded-t-[45px] px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-4 sm:py-6 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
         <div className="relative w-full px-4 my-0">
           {/* Conteneur principal avec flex pour aligner les éléments */}
           <div className="flex justify-between items-center flex-wrap">
             {/* Message des résultats */}
-            <div className="text-gray-600 font-semibold text-sm sm:text-base md:text-lg">
+            <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
               {Math.min(visibleCount, interventions.length)} Résultats affichés
               sur {interventions.length}
             </div>
@@ -492,16 +491,16 @@ const Mestaches = () => {
                     onToggle={() => handleInterventionToggle(intervention.id)}
                   />
 
-                  {!loading && isAdmin && menuOpenId === intervention.id && (
-                    <div className="absolute right-6 top-6 z-50">
+                  {menuOpenId === intervention.id && (
+                    <div className="menu-container">
                       <Options
-                        options={getStatusOption(intervention.statut_display)}
+                        options={statusOptions}
                         handleSelect={(value) =>
                           handleOptionSelect(value, intervention.id)
                         }
-                        className="bg-white shadow-xl rounded-lg text-black w-48 sm:w-56 border"
+                        className="absolute top-8 right-6 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border max-w-60"
                         setMenuOpen={setMenuOpenId}
-                        isActive={!isPopupVisible}
+                        isActive={!isPopupVisible} // Le menu est actif seulement si le PopupChange n'est pas visible
                       />
                     </div>
                   )}
@@ -527,33 +526,22 @@ const Mestaches = () => {
                     }
                     moreClick={() => {
                       // Si vous souhaitez fermer le menu, vous pouvez aussi gérer cela
-                      if (menuOpenId === intervention.id) {
-                        setMenuData(null); // Fermer ou réinitialiser
-                      } else {
-                        setMenuOpenId(intervention.id); // Ouvrir le menu
-                        setMenuData({
-                          title: intervention.title,
-                          urgence: intervention.urgence_display,
-                          statut: intervention.statut_display,
-                          equipement: intervention.equipement,
-                          date: intervention.date_debut,
-                          type: intervention.type_intervention,
-                          id: intervention.id,
-                        });
-                      }
+                      setMenuOpenId(
+                        menuOpenId === intervention.id ? null : intervention.id
+                      );
                     }}
                   />
 
-                  {!loading && isAdmin && menuOpenId === intervention.id && (
-                    <div className="absolute top-10 left-30 z-[9999]">
+                  {menuOpenId === intervention.id && (
+                    <div className="menu-container">
                       <Options
-                        options={getStatusOption(intervention.statut_display)}
+                        options={statusOptions}
                         handleSelect={(value) =>
                           handleOptionSelect(value, intervention.id)
                         }
-                        className="bg-white shadow-xl rounded-lg w-48 sm:w-56 border"
+                        className="absolute top-8 right-6 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border max-w-60"
                         setMenuOpen={setMenuOpenId}
-                        isActive={!isPopupVisible}
+                        isActive={!isPopupVisible} // Le menu est actif seulement si le PopupChange n'est pas visible
                       />
                     </div>
                   )}

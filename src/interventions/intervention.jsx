@@ -808,13 +808,13 @@ const Intervention = () => {
                   />
 
                   {!loading && isAdmin && menuOpenId === intervention.id && (
-                    <div className="absolute right-62 top-8 z-50">
+                    <div className="menu-container">
                       <Options
                         options={getStatusOption(intervention.statut_display)}
                         handleSelect={(value) =>
                           handleOptionSelect(value, intervention.id)
                         }
-                        className="bg-white shadow-xl rounded-lg text-black w-48 sm:w-56 border"
+                        className="absolute top-8 right-6 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border max-w-60"
                         setMenuOpen={setMenuOpenId}
                         isActive={!isPopupVisible}
                       />
@@ -860,13 +860,13 @@ const Intervention = () => {
                   />
 
                   {!loading && isAdmin && menuOpenId === intervention.id && (
-                    <div className="absolute top-10 left-30 z-[9999]">
+                    <div className="menu-container">
                       <Options
                         options={getStatusOption(intervention.statut_display)}
                         handleSelect={(value) =>
                           handleOptionSelect(value, intervention.id)
                         }
-                        className="bg-white shadow-xl rounded-lg w-48 sm:w-56 border"
+                        className="absolute top-8 right-6 z-[9999] bg-white shadow-xl rounded-lg w-48 sm:w-56 border max-w-60"
                         setMenuOpen={setMenuOpenId}
                         isActive={!isPopupVisible}
                       />
