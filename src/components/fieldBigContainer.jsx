@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import addBlack from "../assets/addBlack.svg";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import FieldGrid from "./fieldGrid";
 
 export default function FieldBigContainer({
@@ -9,6 +9,7 @@ export default function FieldBigContainer({
   subfields = [],
   onSubfieldClick,
   onClickAdd,
+  onClickDelete,
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -28,6 +29,14 @@ export default function FieldBigContainer({
             className="p-1.5 rounded-full cursor-pointer flex items-center justify-center"
           >
             <img src={addBlack} alt="add" className="h-5 w-5 sm:h-6 sm:w-6" />
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onClickDelete}
+            className="p-1.5 rounded-full cursor-pointer flex items-center justify-center"
+          >
+            <Trash2 className="h-5 w-5 sm:h-6 sm:w-6" />
           </motion.button>
           <button
             onClick={toggleOpen}
