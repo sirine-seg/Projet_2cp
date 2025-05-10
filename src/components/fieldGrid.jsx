@@ -4,7 +4,7 @@ export default function FieldGrid({ fields = [], onFieldClick }) {
   return (
     <div className="w-full flex flex-wrap gap-2">
       {fields.map((field, index) => (
-        <FieldContainer 
+        <FieldContainer
           key={index}
           field={field}
           onClick={() => onFieldClick(field)}
@@ -13,4 +13,3 @@ export default function FieldGrid({ fields = [], onFieldClick }) {
     </div>
   );
 }
-

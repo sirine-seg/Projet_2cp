@@ -4,6 +4,7 @@ export default function FieldLines({
   fields = [],
   onSubfieldClick,
   onClickAdd,
+  onClickDelete,
 }) {
   return (
     <div className="w-full flex flex-col mt-2 gap-x-2 gap-y-2">
@@ -12,8 +13,11 @@ export default function FieldLines({
           key={index}
           field={fieldObj.title}
           subfields={fieldObj.subfields}
-          onSubfieldClick={onSubfieldClick}
+          onSubfieldClick={(subfieldName) =>
+            onSubfieldClick(subfieldName, fieldObj.id)
+          }
           onClickAdd={() => onClickAdd(fieldObj.title)}
+          onClickDelete={() => onClickDelete(fieldObj.title)}
         />
       ))}
     </div>
