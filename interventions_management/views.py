@@ -10,6 +10,7 @@ from .models import InterventionPreventive, InterventionCurrative, Intervention,
 from notifications_management.models import Notification
 from django.utils import timezone
 from accounts_management.permissions import IsAdmin, IsTechnician, IsPersonnel
+from accounts_management.models import Admin
 from .serializers import InterventionPreventiveSerializer, InterventionCurrativeSerializer, InterventionSerializer, StatusInterventionSerializer
 
 
@@ -233,6 +234,7 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
                     related_intervention=intervention,
                     notification_type="assignment",
                     message=f"Une nouvelle intervention curative a été créée sur l'équipement {intervention.equipement.nom}.",
+                    url=f"http://localhost:5173/DetailsIntervention/{intervention.id}/",
                 )
 
             for technicien in intervention.technicien.all():
@@ -243,6 +245,7 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
                         related_intervention=intervention,
                         notification_type="assignment",
                         message=f"Vous avez été assigné une nouvelle intervention sur l'équipement {intervention.equipement.nom}.",
+                        url=f"http://localhost:5173/Tacheechnicien/{technicien.user.id}",
                     )
             equipement = serializer.validated_data.get('equipement')
             try:
@@ -255,7 +258,7 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
 
         elif IsPersonnel().has_permission(self.request, self):
             allowed_fields = ['id', 'user',
-                              'equipement', 'description', 'statut', 'title', "type_intervention"]
+                              'equipement', 'description', 'statut', 'title', "type_intervention", "urgence", "technicien"]
             validated_data = {field: value for field, value in serializer.validated_data.items(
             ) if field in allowed_fields}
 
@@ -266,7 +269,8 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
 
             statut, _ = StatusIntervention.objects.get_or_create(
                 name="en attente")
-            intervention = serializer.save(user=user.personnel, statut=statut)
+            intervention = serializer.save(user=user.personnel, statut=statut, date_debut=timezone.now() +
+                                           timezone.timedelta(hours=1))
 
             equipement = serializer.validated_data.get('equipement')
             equipement_etat, _ = EtatEquipement.objects.get_or_create(
@@ -280,8 +284,19 @@ class InterventionCurrativeCreateView(generics.CreateAPIView):
                     title="Nouvelle demande d'intervention curative",
                     notification_type="assignment",
                     message=f"Une nouvelle demande d'intervention curative a été créée par {user.get_full_name()}.",
-                    url="",
+                    url=f"http://localhost:5173/DetailsIntervention/{intervention.id}/",
+                    related_intervention=intervention
                 )
+            for admin in Admin.objects.all():
+                if admin.user.active_notif:
+                    Notification.objects.create(
+                        user=admin.user,
+                        title="Nouvelle demande d'intervention curative",
+                        notification_type="assignment",
+                        message=f"Une nouvelle demande d'intervention curative a été créée par {user.get_full_name()}.",
+                        url=f"http://localhost:5173/DetailsIntervention/{intervention.id}/",
+                        related_intervention=intervention
+                    )
 
         else:
             raise PermissionDenied(
