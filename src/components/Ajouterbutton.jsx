@@ -1,29 +1,36 @@
-import AjouterButton from "./Ajouterbutton";
-import { ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import addBlack from "../assets/addBlack.svg";
+import { motion } from "framer-motion";
+import add from '../assets/add.svg';
 
-export default function ChampTitle({ title, handleAjouterClick }) {
+const AjouterButton = ({
+  text = "Ajouter",
+  bgColor = "#20599E",
+  textColor = "white",
+  onClick,
+}) => {
   return (
-    <div className="w-full flex items-center justify-between mb-8">
-      <div className="flex items-center gap-2 flex-1 min-w-0">
-        <ChevronRight size={18} className="flex-shrink-0" />
-        <h1 className="text-lg sm:text-2xl font-semibold">{title}</h1>
-      </div>
-
-      <div className="block md:hidden">
+    <div className="flex justify-center items-center">
       <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={handleAjouterClick}
-            className="p-1.5 rounded-full cursor-pointer flex items-center justify-center"
-          >
-            <img src={addBlack} alt="add" className="h-6 w-6" />
-          </motion.button>
-      </div>
-      <div className="hidden md:block">
-        <AjouterButton text="Ajouter" onClick={handleAjouterClick} />
-      </div>
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={onClick}
+        className={`
+          flex items-center space-x-2 rounded-lg shadow-md transition duration-200
+          px-2 py-1 text-sm
+          sm:px-3 sm:py-2 sm:text-base
+          md:px-4 md:py-2 md:text-md
+          cursor-pointer
+        `}
+        style={{
+          backgroundColor: bgColor,
+          color: textColor,
+        }}
+      >
+        {/* Icône "+" avec même taille que le texte */}
+        <img src={add} alt="AddIcon" className="h-5 w-5" />
+        <span>{text}</span>
+      </motion.button>
     </div>
   );
-}
+};
+
+export default AjouterButton;

@@ -8,7 +8,7 @@ export default function ChampTitle({ title, handleAjouterClick }) {
     <div className="w-full flex items-center justify-between mb-8">
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <ChevronRight size={18} className="flex-shrink-0" />
-        <h1 className="text-lg sm:text-3xl font-semibold">{title}</h1>
+        <h1 className="text-lg sm:text-2xl font-semibold">{title}</h1>
       </div>
 
       <div className="block md:hidden">
