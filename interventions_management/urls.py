@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     InterventionListView,
+    InterventionTacheView,
     InterventionDetailView,
     InterventionPreventiveListView,
     InterventionPreventiveCreateView,
@@ -15,15 +16,15 @@ from .views import (
     StatusInterventionCreateView,
     StatusInterventionDeleteView,
     InterventionCurrativeAffecterView,
-    InterventionListAllView,
-    InterventionPreventiveListAllView,
-    InterventionCurrativeListAllView,
     InterventionsByEquipementView
 )
 
 urlpatterns = [
     path('interventions/', InterventionListView.as_view(),
          name='intervention-list'),
+
+    path('interventions/tache/', InterventionTacheView.as_view(),
+         name='intervention-tache'),
     path('interventions/<int:pk>/', InterventionDetailView.as_view(),
          name='intervention-detail'),
 
@@ -56,13 +57,6 @@ urlpatterns = [
 
     path('interventions/affecter/<int:id>/', InterventionCurrativeAffecterView.as_view(),
          name='status-intervention-affecter'),
-
-    path('interventions/all/', InterventionListAllView.as_view(),
-         name='intervention-list-all'),
-    path('interventions/preventive/all/', InterventionPreventiveListAllView.as_view(),
-         name='intervention-preventive-list-all'),
-    path('interventions/currative/all/', InterventionCurrativeListAllView.as_view(),
-         name='intervention-currative-list-all'),
 
     path('equipements/<int:equipement_id>/interventions/',
          InterventionsByEquipementView.as_view(), name='interventions-by-equipement'),

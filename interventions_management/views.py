@@ -43,15 +43,20 @@ class InterventionListView(generics.ListAPIView):
     """
     serializer_class = InterventionSerializer
     permission_classes = [IsAuthenticated]
+    queryset = Intervention.objects.all()
+
+
+class InterventionTacheView(generics.ListAPIView):
+    """
+    API view to list interventions assigned to the current technician.
+    """
+    serializer_class = InterventionSerializer
+    permission_classes = [IsAuthenticated, IsTechnician]
 
     def get_queryset(self):
         user = self.request.user
-        if IsAdmin().has_permission(self.request, self):
-            return Intervention.objects.all()
-        elif IsTechnician().has_permission(self.request, self):
+        if IsTechnician().has_permission(self.request, self):
             return Intervention.objects.filter(technicien=user.technicien)
-        elif IsPersonnel().has_permission(self.request, self):
-            return Intervention.objects.filter(user=user.personnel)
         return Intervention.objects.none()
 
 
@@ -479,36 +484,6 @@ class InterventionCurrativeAffecterView(generics.UpdateAPIView):
                         message=f"Vous avez été assigné à une nouvelle intervention curative sur l'équipement {intervention.equipement.nom}.",
                         url=f"http://localhost:5173/Tacheechnicien/{technicien.user.id}",
                     )
-
-
-class InterventionListAllView(generics.ListAPIView):
-    """
-    API view to list all interventions without filtering.
-    Requires authentication.
-    """
-    queryset = Intervention.objects.all()
-    serializer_class = InterventionSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class InterventionPreventiveListAllView(generics.ListAPIView):
-    """
-    API view to list all preventive interventions without filtering.
-    Requires authentication.
-    """
-    queryset = InterventionPreventive.objects.all()
-    serializer_class = InterventionPreventiveSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class InterventionCurrativeListAllView(generics.ListAPIView):
-    """
-    API view to list all curative interventions without filtering.
-    Requires authentication.
-    """
-    queryset = InterventionCurrative.objects.all()
-    serializer_class = InterventionCurrativeSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class InterventionsByEquipementView(APIView):
