@@ -107,13 +107,13 @@ const Intervention = () => {
     setSelectedInterventions((prev) => {
       const intervention = interventions.find((e) => e.id === id);
       console.log(interventions.find((i) => i.id === id));
+      console.log("Current intervention.checked value:", intervention?.checked);
       if (!intervention) return prev;
 
-      // If equipment is being checked, add it to selectedEquipements
       if (!intervention.checked) {
         return [...prev, intervention];
       }
-      // If equipment is being unchecked, remove it from selectedEquipements
+
       else {
         return prev.filter((e) => e.id !== id);
       }

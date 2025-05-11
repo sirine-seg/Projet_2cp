@@ -291,6 +291,7 @@ const EquipementsPage = () => {
     // Update selectedEquipements array based on checked status
     setSelectedEquipements((prev) => {
       const equipment = equipements.find((e) => e.id_equipement === id);
+      console.log("Current intervention.checked value:", equipment?.checked);
       if (!equipment) return prev;
 
       // If equipment is being checked, add it to selectedEquipements

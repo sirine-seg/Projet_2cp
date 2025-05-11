@@ -12,9 +12,9 @@ const InterventionList = ({
   onToggle = () => {}
 }) => {
     const urgenceColors = {
-        "Urgence vitale": "bg-[#F09C0A]",
-        "Urgence élevée": "bg-[#20599E]",
-        "Urgence modérée": "bg-[#FF4423]",
+        "Urgence vitale": "bg-[#FF4423]",
+        "Urgence élevée": "bg-[#F09C0A]",
+        "Urgence modérée": "bg-[#20599E]",
         "Faible urgence": "bg-[#49A146]",
     };
 

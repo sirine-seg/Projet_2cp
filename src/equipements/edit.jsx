@@ -341,7 +341,7 @@ const EditPage = () => {
         <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2">
           {/* Manual file upload */}
           <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
-            <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
+            <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1 ml-0.25rem">
               Manuel
             </label>
 

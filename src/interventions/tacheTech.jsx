@@ -148,7 +148,7 @@ const Mestaches = () => {
   useEffect(() => {
     const fetchInterventions = async () => {
       try {
-        let apiUrl = "http://127.0.0.1:8000/api/interventions/interventions";
+        let apiUrl = "http://127.0.0.1:8000/api/interventions/interventions/tache/";
 
         const accessToken = localStorage.getItem("access_token"); // Assuming token is stored in localStorage
 
@@ -328,12 +328,22 @@ const Mestaches = () => {
     setMenuOpenId(null); // close menu
 
     if (value === "changer le statut") {
+      // Find the intervention data by id
+      const intervention = interventions.find(int => int.id === id);
+
+      // Set the MenuData with the intervention details needed for the API call
+      setMenuData({
+        id: intervention.id,
+        // Determine the type from the intervention object
+        type: intervention.type_intervention || 'currative' // Default to currative if not specified
+      });
+
       setSelectedInterventionid(id);
-      setIsPopupVisible(true); // Assurez-vous que isPopupVisible est remis à true ici
+      setIsPopupVisible(true);
     } else if (value === "cancel") {
       // Quand "Supprimer" est sélectionné
-      setSelectedInterventionid(id); // Stocke l'ID de l'intervention à supprimer
-      setIsCancelPopupVisible(true); // Affiche le popup de suppression
+      setSelectedInterventionid(id);
+      setIsCancelPopupVisible(true);
     }
   };
 
@@ -350,18 +360,21 @@ const Mestaches = () => {
 
   const [MenuData, setMenuData] = useState(null);
   const updateStatus = async () => {
-    let data;
     try {
-      const token = localStorage.getItem("access_token"); // retrieve token
+      setLoading(true); // Add loading state
+      const token = localStorage.getItem("access_token");
       let api_url = "";
 
-      if (MenuData.type === "preventive") {
+      if (MenuData?.type === "preventive") {
         api_url = `http://127.0.0.1:8000/api/interventions/interventions/preventive/update/${MenuData.id}/`;
-      } else if (MenuData.type === "currative") {
+      } else if (MenuData?.type === "currative") {
         api_url = `http://127.0.0.1:8000/api/interventions/interventions/currative/update/${MenuData.id}/`;
       }
 
-      if (api_url) {
+      if (api_url && MenuData) {
+        console.log("Making API call to:", api_url);
+        console.log("Sending data:", { statut: convertStatus(selectedStatus) });
+
         const response = await fetch(api_url, {
           method: "PATCH",
           headers: {
@@ -369,18 +382,38 @@ const Mestaches = () => {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
-            statut: convertStatus(selectedStatus), // un int, par ex. 1, 2, 3...
+            statut: convertStatus(selectedStatus),
           }),
         });
-        if (!response.ok) throw new Error("Failed to fetch technicians");
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("API error:", errorData);
+          throw new Error("Failed to update status");
+        }
+
         const responseData = await response.json();
-        console.log(responseData);
-        //setTechnicians(responseData);
-        //const filtered = responseData.filter(tech => tech.disponibilite === true);
-        //setAvailableTechnicians(filtered);
+        console.log("Status updated successfully:", responseData);
+
+        // Refresh the interventions list to show the updated status
+        // You could either call fetchInterventions() again or update the local state:
+        setInterventions(interventions.map(item =>
+          item.id === MenuData.id
+            ? { ...item, statut_display: selectedStatus }
+            : item
+        ));
+
+        // Show success message
+        alert("Statut mis à jour avec succès");
+      } else {
+        console.error("Missing MenuData or API URL for status update");
       }
     } catch (error) {
-      console.error("Error fetching technicians:", error);
+      console.error("Error updating status:", error);
+      alert("Erreur lors de la mise à jour du statut");
+    } finally {
+      setLoading(false);
+      setIsPopupVisible(false);
     }
   };
 

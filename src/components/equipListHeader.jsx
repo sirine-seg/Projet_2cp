@@ -11,7 +11,7 @@ const EquipListHeader = () => {
                 <span className="sm:hidden flex-shrink-0 w-3 h-3 rounded-full opacity-0"></span>
 
                 {/* ID visible seulement sur desktop */}
-                <span className="hidden sm:block w-[15%] overflow-hidden whitespace-nowrap">ID</span>
+                <span className="hidden sm:block w-[15%] overflow-hidden whitespace-nowrap">Code</span>
                 <span className="w-[40%] sm:w-[30%] overflow-hidden whitespace-nowrap">Nom</span>
                 <span className="w-[40%] sm:w-[30%] overflow-hidden whitespace-nowrap">Localisation</span>
 
