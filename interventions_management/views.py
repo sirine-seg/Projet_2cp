@@ -469,6 +469,17 @@ class InterventionCurrativeAffecterView(generics.UpdateAPIView):
             equip.etat = en_maintenance_etat
             equip.save(update_fields=['etat'])
 
+            for technicien in intervention.technicien.all():
+                if technicien.user.active_notif:
+                    Notification.objects.create(
+                        user=technicien.user,
+                        title="Intervention curative assignée",
+                        related_intervention=intervention,
+                        notification_type="assignment",
+                        message=f"Vous avez été assigné à une nouvelle intervention curative sur l'équipement {intervention.equipement.nom}.",
+                        url=f"http://localhost:5173/Tacheechnicien/{technicien.user.id}",
+                    )
+
 
 class InterventionListAllView(generics.ListAPIView):
     """
