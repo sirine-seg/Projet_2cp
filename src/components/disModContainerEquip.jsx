@@ -27,11 +27,11 @@ export default function DisModContainerEquip({ title,
 
   return (
     <div className="w-full mx-auto">
-      <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
+      <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1 ml-0.25rem">
         {title}
       </label>
 
-      <div className="bg-white flex items-start w-full py-2 px-4 border border-white rounded-[0.5rem] font-regular font-poppins justify-between shadow-md transition-shadow duration-300 cursor-default">
+      <div className="bg-white flex items-start w-full py-3 px-4 border border-white rounded-[0.5rem] font-regular font-poppins justify-between shadow-md transition-shadow duration-300 cursor-default">
         <div className="flex items-center space-x-3">
           <img src={Cube} alt="Cube" className="h-5 w-5" />
           <span className="font-medium text-[#202124]">{name} #{id}</span>

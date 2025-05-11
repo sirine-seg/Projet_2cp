@@ -53,7 +53,7 @@ export default function WriteContainer({ title, onSubmit, onChange, value, messa
   return (
     <div className="w-full">
       <div className="mb-4">
-        <label className="flex items-center text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
+        <label className="flex items-center text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1 ml-0.25rem">
           {title}
           {shouldShowAsterisk && <span className="text-red-500 ml-1 text-lg">*</span>}
         </label>
@@ -68,7 +68,7 @@ export default function WriteContainer({ title, onSubmit, onChange, value, messa
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder={title === "Numéro de téléphone" ? "+213XXXXXXXXX" : "---"}
-            className={`w-full py-3 px-4 border border-white rounded-[0.5rem] text-[0.8125rem] font-regular font-poppins ${bgColor} resize-none focus:outline-0 focus:ring-0`}
+            className={`w-full py-3 px-4 border border-white rounded-[0.5rem] text-[1rem] font-regular font-poppins ${bgColor} resize-none focus:outline-0 focus:ring-0 shadow-md`}
             type={title === "Mot de passe" && !showPassword ? "password" : "text"}
           />
           {title === "Mot de passe" && (

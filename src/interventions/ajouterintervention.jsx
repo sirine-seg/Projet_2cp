@@ -416,7 +416,7 @@ const AjouterIntervention = () => {
           </div>
 
           <ChoiceContainer
-            title="type d'intervention"
+            title="Type d'intervention"
             options={typeInterventionOptions}
             onSelect={handlePreventiveChoice}
             selectedOption={selectedTypeIntervention}
@@ -490,19 +490,21 @@ const AjouterIntervention = () => {
 
             {/* List of selected technicians appears here */}
             {selectedTech.length > 0 && (
-              <div className="mt-4">
+              <div className="mt-4 space-y-4">
                 <h3 className="mb-2 font-semibold">
-                  Technicians sélectionnés:
+                  Techniciens sélectionnés:
                 </h3>
-                {selectedTech.map((tech, index) => (
-                  <UserProfilMail
-                    key={index}
-                    nom={tech.last_name}
-                    prenom={tech.first_name}
-                    email={tech.email}
-                    imageUrl={tech.photo}
-                  />
-                ))}
+                <div className="flex flex-col gap-4 mt-4">
+                  {selectedTech.map((tech, index) => (
+                    <UserProfilMail
+                      key={index}
+                      nom={tech.last_name}
+                      prenom={tech.first_name}
+                      email={tech.email}
+                      imageUrl={tech.photo}
+                    />
+                  ))}
+                </div>
               </div>
             )}
 

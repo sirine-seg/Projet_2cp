@@ -21,7 +21,7 @@ export default function ChoiceContainer({
   return (
     <div className="w-full">
       <div className="mb-4">
-        <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
+        <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1 ml-0.25rem">
           {title}
         </label>
         <details
@@ -30,7 +30,7 @@ export default function ChoiceContainer({
           onToggle={(e) => setIsOpen(e.target.open)}
         >
           <summary
-            className={`flex w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[0.8125rem] font-regular font-poppins justify-between ${bgColor} transition-colors duration-200 focus:outline-0 focus:ring-0`}
+            className={`flex w-full py-3 px-4 border border-white rounded-[0.5rem] text-[#80868B] text-[1rem] font-regular font-poppins justify-between ${bgColor} transition-colors duration-200 focus:outline-0 focus:ring-0 shadow-md`}
           >
             <span>{selectedOption || placeholder}</span>
             <svg
