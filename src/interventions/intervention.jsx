@@ -106,6 +106,7 @@ const Intervention = () => {
 
     setSelectedInterventions((prev) => {
       const intervention = interventions.find((e) => e.id === id);
+      console.log(interventions.find((i) => i.id === id));
       if (!intervention) return prev;
 
       // If equipment is being checked, add it to selectedEquipements
@@ -144,7 +145,7 @@ const Intervention = () => {
   // Action groupée sur les interventions sélectionnées
   const handleInterventionActionClick = (action) => {
     const selected = interventions.filter((i) => i.checked);
-    alert(
+    console.log(
       `Action "${action}" sur ${selected.length} interventions(s)`,
       selected
     );
@@ -803,7 +804,7 @@ const Intervention = () => {
                         menuOpenId === intervention.id ? null : intervention.id
                       )
                     }
-                    checked={intervention.checked || false}
+                    checked={intervention.checked}
                     onToggle={() => handleInterventionToggle(intervention.id)}
                   />
 

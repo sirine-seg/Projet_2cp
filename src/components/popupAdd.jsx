@@ -1,5 +1,4 @@
-
- import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 import React, { useState } from "react";
 import Button from "./Button";
 import WriteContainer from "./writeContainer";
@@ -24,6 +23,7 @@ const PopupAdd = ({
         <WriteContainer 
         title ={title}
         bgColor="bg-[#F4F4F4]"
+        shadow="shadow-none"
         value={newFieldName}
         onChange={setNewFieldName}
         />

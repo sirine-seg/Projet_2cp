@@ -33,6 +33,7 @@ const InterventionList = ({
                 onToggle();
               }}
             >
+                
                 <CustomCheckbox checked={checked} color="#20599E" />
             </div>
 

@@ -474,20 +474,20 @@ export default function ChampsDynamiquesPage() {
 
   return (
     <div className="min-h-screen w-full bg-[#F4F4F4]">
-      <div className="fixed top-0 left-0 h-screen w-64 z-30">
-        {/* Mobile - always closed or controlled differently */}
-        <div className="lg:hidden">
+      {/* <div className="fixed top-0 left-0 h-screen w-64 z-30"> */}
+      {/* Mobile - always closed or controlled differently */}
+      {/* <div className="lg:hidden">
           <SideBar isOpen={false} />
-        </div>
+        </div> */}
 
-        {/* Desktop - always open */}
-        <div className="hidden lg:block">
+      {/* Desktop - always open */}
+      {/* <div className="hidden lg:block">
           <SideBar isOpen={true} />
         </div>
-      </div>
+      </div> */}
       <Header bleu />
 
-      <div className="pt-10 p-4 mr-4 ml-4 lg:ml-80 lg:mr-16 xl:mr-24">
+      <div className="pt-10 p-4 mr-4 ml-4 lg:ml-40 lg:mr-16 xl:mr-24">
         <div className="mb-6 sm:mb-12">
           <Breadcrumb path={["Administration", "Champs Dynamiques"]} />
         </div>

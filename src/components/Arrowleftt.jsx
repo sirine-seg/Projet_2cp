@@ -17,7 +17,7 @@ const HeaderBar = ({
   const isSmall = useIsSmallScreen();
 
   return (
-    <div className={`w-full flex items-center justify-between px-4 py-1 mb-4 md:mb-8 relative ${className}`}>
+    <div className={`w-full flex items-center justify-between px-4 py-3 mb-4 md:mb-8 relative ${className}`}>
       
       {/* Flèche gauche */}
       {!profilOrNotif && (

@@ -2,7 +2,7 @@ import React from "react";
 import logoUrl from "../assets/logo.svg";
 import axios from 'axios'; 
 import { useGoogleLogin } from '@react-oauth/google';
-import esiLogo from "../assets/ESI_Logo.svg" ;
+import esiLogo from "../assets/EsiWhite.svg" ;
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'; // Add this import
 
@@ -54,7 +54,7 @@ const Login = () => {
           <img src={logoUrl} className="w-50 sm:w-65 lg:w-75 "/>
           <h1 className="font-bold   text-xl  lg:text-3xl font-poppins ">Bienvenue sur ESI TRACK !</h1>
           <div className="hidden lg:flex absolute bottom-4 lg:bottom-8 left-0 right-0 justify-center">
-            <img src={esiLogo} className="w-45 xl:w-50" />
+            <img src={esiLogo} className="w-40 xl:w-50" />
           </div>
         </div>
         
