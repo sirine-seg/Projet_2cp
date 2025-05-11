@@ -9,6 +9,8 @@ import ProfilPopUp from "./profilPopUp";
 import NotificationPopUp from "./notificationPopUp";
 import SideBar from "./sideBar";
 import Profil from "../assets/Profil.svg";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const Header = ({ bleu = false }) => {
 
@@ -42,10 +44,22 @@ const Header = ({ bleu = false }) => {
         }
 
         const data = await response.json();
-        const transformedData = data.map(notification => ({
-          ...notification,
-          unread: !notification.is_read
-        }));
+        const transformedData = data.map(notification => {
+          // Format the time as "il y a X heures/minutes/jours"
+          const timeAgo = notification.created_at
+            ? formatDistanceToNow(new Date(notification.created_at), {
+              locale: fr,
+              addSuffix: false  // We don't need "il y a" since it's already in your component
+            })
+            : "";
+
+          return {
+            ...notification,
+            unread: !notification.is_read,
+            description: notification.message,
+            time: timeAgo  // Now time is already formatted
+          };
+        });
 
         setNotifications(transformedData);
       } catch (err) {
@@ -129,67 +143,67 @@ const Header = ({ bleu = false }) => {
 
   if (error) {
     return (
-        <div className="w-full min-h-screen flex items-center justify-center bg-[#20599E]">
-          <div className="text-white text-lg">Error loading profile: {error}</div>
-        </div>
+      <div className="w-full min-h-screen flex items-center justify-center bg-[#20599E]">
+        <div className="text-white text-lg">Error loading profile: {error}</div>
+      </div>
     );
   }
-    // Determine if user is technician based on their role
+  // Determine if user is technician based on their role
 
 
   return (
     <>
-    <header className="flex items-center justify-between pl-4 pr-4 sm:pr-10 py-[0.6rem] h-10 sm:h-13 w-full">
-      {/* Partie gauche : Menu + Logo */}
-      <div className="flex items-center space-x-1 sm:space-x-2">
-        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-          <img 
-            src={bleu ? menuBlue : menu} 
-            alt="Menu"
-            className="w-10 sm:w-13 h-10 sm:h-13 cursor-pointer"
-          />
-        </button>
-        <img 
-          src={bleu ? logoBlue : logo} 
-          alt="Logo"
-          className="w-[3.6rem] sm:w-[4rem] md:w-[4.4rem] lg:w-[4.8rem] h-auto"
-        />
-      </div>
-      
-      {/* Partie droite : Notifications + User */}
-      <div className="flex items-center space-x-2 sm:space-x-4">
-        {/* Notifications */}
-        <div ref={notifRef} className="relative flex items-center h-full">
-          <button 
-            onClick={toggleNotifPopup}
-            className="flex items-center justify-center w-7 h-7"
-          >
-            <img src={notif} alt="Notifications" className="w-full h-full" />
+      <header className="flex items-center justify-between pl-4 pr-4 sm:pr-10 py-[0.6rem] h-10 sm:h-13 w-full">
+        {/* Partie gauche : Menu + Logo */}
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            <img
+              src={bleu ? menuBlue : menu}
+              alt="Menu"
+              className="w-10 sm:w-13 h-10 sm:h-13 cursor-pointer"
+            />
           </button>
-
-          {isNotifOpen && (
-              <div className="absolute right-0 top-full mt-2 z-50">
-                <NotificationPopUp
-                    notifications={notifications}
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                />
-              </div>
-          )}
-
+          <img
+            src={bleu ? logoBlue : logo}
+            alt="Logo"
+            className="w-[3.6rem] sm:w-[4rem] md:w-[4.4rem] lg:w-[4.8rem] h-auto"
+          />
         </div>
 
-        {/* Profil */}
-        <div ref={profileRef} className="relative flex items-center h-full">
-          <button 
-            onClick={toggleProfilePopup} 
-            className="flex items-center space-x-2 h-full"
-          >
-            {/*<MdAccountCircle
+        {/* Partie droite : Notifications + User */}
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* Notifications */}
+          <div ref={notifRef} className="relative flex items-center h-full">
+            <button
+              onClick={toggleNotifPopup}
+              className="flex items-center justify-center w-7 h-7"
+            >
+              <img src={notif} alt="Notifications" className="w-full h-full" />
+            </button>
+
+            {isNotifOpen && (
+              <div className="absolute right-0 top-full mt-2 z-50">
+                <NotificationPopUp
+                  notifications={notifications}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+              </div>
+            )}
+
+          </div>
+
+          {/* Profil */}
+          <div ref={profileRef} className="relative flex items-center h-full">
+            <button
+              onClick={toggleProfilePopup}
+              className="flex items-center space-x-2 h-full"
+            >
+              {/*<MdAccountCircle
               className={`w-10 h-10 ${textColor}`}
             />*/}
 
-            <img
+              <img
                 src={userData?.user?.photo || Profil}
                 alt="Profil"
                 className="w-7 h-7 flex-shrink-0 rounded-full object-cover"
@@ -197,39 +211,39 @@ const Header = ({ bleu = false }) => {
                   e.target.src = Profil;
                   e.target.onerror = null;
                 }}
-            />
+              />
 
-            <span className={`hidden sm:inline ${textColor} sm:text-base font-semibold`}>
-              {userData?.user?.last_name || "anonyme"}
-            </span>
-          </button>
+              <span className={`hidden sm:inline ${textColor} sm:text-base font-semibold`}>
+                {userData?.user?.last_name || "anonyme"}
+              </span>
+            </button>
 
-          {isProfileOpen && (
+            {isProfileOpen && (
               <div className="absolute right-0 top-full mt-2 z-50">
                 <ProfilPopUp
-                    nom={userData?.user?.last_name || ""}
-                    prenom={userData?.user?.first_name || ""}
-                    role={userData?.user?.role || ""}
-                    imageUrl={userData?.user?.photo || null}
-                    email={userData?.user?.email || ""}
-                    numero={userData?.user?.phone_number || ""}
+                  nom={userData?.user?.last_name || ""}
+                  prenom={userData?.user?.first_name || ""}
+                  role={userData?.user?.role || ""}
+                  imageUrl={userData?.user?.photo || null}
+                  email={userData?.user?.email || ""}
+                  numero={userData?.user?.phone_number || ""}
                 />
               </div>
-          )}
+            )}
 
+          </div>
         </div>
-      </div>
-    </header>
-    {isSidebarOpen && (
-      <div className="fixed inset-0 z-40">
-        <SideBar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-        
-        <div 
-          className="fixed inset-0 bg-black opacity-25" 
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      </div>
-    )}
+      </header>
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-40">
+          <SideBar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+
+          <div
+            className="fixed inset-0 bg-black opacity-25"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        </div>
+      )}
     </>
   );
 };

@@ -300,11 +300,11 @@ const Affecter = () => {
         )}
 
         {isPopupVisible && (
-        <PopupMessage
-          title="Intervention affectée avec succès!"
-          onClose={() => setIsPopupVisible(false)}
-        />
-      )}
+          <PopupMessage
+            title="Intervention affectée avec succès!"
+            onClose={() => setIsPopupVisible(false)}
+          />
+        )}
       </div>
     </div>
   );

@@ -73,11 +73,11 @@ export default function NotificationCard({
                 {type}
               </div>
             )}
-            
+
             <div className="text-sm md:text-base font-poppins font-bold text-[#202124]">
               {title}
             </div>
-            
+
             <div className="text-xs md:text-sm font-poppins text-[#202124] leading-snug">
               {description}
             </div>
@@ -85,7 +85,7 @@ export default function NotificationCard({
             <div className="pt-2">
               {buttonTitle && (
                 <button className="bg-[#20599E] text-white px-2.5 py-1 md:px-3 md:py-1.5 pr-3 rounded font-poppins font-semibold flex items-center justify-center gap-1 transition cursor-pointer text-xs md:text-sm">
-                  <ChevronLeft size={12} className="md:w-3 md:h-3" /> 
+                  <ChevronLeft size={12} className="md:w-3 md:h-3" />
                   {buttonTitle}
                 </button>
               )}
@@ -97,17 +97,17 @@ export default function NotificationCard({
           </div>
 
           <div className="flex-shrink-0 text-[#202124] ml-1.5 relative" ref={optionsRef}>
-            <button 
+            <button
               className="cursor-pointer"
               onClick={() => setShowOptions(!showOptions)}
             >
               <MoreHorizontal size={16} className="md:w-5 md:h-5" />
             </button>
-            
+
             {showOptions && (
               <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right">
-                <Options 
-                  options={optionsList} 
+                <Options
+                  options={optionsList}
                   handleSelect={handleOptionSelect}
                 />
               </div>
