@@ -197,22 +197,24 @@ export default function DashboardPage() {
           <InterventionProgressCard data={percentageChartData} />
         </div>
 
-        <div className="flex flex-row justify-between flex-wrap sm:flex-wrap lg:flex-nowrap py-4 sm:py-6">
-          <PieChartWithLegend
-            title="Suivi des Équipements"
-            description=""
-            data={equipmentData}
-            value="value"
-            nameKey="name"
-            colorMap={pieColorMap}
-          />
-        </div>
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full py-6">
+          <div className="flex-1">
+            <PieChartWithLegend
+              title="Suivi des Équipements"
+              description=""
+              data={equipmentData}
+              value="value"
+              nameKey="name"
+              colorMap={pieColorMap}
+            />
+          </div>
 
-        <div className="mb-4 sm:mb-6">
-          <TechnicianInterventionChart
-            title="Répartition des interventions par technicien"
-            data={technicianChartData}
-          />
+          <div className="flex-1">
+            <TechnicianInterventionChart
+              title="Répartition des interventions par technicien"
+              data={technicianChartData}
+            />
+          </div>
         </div>
 
         <div className="mb-4 sm:mb-6">

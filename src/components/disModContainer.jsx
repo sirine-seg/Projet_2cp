@@ -34,7 +34,7 @@ export default function DisModContainer({
         {title}
       </label>
       
-      <div className="bg-white flex items-start w-full py-2 px-4 border border-white rounded-[0.5rem] font-regular font-poppins justify-between shadow-md transition-shadow duration-300 cursor-default">
+      <div className="bg-white flex items-start w-full py-3 px-4 border border-white rounded-[0.5rem] font-regular font-poppins justify-between shadow-md transition-shadow duration-300 cursor-default">
         <div className="flex items-center space-x-3">
           {isEditing ? (
             // Affichage selon le type

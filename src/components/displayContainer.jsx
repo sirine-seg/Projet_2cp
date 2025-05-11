@@ -5,10 +5,9 @@ export default function DisplayContainer({ title, content, className = "" }) {
 		  {title}
 		</label>
   
-		<div className="bg-white flex items-start w-full py-2 px-4 border border-white rounded-[0.5rem] font-regular font-poppins justify-between shadow-md min-h-[40px] my-2">
+		<div className="bg-white flex items-start w-full py-3 px-4 border border-white rounded-[0.5rem] font-regular font-poppins justify-between shadow-md min-h-[45px] my-2">
 		  <span className="font-medium text-[#202124]">{content}</span>
 		</div>
 	  </div>
 	);
   }
-  

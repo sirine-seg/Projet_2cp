@@ -212,15 +212,18 @@ const Affecter = () => {
                   <h3 className="mb-2 font-semibold">
                     Technicians sélectionnés:
                   </h3>
-                  {selectedTech.map((tech, index) => (
-                    <UserProfilMail
-                      key={index}
-                      nom={tech.last_name}
-                      prenom={tech.first_name}
-                      email={tech.email}
-                      imageUrl={tech.photo}
-                    />
-                  ))}
+                  <div className="flex flex-col gap-4 mt-4">
+                    *
+                    {selectedTech.map((tech, index) => (
+                      <UserProfilMail
+                        key={index}
+                        nom={tech.last_name}
+                        prenom={tech.first_name}
+                        email={tech.email}
+                        imageUrl={tech.photo}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -263,7 +266,6 @@ const Affecter = () => {
               className="py-2 px-3 text-sm"
             />
           </div>
-
         </div>
 
         {/* ───────── Bouton Terminer en dessous ───────── */}

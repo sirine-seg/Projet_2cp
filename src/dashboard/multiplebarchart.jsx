@@ -35,7 +35,7 @@ export default function TechnicianInterventionChart({
 
   // Ajout d'une légende personnalisée dans le header
   const renderLegend = () => (
-    <div className="flex flex-wrap gap-4 mt-2">
+    <div className="flex flex-wrap gap-4 mt-2 h-full">
       {statuses.map((status) => (
         <div key={status} className="flex items-center">
           <div
