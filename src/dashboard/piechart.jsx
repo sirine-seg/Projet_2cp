@@ -27,8 +27,8 @@ export default function PieChartBase({
   valueKey = "value",
   nameKey = "name",
   colorMap = {},
-  donut = false, // toggle donut style
-  showCenterText = false, // toggle inner label text
+  donut = false,
+  showCenterText = false,
 }) {
   const total = React.useMemo(
     () => data.reduce((acc, curr) => acc + curr[valueKey], 0),
@@ -37,7 +37,7 @@ export default function PieChartBase({
   const getPercentage = (value) => ((value / total) * 100).toFixed(1) + "%";
 
   return (
-    <Card className="w-full max-w-full flex flex-col">
+    <Card className="w-full max-w-full flex flex-col h-full">
       <CardHeader className="items-center pb-0 text-center">
         <CardTitle className="text-xl sm:text-2xl">{title}</CardTitle>
         {description && (
@@ -48,8 +48,8 @@ export default function PieChartBase({
       </CardHeader>
 
       <CardContent className="flex-1">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20">
-          {/* Pie Chart */}
+        <div className="flex flex-col items-center justify-center gap-8">
+          {/* Pie Chart - centrée */}
           <div className="w-full max-w-[220px] aspect-square min-h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -58,7 +58,7 @@ export default function PieChartBase({
                   dataKey={valueKey}
                   nameKey={nameKey}
                   outerRadius={100}
-                  innerRadius={donut ? 50 : 0} // Adjust if donut
+                  innerRadius={donut ? 50 : 0}
                 >
                   {data.map((entry, index) => (
                     <Cell
@@ -109,7 +109,7 @@ export default function PieChartBase({
             </ResponsiveContainer>
           </div>
 
-          {/* Legend */}
+          {/* Legend - maintenant en dessous */}
           <div className="flex flex-col gap-3 justify-center max-w-[320px]">
             <ul className="flex flex-col gap-3 text-base">
               {data.map((entry, index) => {
