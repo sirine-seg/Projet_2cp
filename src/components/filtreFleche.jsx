@@ -79,23 +79,23 @@ const Filtre = ({
     if (isActive) {
       return "bg-[#F09C0A] text-white"; // Orange au clic
     }
-    return "bg-white text-black"; // Blanc par défaut
+    return "bg-[#F4F4F4] text-black"; // Blanc par défaut
   };
   return (
     <div ref={containerRef} className="relative">
       <button
         className={`
           flex items-center justify-between gap-2
-          px-2.5 xs:px-3.5 sm:px-4 md:px-4 lg:px-6
-          py-2 xs:py-2 sm:py-2.5 md:py-2
-          text-[10px] xs:text-xs sm:text-sm md:text-base
-          rounded-md
+          px-2 py-1 sm:px-4 sm:py-2
+          text-xs sm:text-sm
+          rounded-md font-semibold
           shadow-sm
           cursor-pointer
           border
           transition-all duration-300
           border-transparent
           hover:shadow-md
+          h-6 sm:h-8
           
           ${getButtonStyle()}
         `}
