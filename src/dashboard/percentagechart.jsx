@@ -16,7 +16,7 @@ export default function InterventionProgressCard({
   backgroundColor = "bg-[#C3D4E9]",
 }) {
   return (
-    <Card className="w-full max-w-md flex flex-col p-3 sm:p-4">
+    <Card className="w-full lg:max-w-md flex flex-col p-3 sm:p-4">
       <CardHeader>
         <CardTitle className="text-base sm:text-lg md:text-xl">
           {title}
