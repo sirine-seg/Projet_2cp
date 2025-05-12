@@ -167,10 +167,6 @@ export default function DashboardPage() {
     Curatives: "#20599E",
   };
 
-  if (loading) {
-    return <div>Loading dashboard data...</div>;
-  }
-
   if (error) {
     return <div>Error loading dashboard data: {error.message}</div>;
   }

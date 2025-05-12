@@ -6,22 +6,15 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/card.jsx";
+} from "../components/card.jsx";
 
 export default function InterventionProgressCard({
   title = "Progression des interventions",
   description = "",
   data,
-  allCategories = ["En attente", "En cours", "Terminées"], // Toutes les catégories possibles
   barColor = "bg-[#20599E]",
   backgroundColor = "bg-[#C3D4E9]",
 }) {
-  // Crée un jeu de données complet avec toutes les catégories
-  const completeData = allCategories.map(category => {
-    const existingItem = data.find(item => item.label === category);
-    return existingItem || { label: category, value: 0 };
-  });
-
   return (
     <Card className="w-full max-w-md flex flex-col p-3 sm:p-4">
       <CardHeader>
@@ -36,7 +29,7 @@ export default function InterventionProgressCard({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        {completeData.map(({ label, value }) => (
+        {data.map(({ label, value }) => (
           <div
             key={label}
             className="flex items-center justify-between gap-2 w-full min-w-0"
@@ -48,10 +41,7 @@ export default function InterventionProgressCard({
               <div className={`absolute inset-0 ${backgroundColor}`} />
               <div
                 className={`absolute h-full ${barColor} rounded-full`}
-                style={{ 
-                  width: `${value}%`,
-                  minWidth: "2px" // Toujours visible même à 0%
-                }}
+                style={{ width: `${value}%` }}
               />
             </div>
             <div className="w-10 sm:w-12 text-xs sm:text-base text-right font-medium">

@@ -528,6 +528,9 @@ const Intervention = () => {
     if (status === "en attente") {
       statusOptions.push({ label: "Affecter", value: "Affecter" });
     }
+    if (currentView === "list") {
+      statusOptions.push({ label: "Détails", value: "details" });
+    }
     return statusOptions;
   };
 
@@ -569,6 +572,8 @@ const Intervention = () => {
       console.log("selected type : ", menuData.type);
     } else if (value === "Affecter") {
       navigate(`/AffecterIntervention/${id}`);
+    } else if (value === "details") {
+      navigate(`/DetailsIntervention/${id}`);
     }
   };
 
