@@ -1,18 +1,20 @@
 from django.urls import path
 from .views import (
-    UserListView, UserDetailView, UserUpdateView,
-    AdminListView, AdminDetailView, TechnicienUpdateView,
-    TechnicienListView, TechnicienDetailView,
-    PersonnelListView, PersonnelDetailView, PosteCreateView, UserCreationAPIView,
-    BlockUserView, UnblockUserView, MeAPIView, PosteListView, ToggleActivateNotificationView, ToggleActivateNotificationEmailView,
-    PosteUpdateView, PosteDeleteView,
+    UserListView, UserDetailView, UserUpdateView, UserCreationAPIView,
+    AdminListView, AdminDetailView, AdminUpdateView,
+    TechnicienListView, TechnicienDetailView, TechnicienUpdateView,
+    PersonnelListView, PersonnelDetailView,
+    PosteCreateView, PosteListView, PosteUpdateView, PosteDeleteView,
+    BlockUserView, UnblockUserView,
+    MeAPIView, ToggleActivateNotificationView, ToggleActivateNotificationEmailView,
 )
 
 urlpatterns = [
     # User routes
     path('users/', UserListView.as_view(), name='user-list'),
     path('users/<int:id>/', UserDetailView.as_view(), name='user-detail'),
-    path('users/<int:id>/update/', UserUpdateView.as_view(), name='user-update'),
+    path('api/users/update/<int:id>/',
+         UserUpdateView.as_view(), name='user-update'),
     path('user/<int:pk>/block/', BlockUserView.as_view(), name='user-block'),
     path('users/<int:pk>/unblock/', UnblockUserView.as_view(), name='user-unblock'),
     path('createUser/', UserCreationAPIView.as_view(), name='UserCreation'),
@@ -21,12 +23,14 @@ urlpatterns = [
     # Admin routes
     path('admins/', AdminListView.as_view(), name='admin-list'),
     path('admins/<int:id>/', AdminDetailView.as_view(), name='admin-detail'),
+    path('admins/<int:user_id>/update/',
+         AdminUpdateView.as_view(), name='admin-update'),
 
     # Technicien routes
     path('techniciens/', TechnicienListView.as_view(), name='technicien-list'),
     path('techniciens/<int:id>/', TechnicienDetailView.as_view(),
          name='technicien-detail'),
-    path('techniciens/<int:id>/update/',
+    path('techniciens/<int:user_id>/update/',
          TechnicienUpdateView.as_view(), name='technicien-update'),
 
     # Personnel routes
@@ -45,4 +49,5 @@ urlpatterns = [
          ToggleActivateNotificationView.as_view(), name='toggle-notification'),
     path('toggle-notification-email/<int:id>/',
          ToggleActivateNotificationEmailView.as_view(), name='toggle-notification-email'),
+
 ]

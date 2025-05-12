@@ -62,6 +62,20 @@ class AdminDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAdmin, IsAuthenticated]
 
 
+class AdminUpdateView(generics.UpdateAPIView):
+    """
+    API view to update an Admin account.
+    """
+    queryset = Admin.objects.all()
+    serializer_class = AdminSerializer
+    lookup_field = 'user_id'
+    permission_classes = [IsAdmin, IsAuthenticated]
+
+    def get_object(self):
+        user_id = self.kwargs.get('user_id')
+        return get_object_or_404(Admin, user_id=user_id)
+
+
 class TechnicienListView(generics.ListAPIView):
     """
     API view to list all Technicien accounts with filtering options.
@@ -90,8 +104,11 @@ class TechnicienUpdateView(generics.UpdateAPIView):
     queryset = Technicien.objects.all()
     serializer_class = TechnicienUpdateSerializer
     lookup_field = 'user_id'
-    lookup_url_kwarg = 'id'
     permission_classes = [IsTechnician | IsAdmin, IsAuthenticated]
+
+    def get_object(self):
+        user_id = self.kwargs.get('user_id')
+        return get_object_or_404(Technicien, user_id=user_id)
 
 
 class PersonnelListView(generics.ListAPIView):
@@ -151,21 +168,22 @@ class MeAPIView (generics.RetrieveAPIView):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        role = self.request.data.get("role")
-        if role == "Technician":
-            return AdminSerializer
-        elif role == "Personnel":
+        user = self.request.user
+        if user.role == User.TECHNICIEN:
+            return TechnicienSerializer
+        elif user.role == User.PERSONNEL:
             return PersonnelSerializer
-        else:
-            return AdminSerializer
+        return AdminSerializer
 
     def get_object(self):
         user = self.request.user
+        # If they’re in the Admin role, return the Admin record
         if user.role == User.TECHNICIEN:
+            # ← your related_name on the OneToOneField
             return Technicien.objects.filter(user=user).first()
         elif user.role == User.PERSONNEL:
-            return Personnel.objects.filter(user=user).first()
-        return Admin.objects.filter(user=user).first()
+            return Personnel.objects.filter(user=user).first()  # ← likewise
+        return Admin.objects.filter(user=user).first()  # ← likewise
 
 
 class PosteListView(generics.ListAPIView):
