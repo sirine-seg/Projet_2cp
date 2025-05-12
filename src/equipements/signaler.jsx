@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import SelectableInput from "../components/SelectableInput";
+import ChoiceContainer from "../components/choiceContainer";
 import AutoGrowTextarea from "../components/description";
 import Header from "../components/Header";
 import ImageUploader from "../components/imageUploader.jsx";
@@ -34,13 +34,25 @@ const Signaler = () => {
   // Reference for textarea auto-grow
   const textareaRef = useRef(null);
 
-  // Predefined urgency options
+  // Urgency options
   const urgenceOptions = [
-    { id: 1, label: "Urgence vitale" },
-    { id: 2, label: "Urgence élevée" },
-    { id: 3, label: "Urgence modérée" },
-    { id: 4, label: "Faible urgence" },
+    { value: 1, label: "Urgence vitale" },
+    { value: 2, label: "Urgence élevée" },
+    { value: 3, label: "Urgence modérée" },
+    { value: 4, label: "Faible urgence" },
   ];
+
+  const labelUrgence =
+    urgenceOptions.find((option) => option.value === selectedUrgence)?.label ||
+    "--";
+
+  const handleUrgenceSelect = (option) => {
+    console.log("option" + option);
+    setSelectedUrgence(option);
+    console.log("the String" + selectedUrgence); // Update the value
+    //      const label = urgenceOptions.find(option => option.value === valueToFind)?.label || '--';
+    setUrgenceLabel(option.label); // Update the label instantly
+  };
 
   // Handle form field changes
   // to save intervention info to submit them .
@@ -168,43 +180,41 @@ const Signaler = () => {
       <div className="w-full min-h-screen rounded-t-[35px] sm:rounded-t-[45px] px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-4 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
         {/* Navigation header */}
         <div className="w-full">
-          <Headerbar title="Creer une intervention" />
+          <Headerbar title="Créer une intervention" />
         </div>
-
-        {/* Form section title */}
-        {/*<div className="w-full sm:w-80 h-6 justify-start text-neutral-800 text-lg sm:text-xl md:text-2xl font-normal font-['Poppins'] leading-snug tracking-wide mt-8 ml-8">
-          <h1>Détails de l'intervention</h1>
-        </div>*/}
 
         {/* Form fields */}
         <div className="flex flex-col w-full mx-auto px-3.5 mt-2">
-          {/* Problem title input */}
-          <WriteContainer
-            title="titre de l'intervention"
-            value={newIntervention.title}
-            onChange={(val) =>
-              setNewIntervention({ ...newIntervention, title: val })
-            }
-          />
-
-          {/* Urgency selection dropdown */}
-          <div className="w-full">
-            <SelectableInput
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center">
+            {/* Problem title input */}
+            <WriteContainer
+              title="Titre"
+              value={newIntervention.title}
+              onChange={(val) =>
+                setNewIntervention({ ...newIntervention, title: val })
+              }
+            />
+            <ChoiceContainer
               title="Urgence"
               options={urgenceOptions}
-              selectedOption={selectedUrgence}
-              onSelect={(selectedOption) => setSelectedUrgence(selectedOption)}
+              selectedOption={labelUrgence}
+              onSelect={handleUrgenceSelect}
+              className="text-sm py-1 px-2 max-w-xs w-full"
             />
           </div>
 
-          {/* Description textarea */}
-          <div className="w-full mt-4">
-            <AutoGrowTextarea onChange={handleChange} />
-          </div>
+          {/* Description field */}
+          <WriteContainer
+            title="Description"
+            //  value={"---"}
+            multiline
+            onChange={(val) => setdescription(val)}
+            className="px-8"
+          />
         </div>
 
         {/* Image upload section */}
-        <div className="flex items-center w-full sm:w-1/2 py-4 px-7">
+        <div className="flex items-center justify-center w-full sm:w-1/2 py-4 px-7">
           <ImageUploader onImageSelected={(image) => setSelectedImage(image)} />
         </div>
 

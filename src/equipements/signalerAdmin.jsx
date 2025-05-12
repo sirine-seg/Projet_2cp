@@ -217,7 +217,7 @@ const SignalerAdmin = () => {
             {/* Problem title field */}
 
             <WriteContainer
-              title="titre"
+              title="Titre"
               value={newIntervention.title}
               onChange={(val) =>
                 setNewIntervention({ ...newIntervention, title: val })
@@ -244,7 +244,7 @@ const SignalerAdmin = () => {
             />
 
             {/* Date */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-24">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-24">
               <DateInput
                 label="Date début"
                 selectedDate={selectedDatedebut}
@@ -256,7 +256,7 @@ const SignalerAdmin = () => {
                 setSelectedDate={setSelectedDatefin}
               />
             </div>
-            <div className="flex space-x-4 items-center">
+            <div className="flex space-x-4 items-center py-6 sm:py-0">
               <Buttonrec
                 text="Assigne un Techncien"
                 bgColor="#F09C0A"
@@ -265,7 +265,7 @@ const SignalerAdmin = () => {
                 className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
               />
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center justify-center">
               <ImageUploader />
             </div>
           </div>

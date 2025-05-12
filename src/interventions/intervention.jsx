@@ -808,11 +808,23 @@ const Intervention = () => {
                     id={intervention.id}
                     urgence={intervention.urgence_display}
                     statut={intervention.statut_display}
-                    moreClick={() =>
-                      setMenuOpenId(
-                        menuOpenId === intervention.id ? null : intervention.id
-                      )
-                    }
+                    moreClick={() => {
+                      // Si vous souhaitez fermer le menu, vous pouvez aussi gérer cela
+                      if (menuOpenId === intervention.id) {
+                        setMenuData(null); // Fermer ou réinitialiser
+                      } else {
+                        setMenuOpenId(intervention.id); // Ouvrir le menu
+                        setMenuData({
+                          title: intervention.title,
+                          urgence: intervention.urgence_display,
+                          statut: intervention.statut_display,
+                          equipement: intervention.equipement,
+                          date: intervention.date_debut,
+                          type: intervention.type_intervention,
+                          id: intervention.id,
+                        });
+                      }
+                    }}
                     checked={intervention.checked}
                     onToggle={() => handleInterventionToggle(intervention.id)}
                   />

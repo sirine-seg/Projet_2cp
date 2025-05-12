@@ -48,7 +48,7 @@ export default function WriteContainer({ title, onSubmit, onChange, value, messa
   };
 
   // Fonction pour vérifier si l'étoile rouge doit être affichée
-  const shouldShowAsterisk = ["Nom", "Prénom", "E-mail"].includes(title);
+  const shouldShowAsterisk = ["Nom", "Prénom", "E-mail", "Titre"].includes(title);
 
   return (
     <div className="w-full">

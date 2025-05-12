@@ -20,21 +20,23 @@ const HeaderBar = ({
     <div className={`w-full flex items-center justify-between px-4 py-3 mb-4 md:mb-8 relative ${className}`}>
       
       {/* Flèche gauche */}
-      {!profilOrNotif && (
-        <>
-          {isSmall ? (
-            <ChevronLeft
-              className="w-5 h-5 text-dark cursor-pointer block md:hidden"
-              onClick={() => navigate(-1)}
-            />
-          ) : (
-            <ArrowLeft
-              className="w-6 h-6 text-dark cursor-pointer hidden md:block"
-              onClick={() => navigate(-1)}
-            />
-          )}
-        </>
+      {/* Mobile only */}
+      {isSmall && profilOrNotif ? null : ( // Si c'est la page de profil ou celle de notifications, on n'affiche pas ChevronLeft
+        <div className="block md:hidden z-10 relative">
+          <ChevronLeft
+            className="w-6 h-6 text-dark cursor-pointer"
+            onClick={() => navigate(-1)}
+          />
+        </div>
       )}
+
+      {/* Tablet & Desktop only */}
+      <div className="hidden md:block">
+        <ArrowLeft
+          className="w-8 h-8 text-dark cursor-pointer"
+          onClick={() => navigate(-1)}
+        />
+      </div>
 
       {/* Titre centré */}
       <div
@@ -48,7 +50,7 @@ const HeaderBar = ({
 
       {/* Handle (profil / notif mobile uniquement) */}
       {isSmall && profilOrNotif && (
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 translate-y-[-50%]">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 translate-y-[-80%]">
           <img
             src={handle}
             alt="Handle"
