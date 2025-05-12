@@ -223,7 +223,7 @@ export default function DashboardPage() {
               className="h-[20px] w-[20px] shrink-0"
             />
             )}
-            <span className="text-sm">Import PDF</span>
+            <span className="text-sm">Exporter PDF</span>
           </div>
           
           <div 
@@ -241,7 +241,7 @@ export default function DashboardPage() {
                 className="h-[20px] w-[20px] shrink-0 "
               />
             )}
-            <span className="text-sm">Import Excel</span>
+            <span className="text-sm">Exporter Excel</span>
           </div>
         </div>
       </div>
