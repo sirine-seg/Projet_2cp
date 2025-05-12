@@ -9,39 +9,40 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from urllib.parse import urlparse
+from dotenv import load_dotenv
 import os
 from pathlib import Path
 from datetime import timedelta
-
-# Import dj_database_url for easier database URL handling
 import dj_database_url
+
+# Load environment variables
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Hardcoded settings for local development
-SECRET_KEY = 'o51#8oksqfs(*zbawv0pi=k-9)#0c_3#+_sb*258x-2!6rb_wi'
-DEBUG = True
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY', 'o51#8oksqfs(*zbawv0pi=k-9)#0c_3#+_sb*258x-2!6rb_wi')
 
-# Get environment variable for DATABASE_URL or use local fallback
-DATABASE_URL = "postgresql://postgres:yrUZonARaNTsPWCEmqXowJzPTpWeaUmd@shuttle.proxy.rlwy.net:50733/railway"
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-if DATABASE_URL:
-    # Use Railway's connection URL if available
-    DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
-    }
-else:
-    # Local development database settings
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'railway',
-            'USER': 'postgres',
-            'PASSWORD': 'yrUZonARaNTsPWCEmqXowJzPTpWeaUmd',
-            'HOST': 'postgres.railway.internal',
-            'PORT': '5432',  # Replace with your actual port from Railway
-        }
-    }
+# Allowed hosts
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# Database
+DATABASE_URL = os.environ.get(
+    'DATABASE_URL', 'postgresql://neondb_owner:npg_rPBw1YjhQ2ku@ep-autumn-term-a4vo0tyn-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require')
+
+DATABASES = {
+    'default': dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 
 # Application definition
 INSTALLED_APPS = [
@@ -84,6 +85,7 @@ SPAGHETTI_SAUCE = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Added for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -162,7 +164,9 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -186,6 +190,8 @@ ROOT_URLCONF = 'backend.urls'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",  # frontend dev server
+    # Add your frontend domain when deployed
+    "https://your-frontend-app.onrender.com",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -248,4 +254,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'esitrack@esi.dz'  # Replace with your email address
 EMAIL_HOST_PASSWORD = 'fhol grax wgpt rrbt '  # Replace with your email password
 # Replace with your actual frontend URL
-FRONTEND_URL = "http://localhost:3000/"
+FRONTEND_URL = os.environ.get('FRONTEND_URL', "http://localhost:3000/")
