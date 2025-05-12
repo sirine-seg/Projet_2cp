@@ -14,7 +14,7 @@ services:
       - key: DEBUG
         value: false
       - key: ALLOWED_HOSTS
-        value: ".onrender.com,esitrack-backend.onrender.com"
+        value: ".onrender.com,esitrack-backend.onrender.com,esi-track-deployement.onrender.com"
       - key: FRONTEND_URL
         value: "https://your-frontend-app.onrender.com/"
 
