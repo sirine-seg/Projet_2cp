@@ -117,7 +117,7 @@ const AjouterIntervention = () => {
     const fetchStatusList = async () => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/interventions/interventions/status/",
+          "https://esi-track-deployement.onrender.com/api/interventions/interventions/status/",
           {
             headers: headers,
           }
@@ -138,7 +138,7 @@ const AjouterIntervention = () => {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/users/",
+          "https://esi-track-deployement.onrender.com/api/accounts/users/",
           {
             headers: headers,
           }
@@ -269,7 +269,7 @@ const AjouterIntervention = () => {
       try {
         const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "http://127.0.0.1:8000/api/equipements/equipement",
+          "https://esi-track-deployement.onrender.com/api/equipements/equipement",
           {
             headers: {
               "Content-Type": "application/json",
@@ -294,7 +294,7 @@ const AjouterIntervention = () => {
       try {
         const token = localStorage.getItem("access_token"); // adjust the key if different
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/techniciens/",
+          "https://esi-track-deployement.onrender.com/api/accounts/techniciens/",
           {
             headers: {
               "Content-Type": "application/json",
@@ -355,12 +355,12 @@ const AjouterIntervention = () => {
 
       if (selectedTypeIntervention === "preventive") {
         api_url =
-          "http://127.0.0.1:8000/api/interventions/interventions/preventive/create/";
+          "https://esi-track-deployement.onrender.com/api/interventions/interventions/preventive/create/";
         data = gatherDataPreventive;
         console.log(JSON.stringify(data));
       } else if (selectedTypeIntervention === "currative") {
         api_url =
-          "http://127.0.0.1:8000/api/interventions/interventions/currative/create/";
+          "https://esi-track-deployement.onrender.com/api/interventions/interventions/currative/create/";
         data = gatherdDataCurrative;
         console.log(JSON.stringify(data));
       }

@@ -20,7 +20,7 @@ const ViewUser = () => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/accounts/users/${id}/`,
+          `https://esi-track-deployement.onrender.com/api/accounts/users/${id}/`,
           {
             method: "GET",
             headers: {

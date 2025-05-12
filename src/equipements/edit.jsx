@@ -55,7 +55,7 @@ const EditPage = () => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/equipements/equipement/${id}/`,
+          `https://esi-track-deployement.onrender.com/api/equipements/equipement/${id}/`,
           {
             method: "GET",
             headers: {
@@ -101,7 +101,7 @@ const EditPage = () => {
       return;
     }
 
-    fetch("http://127.0.0.1:8000/api/equipements/type/", {
+    fetch("https://esi-track-deployement.onrender.com/api/equipements/type/", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -129,7 +129,7 @@ const EditPage = () => {
       return;
     }
 
-    fetch("http://127.0.0.1:8000/api/equipements/categorie/", {
+    fetch("https://esi-track-deployement.onrender.com/api/equipements/categorie/", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -157,7 +157,7 @@ const EditPage = () => {
       return;
     }
 
-    fetch("http://127.0.0.1:8000/api/equipements/localisation/", {
+    fetch("https://esi-track-deployement.onrender.com/api/equipements/localisation/", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -219,7 +219,7 @@ const EditPage = () => {
       formData.append("manuel", equipement.manuel);
     }
 
-    fetch(`http://127.0.0.1:8000/api/equipements/equipement/${id}/update/`, {
+    fetch(`https://esi-track-deployement.onrender.com/api/equipements/equipement/${id}/update/`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`, // ⬅️ ajout ici

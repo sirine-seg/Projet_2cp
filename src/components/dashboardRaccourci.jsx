@@ -18,7 +18,7 @@ export default function DashboardRaccourci() {
   };
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/stats/equipements/percentage-by-etat/")
+    fetch("https://esi-track-deployement.onrender.com/api/stats/equipements/percentage-by-etat/")
       .then((res) => res.json())
       .then((equipmentRawData) => {
         setEquipmentData(formatEquipmentData(equipmentRawData));
@@ -49,15 +49,15 @@ export default function DashboardRaccourci() {
   return (
     <div className="w-full min-h-screen">
 
-<PieChartBase
-  title="Gardez un oeil sur la maintenance!"
-  description="Retrouvez toutes les statistiques essentielles en un clic sur le tableau de bord."
-  data={equipmentData}
-  donut={true}
-  showCenterText={false}
-  colorMap={pieColorMap}
-  onClick={handleClick}
-/>
+      <PieChartBase
+        title="Gardez un oeil sur la maintenance!"
+        description="Retrouvez toutes les statistiques essentielles en un clic sur le tableau de bord."
+        data={equipmentData}
+        donut={true}
+        showCenterText={false}
+        colorMap={pieColorMap}
+        onClick={handleClick}
+      />
     </div>
   );
 }

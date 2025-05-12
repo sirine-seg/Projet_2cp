@@ -43,7 +43,7 @@ const InfoIntervention = () => {
       try {
         const accessToken = localStorage.getItem("access_token");
         const response = await fetch(
-          `http://127.0.0.1:8000/api/interventions/interventions/${id}/`,
+          `https://esi-track-deployement.onrender.com/api/interventions/interventions/${id}/`,
           {
             method: "GET",
             headers: {
@@ -123,7 +123,7 @@ const InfoIntervention = () => {
                   title="Technicien(s)"
                   content={
                     Array.isArray(intervention?.technicien_name) &&
-                    intervention.technicien_name.length > 0 ? (
+                      intervention.technicien_name.length > 0 ? (
                       intervention.technicien_name.map((name, index) => (
                         <InfoIntervUser
                           key={index}

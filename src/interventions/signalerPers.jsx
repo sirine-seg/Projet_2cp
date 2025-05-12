@@ -77,7 +77,7 @@ const Signaler = () => {
       try {
         const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "http://127.0.0.1:8000/api/equipements/equipement",
+          "https://esi-track-deployement.onrender.com/api/equipements/equipement",
           {
             headers: {
               "Content-Type": "application/json",
@@ -111,7 +111,7 @@ const Signaler = () => {
     try {
       const token = localStorage.getItem("access_token"); // retrieve token
       const response = await fetch(
-        "http://127.0.0.1:8000/api/interventions/interventions/currative/create/",
+        "https://esi-track-deployement.onrender.com/api/interventions/interventions/currative/create/",
         {
           method: "POST",
           headers: {

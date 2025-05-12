@@ -101,7 +101,7 @@ const SignalerAdmin = () => {
         const token = localStorage.getItem("access_token");
 
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/techniciens/",
+          "https://esi-track-deployement.onrender.com/api/accounts/techniciens/",
           {
             headers: {
               "Content-Type": "application/json",
@@ -152,7 +152,7 @@ const SignalerAdmin = () => {
 
     // Submit intervention with the gathered data
     fetch(
-      "http://127.0.0.1:8000/api/interventions/interventions/currative/create/",
+      "https://esi-track-deployement.onrender.com/api/interventions/interventions/currative/create/",
       {
         method: "POST",
         headers: headers,

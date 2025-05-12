@@ -20,7 +20,7 @@ const AjoutPage = () => {
 
   const [newEquipement, setNewEquipement] = useState({
     nom: "",
-    type: "",
+    typee: "",
     categorie: "",
     localisation: "",
     codebar: "",
@@ -39,7 +39,7 @@ const AjoutPage = () => {
   const handleAddEquipement = () => {
     const formData = new FormData();
     formData.append("nom", newEquipement.nom);
-    formData.append("type", newEquipement.type);
+    formData.append("typee", newEquipement.typee);
     formData.append("categorie", newEquipement.categorie);
     formData.append("localisation", newEquipement.localisation);
     formData.append("code", newEquipement.code);
@@ -55,7 +55,7 @@ const AjoutPage = () => {
 
     const token = localStorage.getItem("access_token");
 
-    fetch("http://127.0.0.1:8000/api/equipements/equipement/create/", {
+    fetch("https://esi-track-deployement.onrender.com/api/equipements/equipement/create/", {
       method: "POST",
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -91,13 +91,13 @@ const AjoutPage = () => {
       const token = localStorage.getItem("access_token");
       try {
         const [typeRes, catRes, locRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/equipements/type/", {
+          fetch("https://esi-track-deployement.onrender.com/api/equipements/type/", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://127.0.0.1:8000/api/equipements/categorie/", {
+          fetch("https://esi-track-deployement.onrender.com/api/equipements/categorie/", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://127.0.0.1:8000/api/equipements/localisation/", {
+          fetch("https://esi-track-deployement.onrender.com/api/equipements/localisation/", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -210,10 +210,10 @@ const AjoutPage = () => {
               title="Type"
               options={types}
               selectedOption={
-                types.find((t) => t.value === newEquipement.type)?.label || ""
+                types.find((t) => t.value === newEquipement.typee)?.label || ""
               }
               onSelect={(value) =>
-                setNewEquipement({ ...newEquipement, type: value })
+                setNewEquipement({ ...newEquipement, typee: value })
               }
             />
           </div>

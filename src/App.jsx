@@ -45,7 +45,7 @@ function App() {
           return;
         }
 
-        const response = await fetch("http://localhost:8000/api/accounts/me/", {
+        const response = await fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${accessToken}`,
@@ -72,46 +72,46 @@ function App() {
 
 
   return (
-    
-      <Routes>
 
-        <Route path="/Home" element={< HomePage />} />
-        <Route path="/Login" element={< Login />} />
-        <Route path="/Profil" element={< Profil />} />
-        <Route path="/Notifications" element={< Notifications />} />
+    <Routes>
 
-
-        <Route path="/Equipements" element={< EquipementsPage />} />
-        <Route path="/AjouterEquipement" element={< AjoutPage/>} />
-        <Route path="/ModifierEquipement/:id" element={< EditPage/>} />
-        <Route path="/DetailsEquipement/:id_equipement" element={<Info />} />
-        <Route path="/Signaler/:id_equipement" element={<SignalerRedirect userRole={userRole} />} />
+      <Route path="/Home" element={< HomePage />} />
+      <Route path="/Login" element={< Login />} />
+      <Route path="/Profil" element={< Profil />} />
+      <Route path="/Notifications" element={< Notifications />} />
 
 
-        <Route path="/Interventions" element={< Intervention />} />
-        <Route path="/AjouterIntervention" element={< AjouterInterventionRedirect userRole={userRole} />} />
-        <Route path="/AffecterIntervention/:id_intervention" element={< Affecterintervention />} />
-        <Route path="/DetailsIntervention/:id" element={< Interventioninfo />} />
+      <Route path="/Equipements" element={< EquipementsPage />} />
+      <Route path="/AjouterEquipement" element={< AjoutPage />} />
+      <Route path="/ModifierEquipement/:id" element={< EditPage />} />
+      <Route path="/DetailsEquipement/:id_equipement" element={<Info />} />
+      <Route path="/Signaler/:id_equipement" element={<SignalerRedirect userRole={userRole} />} />
 
 
-        <Route path="/MesTaches" element={<TacheTech />} />     
-
-        
-        <Route path="/Utilisateurs" element={< Users />} />
-        <Route path="/ModifierUtilisateur/:id" element={< Modifie/>} />
-        <Route path="/AjouterUtilisateur" element={< AjouterUser />} />
-        <Route path="/DetailsUtilisateur/:id" element={< DetailsUser />} />
+      <Route path="/Interventions" element={< Intervention />} />
+      <Route path="/AjouterIntervention" element={< AjouterInterventionRedirect userRole={userRole} />} />
+      <Route path="/AffecterIntervention/:id_intervention" element={< Affecterintervention />} />
+      <Route path="/DetailsIntervention/:id" element={< Interventioninfo />} />
 
 
-        <Route path="/Generale" element={< GeneralPage />} />
-        <Route path="/ChampsDynamiques" element={< ChampsDynamiquesPage />} />
-        <Route path="/Aide" element={< AideEtSupportPage />} />
-        
+      <Route path="/MesTaches" element={<TacheTech />} />
 
-        <Route path="/dashboard" element={< DashboardPage/>} />
- 
-      </Routes>
-    
+
+      <Route path="/Utilisateurs" element={< Users />} />
+      <Route path="/ModifierUtilisateur/:id" element={< Modifie />} />
+      <Route path="/AjouterUtilisateur" element={< AjouterUser />} />
+      <Route path="/DetailsUtilisateur/:id" element={< DetailsUser />} />
+
+
+      <Route path="/Generale" element={< GeneralPage />} />
+      <Route path="/ChampsDynamiques" element={< ChampsDynamiquesPage />} />
+      <Route path="/Aide" element={< AideEtSupportPage />} />
+
+
+      <Route path="/dashboard" element={< DashboardPage />} />
+
+    </Routes>
+
   );
 }
 

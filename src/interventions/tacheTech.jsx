@@ -150,7 +150,7 @@ const Mestaches = () => {
     const fetchInterventions = async () => {
       try {
         let apiUrl =
-          "http://127.0.0.1:8000/api/interventions/interventions/tache/";
+          "https://esi-track-deployement.onrender.com/api/interventions/interventions/tache/";
 
         const accessToken = localStorage.getItem("access_token"); // Assuming token is stored in localStorage
 
@@ -249,7 +249,7 @@ const Mestaches = () => {
       try {
         const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "http://127.0.0.1:8000/api/interventions/interventions/status/",
+          "https://esi-track-deployement.onrender.com/api/interventions/interventions/status/",
           {
             method: "GET",
             headers: {
@@ -280,7 +280,7 @@ const Mestaches = () => {
       try {
         const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "http://127.0.0.1:8000/api/equipements/equipement/",
+          "https://esi-track-deployement.onrender.com/api/equipements/equipement/",
           {
             method: "GET",
             headers: {
@@ -371,9 +371,9 @@ const Mestaches = () => {
       let api_url = "";
 
       if (MenuData?.type === "preventive") {
-        api_url = `http://127.0.0.1:8000/api/interventions/interventions/preventive/update/${MenuData.id}/`;
+        api_url = `https://esi-track-deployement.onrender.com/api/interventions/interventions/preventive/update/${MenuData.id}/`;
       } else if (MenuData?.type === "currative") {
-        api_url = `http://127.0.0.1:8000/api/interventions/interventions/currative/update/${MenuData.id}/`;
+        api_url = `https://esi-track-deployement.onrender.com/api/interventions/interventions/currative/update/${MenuData.id}/`;
       }
 
       if (api_url && MenuData) {
@@ -482,10 +482,10 @@ const Mestaches = () => {
           <div className="flex justify-between items-center flex-wrap">
             {/* Message des résultats */}
             {currentView === "grid" ? (
-            <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
-              {Math.min(visibleCount, interventions.length)} Résultats affichés
-              sur {interventions.length}
-            </div>
+              <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
+                {Math.min(visibleCount, interventions.length)} Résultats affichés
+                sur {interventions.length}
+              </div>
             ) : (
               <div></div>
             )}

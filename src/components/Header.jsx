@@ -30,7 +30,7 @@ const Header = ({ bleu = false }) => {
       try {
         const accessToken = localStorage.getItem('access_token');
 
-        const response = await fetch("http://localhost:8000/api/notifications/notifications/", {
+        const response = await fetch("https://esi-track-deployement.onrender.com/api/notifications/notifications/", {
           method: "GET",
           headers: {
             "Accept": "application/json",
@@ -115,7 +115,7 @@ const Header = ({ bleu = false }) => {
       try {
         const accessToken = localStorage.getItem('access_token');
 
-        const response = await fetch("http://localhost:8000/api/accounts/me/", {
+        const response = await fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
           method: "GET",
           headers: {
             "Accept": "application/json",

@@ -151,7 +151,7 @@ const Intervention = () => {
     const fetchUserRole = async () => {
       try {
         const accessToken = localStorage.getItem("access_token");
-        const response = await fetch("http://localhost:8000/api/accounts/me/", {
+        const response = await fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -178,14 +178,14 @@ const Intervention = () => {
   useEffect(() => {
     const fetchInterventions = async () => {
       try {
-        let apiUrl = "http://127.0.0.1:8000/api/interventions/interventions";
+        let apiUrl = "https://esi-track-deployement.onrender.com/api/interventions/interventions";
 
         if (filter === "Curative") {
           apiUrl =
-            "http://127.0.0.1:8000/api/interventions/interventions/currative/";
+            "https://esi-track-deployement.onrender.com/api/interventions/interventions/currative/";
         } else if (filter === "Préventive") {
           apiUrl =
-            "http://127.0.0.1:8000/api/interventions/interventions/preventive/";
+            "https://esi-track-deployement.onrender.com/api/interventions/interventions/preventive/";
         }
 
         const accessToken = localStorage.getItem("access_token");
@@ -320,7 +320,7 @@ const Intervention = () => {
       try {
         const token = localStorage.getItem("access_token"); // or wherever you store your token
         const response = await fetch(
-          "http://127.0.0.1:8000/api/interventions/interventions/status/",
+          "https://esi-track-deployement.onrender.com/api/interventions/interventions/status/",
           {
             method: "GET",
             headers: {
@@ -351,7 +351,7 @@ const Intervention = () => {
       try {
         const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "http://127.0.0.1:8000/api/equipements/equipement/",
+          "https://esi-track-deployement.onrender.com/api/equipements/equipement/",
           {
             method: "GET",
             headers: {
@@ -388,7 +388,7 @@ const Intervention = () => {
       try {
         const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/techniciens/",
+          "https://esi-track-deployement.onrender.com/api/accounts/techniciens/",
           {
             method: "GET",
             headers: {
@@ -452,7 +452,7 @@ const Intervention = () => {
       console.log("the id of the intervention", selectedInterventionid);
       console.log("the type of the intervention", menuData.type);
       const response = await fetch(
-        `http://127.0.0.1:8000//api/interventions/interventions/cancel/${menuData.type}/${selectedInterventionid}/`,
+        `https://esi-track-deployement.onrender.com//api/interventions/interventions/cancel/${menuData.type}/${selectedInterventionid}/`,
         {
           method: "PATCH",
           headers: {
@@ -571,7 +571,7 @@ const Intervention = () => {
   const handleDeleteIntervention = async (interventionid) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/intervention/delete/${interventionid}/`,
+        `https://esi-track-deployement.onrender.com/intervention/delete/${interventionid}/`,
         {
           method: "DELETE",
         }
@@ -607,10 +607,10 @@ const Intervention = () => {
       console.log("this is the data : ", menuData);
       console.log("the id of intervention is : ", selectedInterventionid);
       if (typeInter === "currative") {
-        api_url = `http://127.0.0.1:8000/api/interventions/interventions/currative/update/${selectedInterventionid}/`;
+        api_url = `https://esi-track-deployement.onrender.com/api/interventions/interventions/currative/update/${selectedInterventionid}/`;
         console.log("successfully entered");
       } else if (typeInter === "preventive") {
-        api_url = `http://127.0.0.1:8000/api/interventions/interventions/preventive/update/${selectedInterventionid}/`;
+        api_url = `https://esi-track-deployement.onrender.com/api/interventions/interventions/preventive/update/${selectedInterventionid}/`;
       }
       console.log("selectedStatus:", selectedStatus);
 

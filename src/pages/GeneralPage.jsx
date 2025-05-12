@@ -17,7 +17,7 @@ export default function GeneralPage() {
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
 
-    fetch("http://localhost:8000/api/accounts/me/", {
+    fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -29,7 +29,7 @@ export default function GeneralPage() {
 
         // Fetch general notification status
         fetch(
-          `http://localhost:8000/api/accounts/toggle-notification/${userID}/`,
+          `https://esi-track-deployement.onrender.com/api/accounts/toggle-notification/${userID}/`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -46,7 +46,7 @@ export default function GeneralPage() {
 
         // Fetch email notification status
         fetch(
-          `http://localhost:8000/api/accounts/toggle-notification-email/${userID}/`,
+          `https://esi-track-deployement.onrender.com/api/accounts/toggle-notification-email/${userID}/`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -68,7 +68,7 @@ export default function GeneralPage() {
   const handleToggleAllNotifications = () => {
     const accessToken = localStorage.getItem("access_token");
 
-    fetch("http://localhost:8000/api/accounts/me/", {
+    fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -79,7 +79,7 @@ export default function GeneralPage() {
         console.log("User ID for toggle:", userID);
 
         fetch(
-          `http://localhost:8000/api/accounts/toggle-notification/${userID}/`,
+          `https://esi-track-deployement.onrender.com/api/accounts/toggle-notification/${userID}/`,
           {
             method: "POST",
             headers: {
@@ -103,7 +103,7 @@ export default function GeneralPage() {
   const handleToggleEmailNotifications = () => {
     const accessToken = localStorage.getItem("access_token");
 
-    fetch("http://localhost:8000/api/accounts/me/", {
+    fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -114,7 +114,7 @@ export default function GeneralPage() {
         console.log("User ID for toggle email:", userID);
 
         fetch(
-          `http://localhost:8000/api/accounts/toggle-notification-email/${userID}/`,
+          `https://esi-track-deployement.onrender.com/api/accounts/toggle-notification-email/${userID}/`,
           {
             method: "POST",
             headers: {

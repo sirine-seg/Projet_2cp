@@ -23,7 +23,7 @@ export default function SideBar({ isOpen, setIsOpen }) {
     const fetchUserRole = async () => {
       try {
         const accessToken = localStorage.getItem('access_token');
-        const response = await fetch("http://localhost:8000/api/accounts/me/", {
+        const response = await fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${accessToken}`,
@@ -160,7 +160,7 @@ export default function SideBar({ isOpen, setIsOpen }) {
 
       {/* Log Out */}
       <div className="sticky bottom-0 bg-white pt-2">
-        <div 
+        <div
           className="flex items-center gap-3 text-[#FF4423] cursor-pointer p-2 rounded-xl"
           onClick={handleLogout}
         >
@@ -177,12 +177,11 @@ function NavItem({ to, icon, label, activeColor = "#20599E" }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex items-center gap-2 p-3 rounded-xl transition font-medium text-sm ${
-          isActive
-            ? activeColor === "#20599E"
-              ? "bg-[#20599E] text-white"
-              : "bg-[#F09C0A] text-white"
-            : "text-[#202124] hover:bg-gray-100"
+        `flex items-center gap-2 p-3 rounded-xl transition font-medium text-sm ${isActive
+          ? activeColor === "#20599E"
+            ? "bg-[#20599E] text-white"
+            : "bg-[#F09C0A] text-white"
+          : "text-[#202124] hover:bg-gray-100"
         }`
       }
     >

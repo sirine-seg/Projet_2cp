@@ -17,7 +17,7 @@ const fetchInterventionsByEquipement = async (equipementId) => {
     const token = localStorage.getItem("access_token"); // Get token from localStorage
 
     const response = await fetch(
-      `http://127.0.0.1:8000/api/interventions/equipements/${equipementId}/interventions/`,
+      `https://esi-track-deployement.onrender.com/api/interventions/equipements/${equipementId}/interventions/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ const Info = () => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/equipements/equipement/${id_equipement}/`,
+          `https://esi-track-deployement.onrender.com/api/equipements/equipement/${id_equipement}/`,
           {
             method: "GET",
             headers: {

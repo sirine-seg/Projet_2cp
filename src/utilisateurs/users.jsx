@@ -111,7 +111,7 @@ const UsersPage = () => {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/postes/",
+          "https://esi-track-deployement.onrender.com/api/accounts/postes/",
           {
             method: "GET",
             headers: {
@@ -157,7 +157,7 @@ const UsersPage = () => {
     }
 
     try {
-      let url = "http://127.0.0.1:8000/api/accounts/users/?";
+      let url = "https://esi-track-deployement.onrender.com/api/accounts/users/?";
       const params = [];
 
       if (filter && filter !== "Tout") {
@@ -241,7 +241,7 @@ const UsersPage = () => {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/accounts/user/${selectedUserId}/block/`,
+        `https://esi-track-deployement.onrender.com/api/accounts/user/${selectedUserId}/block/`,
         {
           method: "POST",
           headers: {
@@ -286,7 +286,7 @@ const UsersPage = () => {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/accounts/users/${selectedUserId}/unblock/`,
+        `https://esi-track-deployement.onrender.com/api/accounts/users/${selectedUserId}/unblock/`,
         {
           method: "POST",
           headers: {
@@ -407,10 +407,10 @@ const UsersPage = () => {
         <div className="relative w-full px-4 my-0">
           <div className="flex justify-between items-center flex-wrap">
             {currentView === "grid" ? (
-            <div className="text-gray-600 font-semibold text-sm sm:text-base md:text-lg">
-              {Math.min(visibleCount, users.length)} Résultats affichés sur{" "}
-              {users.length}
-            </div>
+              <div className="text-gray-600 font-semibold text-sm sm:text-base md:text-lg">
+                {Math.min(visibleCount, users.length)} Résultats affichés sur{" "}
+                {users.length}
+              </div>
             ) : (
               <div></div>
             )}
@@ -419,7 +419,7 @@ const UsersPage = () => {
               <div className="h-9 flex items-center">
                 <ViewToggle onChange={(view) => setCurrentView(view)} />
               </div>
-              
+
               {/* Bouton Disponible (s'affiche seulement si "Technicien" est sélectionné) */}
               {filter === "Technicien" && (
                 <Filterbutton

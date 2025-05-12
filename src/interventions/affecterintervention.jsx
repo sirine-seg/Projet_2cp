@@ -51,7 +51,7 @@ const Affecter = () => {
       try {
         const token = localStorage.getItem("access_token"); // adjust the key if different
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/techniciens/",
+          "https://esi-track-deployement.onrender.com/api/accounts/techniciens/",
           {
             headers: {
               "Content-Type": "application/json",
@@ -124,7 +124,7 @@ const Affecter = () => {
       };
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/interventions/interventions/affecter/${id_intervention}/  `,
+        `https://esi-track-deployement.onrender.com/api/interventions/interventions/affecter/${id_intervention}/  `,
         {
           method: "PATCH",
           headers: {

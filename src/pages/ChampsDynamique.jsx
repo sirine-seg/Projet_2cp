@@ -43,7 +43,7 @@ export default function ChampsDynamiquesPage() {
       : {};
 
     // Localisations
-    fetch("http://localhost:8000/api/equipements/localisation/", {
+    fetch("https://esi-track-deployement.onrender.com/api/equipements/localisation/", {
       headers: {
         "Content-Type": "application/json",
         ...authHeader,
@@ -61,7 +61,7 @@ export default function ChampsDynamiquesPage() {
       .catch((err) => console.error("❌ Failed to fetch localisations", err));
 
     // États
-    fetch("http://localhost:8000/api/equipements/etat/", {
+    fetch("https://esi-track-deployement.onrender.com/api/equipements/etat/", {
       headers: {
         "Content-Type": "application/json",
         ...authHeader,
@@ -79,7 +79,7 @@ export default function ChampsDynamiquesPage() {
       .catch((err) => console.error("❌ Failed to fetch états", err));
 
     // Catégories et types
-    fetch("http://localhost:8000/api/equipements/categorie/", {
+    fetch("https://esi-track-deployement.onrender.com/api/equipements/categorie/", {
       headers: {
         "Content-Type": "application/json",
         ...authHeader,
@@ -93,7 +93,7 @@ export default function ChampsDynamiquesPage() {
             categoryNameToId[cat.nom] = cat.id;
 
             const typesRes = await fetch(
-              `http://localhost:8000/api/equipements/type/?categorie=${cat.id}`,
+              `https://esi-track-deployement.onrender.com/api/equipements/type/?categorie=${cat.id}`,
               {
                 headers: {
                   "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export default function ChampsDynamiquesPage() {
       );
 
     // Status
-    fetch("http://localhost:8000/api/interventions/interventions/status/", {
+    fetch("https://esi-track-deployement.onrender.com/api/interventions/interventions/status/", {
       headers: {
         "Content-Type": "application/json",
         ...authHeader,
@@ -139,7 +139,7 @@ export default function ChampsDynamiquesPage() {
       .catch((err) => console.error("❌ Failed to fetch status", err));
 
     // Postes
-    fetch("http://localhost:8000/api/accounts/postes/", {
+    fetch("https://esi-track-deployement.onrender.com/api/accounts/postes/", {
       headers: {
         "Content-Type": "application/json",
         ...authHeader,
@@ -184,7 +184,7 @@ export default function ChampsDynamiquesPage() {
       // Localisations
       if (editingField === "Localisations") {
         response = await fetch(
-          "http://localhost:8000/api/equipements/localisation/create/",
+          "https://esi-track-deployement.onrender.com/api/equipements/localisation/create/",
           {
             method: "POST",
             headers: authHeaders,
@@ -205,7 +205,7 @@ export default function ChampsDynamiquesPage() {
       // États
       else if (editingField === "Etats") {
         response = await fetch(
-          "http://localhost:8000/api/equipements/etat/create/",
+          "https://esi-track-deployement.onrender.com/api/equipements/etat/create/",
           {
             method: "POST",
             headers: authHeaders,
@@ -221,7 +221,7 @@ export default function ChampsDynamiquesPage() {
       // Categories
       else if (editingField === "Categories") {
         response = await fetch(
-          "http://localhost:8000/api/equipements/categorie/create/",
+          "https://esi-track-deployement.onrender.com/api/equipements/categorie/create/",
           {
             method: "POST",
             headers: authHeaders,
@@ -257,7 +257,7 @@ export default function ChampsDynamiquesPage() {
         const categoryId = matchedCategory.id;
 
         response = await fetch(
-          "http://localhost:8000/api/equipements/type/create/",
+          "https://esi-track-deployement.onrender.com/api/equipements/type/create/",
           {
             method: "POST",
             headers: authHeaders,
@@ -271,9 +271,9 @@ export default function ChampsDynamiquesPage() {
             prev.map((cat) =>
               cat.title === parentCategory
                 ? {
-                    ...cat,
-                    subfields: [...cat.subfields, added.nom || newFieldName],
-                  }
+                  ...cat,
+                  subfields: [...cat.subfields, added.nom || newFieldName],
+                }
                 : cat
             )
           );
@@ -286,7 +286,7 @@ export default function ChampsDynamiquesPage() {
       // Status
       else if (editingField === "Status") {
         response = await fetch(
-          "http://localhost:8000/api/interventions/interventions/status/create/",
+          "https://esi-track-deployement.onrender.com/api/interventions/interventions/status/create/",
           {
             method: "POST",
             headers: authHeaders,
@@ -302,7 +302,7 @@ export default function ChampsDynamiquesPage() {
       // Postes
       else if (editingField === "Postes") {
         response = await fetch(
-          "http://localhost:8000/api/accounts/postes/create/",
+          "https://esi-track-deployement.onrender.com/api/accounts/postes/create/",
           {
             method: "POST",
             headers: authHeaders,
@@ -323,12 +323,12 @@ export default function ChampsDynamiquesPage() {
 
   const handleDeleteClick =
     (fieldType) =>
-    (fieldName, parent = null) => {
-      setEditingField(fieldType); // Set the type being deleted
-      setItemToDelete(fieldName); // Set the item name
-      setParentCategory(parent); // For types
-      setIsDeletePopupOpen(true);
-    };
+      (fieldName, parent = null) => {
+        setEditingField(fieldType); // Set the type being deleted
+        setItemToDelete(fieldName); // Set the item name
+        setParentCategory(parent); // For types
+        setIsDeletePopupOpen(true);
+      };
 
   const handleClosePopup = () => {
     setIsDeletePopupOpen(false);
@@ -347,32 +347,32 @@ export default function ChampsDynamiquesPage() {
       switch (editingField) {
         case "Localisations":
           id = localisationNameToId[fieldName];
-          url = `http://localhost:8000/api/equipements/localisation/${id}/delete/`;
+          url = `https://esi-track-deployement.onrender.com/api/equipements/localisation/${id}/delete/`;
           break;
 
         case "Etats":
           id = etatNameToId[fieldName];
-          url = `http://localhost:8000/api/equipements/etat/${id}/delete/`;
+          url = `https://esi-track-deployement.onrender.com/api/equipements/etat/${id}/delete/`;
           break;
 
         case "Postes":
           id = posteNameToId[fieldName];
-          url = `http://localhost:8000/api/accounts/postes/${id}/delete/`;
+          url = `https://esi-track-deployement.onrender.com/api/accounts/postes/${id}/delete/`;
           break;
 
         case "Status":
           id = statusNameToId[fieldName];
-          url = `http://localhost:8000/api/interventions/interventions/status/${id}/`;
+          url = `https://esi-track-deployement.onrender.com/api/interventions/interventions/status/${id}/`;
           break;
 
         case "Categories":
           id = categorieNameToId[fieldName];
-          url = `http://localhost:8000/api/equipements/categorie/${id}/delete/`;
+          url = `https://esi-track-deployement.onrender.com/api/equipements/categorie/${id}/delete/`;
           break;
 
         case "Type":
           id = typeNameToId[fieldName];
-          url = `http://localhost:8000/api/equipements/type/${id}/delete/`;
+          url = `https://esi-track-deployement.onrender.com/api/equipements/type/${id}/delete/`;
           break;
 
         default:
@@ -454,9 +454,9 @@ export default function ChampsDynamiquesPage() {
             prev.map((cat) =>
               cat.id === categoryId
                 ? {
-                    ...cat,
-                    subfields: cat.subfields.filter((t) => t !== fieldName),
-                  }
+                  ...cat,
+                  subfields: cat.subfields.filter((t) => t !== fieldName),
+                }
                 : cat
             )
           );

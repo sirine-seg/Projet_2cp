@@ -19,7 +19,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchInterventions = async () => {
       try {
-        let apiUrl = "http://127.0.0.1:8000/api/interventions/interventions";
+        let apiUrl = "https://esi-track-deployement.onrender.com/api/interventions/interventions";
 
         const accessToken = localStorage.getItem("access_token"); // Assuming token is stored in localStorage
 
@@ -49,8 +49,8 @@ export default function HomePage() {
   }, []);
 
   const lastTwoInterventions = [...interventions]
-      .sort((a, b) => b.id - a.id)
-      .slice(0, 2);
+    .sort((a, b) => b.id - a.id)
+    .slice(0, 2);
 
 
   return (

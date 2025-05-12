@@ -21,7 +21,7 @@ export default function NotificationPage() {
       try {
         const accessToken = localStorage.getItem('access_token');  // get token from localStorage
         console.log(accessToken);
-        const response = await fetch("http://127.0.0.1:8000/api/notifications/notifications/", {
+        const response = await fetch("https://esi-track-deployement.onrender.com/api/notifications/notifications/", {
           method: "GET",
           headers: {
             "Accept": "application/json",
@@ -71,7 +71,7 @@ export default function NotificationPage() {
       const accessToken = localStorage.getItem('access_token');
 
       // First make the API call to update the status
-      const response = await fetch(`http://127.0.0.1:8000/api/notifications/notifications/${id}/mark-as-read/`, {
+      const response = await fetch(`https://esi-track-deployement.onrender.com/api/notifications/notifications/${id}/mark-as-read/`, {
         method: "PATCH", // or "PATCH" depending on your API
         headers: {
           "Accept": "application/json",

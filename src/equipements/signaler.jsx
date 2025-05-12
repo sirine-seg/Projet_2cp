@@ -115,7 +115,7 @@ const Signaler = () => {
     console.log("accessToken", accessToken);
     // Send the request
     fetch(
-      "http://127.0.0.1:8000/api/interventions/interventions/currative/create/",
+      "https://esi-track-deployement.onrender.com/api/interventions/interventions/currative/create/",
       {
         method: "POST",
         credentials: "include",

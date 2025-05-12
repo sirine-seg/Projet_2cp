@@ -23,7 +23,7 @@ export default function ProfilePage() {
       try {
         const accessToken = localStorage.getItem("access_token");
 
-        const response = await fetch("http://localhost:8000/api/accounts/me/", {
+        const response = await fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
           method: "GET",
           headers: {
             Accept: "application/json",
@@ -66,7 +66,7 @@ export default function ProfilePage() {
       console.log("the data logged from the update", updateData);
 
       const response = await fetch(
-        `http://localhost:8000/api/accounts/api/users/update/${userId}/`,
+        `https://esi-track-deployement.onrender.com/api/accounts/api/users/update/${userId}/`,
         {
           method: "PATCH",
           headers: {
@@ -128,7 +128,7 @@ export default function ProfilePage() {
       console.log("the data logged from the update", updateData);
 
       const response = await fetch(
-        `http://localhost:8000/api/accounts/techniciens/${userId}/update/`,
+        `https://esi-track-deployement.onrender.com/api/accounts/techniciens/${userId}/update/`,
         {
           method: "PATCH",
           headers: {
@@ -163,9 +163,8 @@ export default function ProfilePage() {
         <div className="flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-24 mb-6 px-4 mb:px-10">
           {/* Photo et boutons */}
           <div
-            className={`flex flex-row md:flex-col items-center ${
-              isTechnician ? "gap-10 sm:gap-24 md:gap-6" : "gap-10"
-            }`}
+            className={`flex flex-row md:flex-col items-center ${isTechnician ? "gap-10 sm:gap-24 md:gap-6" : "gap-10"
+              }`}
           >
             <img
               src={userData?.user?.photo || Profil}

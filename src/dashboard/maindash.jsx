@@ -52,31 +52,31 @@ export default function DashboardPage() {
       fetch("/data/linechart.json").then((res) => res.json()),
       fetch("/data/mixedbar.json").then((res) => res.json()),
       fetch("/data/multiplebar.json").then((res) => res.json()),
-      fetch("http://127.0.0.1:8000/api/stats/interventions/count/").then(
+      fetch("https://esi-track-deployement.onrender.com/api/stats/interventions/count/").then(
         (res) => res.json()
       ),
-      fetch("http://127.0.0.1:8000/api/stats/equipements/count/").then((res) =>
+      fetch("https://esi-track-deployement.onrender.com/api/stats/equipements/count/").then((res) =>
         res.json()
       ),
       fetch(
-        "http://127.0.0.1:8000/api/stats/interventions/average-resolution-time/"
+        "https://esi-track-deployement.onrender.com/api/stats/interventions/average-resolution-time/"
       ).then((res) => {
         if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
         return res.json();
       }),
       fetch(
-        "http://127.0.0.1:8000/api/stats/technicians/intervention-status-percentage/"
+        "https://esi-track-deployement.onrender.com/api/stats/technicians/intervention-status-percentage/"
       ).then((res) => {
         if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
         return res.json();
       }),
       fetch(
-        "http://127.0.0.1:8000/api/stats/equipements/percentage-by-etat/"
+        "https://esi-track-deployement.onrender.com/api/stats/equipements/percentage-by-etat/"
       ).then((res) => res.json()),
       fetch(
-        "http://127.0.0.1:8000/api/stats/interventions/percentage-by-status/"
+        "https://esi-track-deployement.onrender.com/api/stats/interventions/percentage-by-status/"
       ).then((res) => res.json()),
-      fetch("http://127.0.0.1:8000/api/stats/interventions/by-month/").then(
+      fetch("https://esi-track-deployement.onrender.com/api/stats/interventions/by-month/").then(
         (res) => res.json()
       ),
     ])
@@ -208,7 +208,7 @@ export default function DashboardPage() {
       <Header bleu />
       <div className="export-controls p-4 flex justify-end space-x-4">
         <div className="flex items-center justify-center space-x-4 px-20">
-          <div 
+          <div
             onClick={handleExportPDF}
             className={`cursor-pointer flex items-center space-x-2 p-2 bg-gray-100 hover:bg-gray-200 rounded-md ${pdfExportLoading ? 'opacity-50' : ''}`}
             title="Exporter en PDF"
@@ -217,16 +217,16 @@ export default function DashboardPage() {
             {pdfExportLoading ? (
               <span className="animate-spin inline-block h-5 w-5 border-t-2 border-b-2 border-blue-600 rounded-full mr-2"></span>
             ) : (
-            <img
-              src={upload}
-              alt="export pdf"
-              className="h-[20px] w-[20px] shrink-0"
-            />
+              <img
+                src={upload}
+                alt="export pdf"
+                className="h-[20px] w-[20px] shrink-0"
+              />
             )}
             <span className="text-sm">Import PDF</span>
           </div>
-          
-          <div 
+
+          <div
             onClick={handleExportExcel}
             className={`cursor-pointer flex items-center space-x-2 p-2 bg-gray-100 hover:bg-gray-200 rounded-md ${excelExportLoading ? 'opacity-50' : ''}`}
             title="Exporter en Excel"

@@ -17,10 +17,10 @@ export default function PicView({ equipement = {} }) {
   const displaySrc = previewUrl
     ? previewUrl
     : equipement.image
-    ? equipement.image.startsWith("http")
-      ? equipement.image
-      : `http://127.0.0.1:8000/equip_imges/${equipement.image}`
-    : Pic;
+      ? equipement.image.startsWith("http")
+        ? equipement.image
+        : `https://esi-track-deployement.onrender.com/equip_imges/${equipement.image}`
+      : Pic;
 
   return (
     <div className="flex justify-center items-center w-full py-4">

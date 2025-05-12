@@ -50,7 +50,7 @@ const AjoutPage = () => {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/accounts/createUser/",
+        "https://esi-track-deployement.onrender.com/api/accounts/createUser/",
         {
           method: "POST",
           headers: {
@@ -98,7 +98,7 @@ const AjoutPage = () => {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/postes/",
+          "https://esi-track-deployement.onrender.com/api/accounts/postes/",
           {
             method: "GET",
             headers: {

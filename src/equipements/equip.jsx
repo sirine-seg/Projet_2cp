@@ -93,7 +93,7 @@ const EquipementsPage = () => {
     const fetchUserRole = async () => {
       try {
         const accessToken = localStorage.getItem("access_token");
-        const response = await fetch("http://localhost:8000/api/accounts/me/", {
+        const response = await fetch("https://esi-track-deployement.onrender.com/api/accounts/me/", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -200,7 +200,7 @@ const EquipementsPage = () => {
     try {
       const token = localStorage.getItem("access_token"); // Correct token key
 
-      let url = "http://127.0.0.1:8000/api/equipements/equipement/?";
+      let url = "https://esi-track-deployement.onrender.com/api/equipements/equipement/?";
       const params = [];
 
       if (search.trim() !== "") {
@@ -359,7 +359,7 @@ const EquipementsPage = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    fetch("http://127.0.0.1:8000/api/equipements/etat/", {
+    fetch("https://esi-track-deployement.onrender.com/api/equipements/etat/", {
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
@@ -381,13 +381,13 @@ const EquipementsPage = () => {
     const fetchOptions = async () => {
       try {
         const [typeRes, catRes, locRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/equipements/type/", {
+          fetch("https://esi-track-deployement.onrender.com/api/equipements/type/", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://127.0.0.1:8000/api/equipements/categorie/", {
+          fetch("https://esi-track-deployement.onrender.com/api/equipements/categorie/", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://127.0.0.1:8000/api/equipements/localisation/", {
+          fetch("https://esi-track-deployement.onrender.com/api/equipements/localisation/", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -451,7 +451,7 @@ const EquipementsPage = () => {
       );
 
       const patchResponse = await fetch(
-        `http://127.0.0.1:8000/api/equipements/equipement/${equipementId}/change-etat/`,
+        `https://esi-track-deployement.onrender.com/api/equipements/equipement/${equipementId}/change-etat/`,
         {
           method: "PATCH",
           headers: {
@@ -471,7 +471,7 @@ const EquipementsPage = () => {
       }
 
       const getResponse = await fetch(
-        `http://127.0.0.1:8000/api/equipements/equipement/${equipementId}/`,
+        `https://esi-track-deployement.onrender.com/api/equipements/equipement/${equipementId}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -510,7 +510,7 @@ const EquipementsPage = () => {
     }
 
     try {
-      const url = `http://127.0.0.1:8000/api/equipements/equipement/${id_equipement}/`;
+      const url = `https://esi-track-deployement.onrender.com/api/equipements/equipement/${id_equipement}/`;
       console.log("Requête GET vers :", url);
 
       const response = await fetch(url, {
@@ -632,11 +632,10 @@ const EquipementsPage = () => {
           <div className="flex flex-nowrap space-x-2 no-scrollbar pb-2">
             <Filtre
               id="categorie"
-              label={`Catégorie${
-                filters["categorie__nom"]
-                  ? `: ${filters["categorie__nom"]}`
-                  : ""
-              }`}
+              label={`Catégorie${filters["categorie__nom"]
+                ? `: ${filters["categorie__nom"]}`
+                : ""
+                }`}
               options={categories}
               onSelectFilter={(option) =>
                 handleFilterChange("categorie__nom", option)
@@ -649,9 +648,8 @@ const EquipementsPage = () => {
 
             <Filtre
               id="type"
-              label={`Type${
-                filters["typee__nom"] ? `: ${filters["typee__nom"]}` : ""
-              }`}
+              label={`Type${filters["typee__nom"] ? `: ${filters["typee__nom"]}` : ""
+                }`}
               options={types}
               onSelectFilter={(option) =>
                 handleFilterChange("typee__nom", option)
@@ -664,11 +662,10 @@ const EquipementsPage = () => {
 
             <Filtre
               id="localisation"
-              label={`Localisation${
-                filters["localisation__nom"]
-                  ? `: ${filters["localisation__nom"]}`
-                  : ""
-              }`}
+              label={`Localisation${filters["localisation__nom"]
+                ? `: ${filters["localisation__nom"]}`
+                : ""
+                }`}
               options={localisations}
               onSelectFilter={(option) =>
                 handleFilterChange("localisation__nom", option)
@@ -681,9 +678,8 @@ const EquipementsPage = () => {
 
             <Filtre
               id="etat"
-              label={`État${
-                filters["etat__nom"] ? `: ${filters["etat__nom"]}` : ""
-              }`}
+              label={`État${filters["etat__nom"] ? `: ${filters["etat__nom"]}` : ""
+                }`}
               options={etats}
               onSelectFilter={(option) =>
                 handleFilterChange("etat__nom", option)

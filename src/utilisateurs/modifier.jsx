@@ -36,7 +36,7 @@ const ModifierPagesss = () => {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/accounts/users/${id}/`,
+          `https://esi-track-deployement.onrender.com/api/accounts/users/${id}/`,
           {
             method: "GET",
             headers: {
@@ -84,7 +84,7 @@ const ModifierPagesss = () => {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/postes/",
+          "https://esi-track-deployement.onrender.com/api/accounts/postes/",
           {
             method: "GET",
             headers: {
@@ -143,7 +143,7 @@ const ModifierPagesss = () => {
 
     try {
       const userResponse = await fetch(
-        `http://127.0.0.1:8000/api/accounts/users/${id}/update/`,
+        `https://esi-track-deployement.onrender.com/api/accounts/users/${id}/update/`,
         {
           method: "PUT",
           headers: {
@@ -158,7 +158,7 @@ const ModifierPagesss = () => {
         const errorData = await userResponse.json();
         setErrorMessage(
           "Erreur lors de la modification des informations de l'utilisateur : " +
-            JSON.stringify(errorData)
+          JSON.stringify(errorData)
         );
         return;
       }
@@ -168,7 +168,7 @@ const ModifierPagesss = () => {
 
       if (newUser.role === "Technicien") {
         const technicienResponse = await fetch(
-          `http://127.0.0.1:8000/api/accounts/techniciens/${id}/update/`,
+          `https://esi-track-deployement.onrender.com/api/accounts/techniciens/${id}/update/`,
           {
             method: "PUT",
             headers: {
@@ -183,7 +183,7 @@ const ModifierPagesss = () => {
           const errorData = await technicienResponse.json();
           setErrorMessage(
             "Erreur lors de la modification du poste : " +
-              JSON.stringify(errorData)
+            JSON.stringify(errorData)
           );
           return;
         }
