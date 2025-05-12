@@ -6,6 +6,7 @@ import DisModContainer from "../components/disModContainer";
 import DisplayContainer from "../components/displayContainer";
 import Button from "../components/Button";
 import { LogOut } from "lucide-react";
+import DisModContainerProfile from "../components/disModContainerProfile.jsx"
 
 export default function ProfilePage() {
     const [userData, setUserData] = useState(null);
@@ -32,6 +33,7 @@ export default function ProfilePage() {
 
                 const data = await response.json();
                 setUserData(data);
+                console.log ("the data logged from the fetch" , data) ;
             } catch (err) {
                 setError(err.message);
                 console.error("Error fetching user profile:", err);
@@ -42,6 +44,50 @@ export default function ProfilePage() {
 
         fetchUserProfile();
     }, []);
+
+
+
+    const updateUserData = async (field, value) => {
+
+        try {
+            const accessToken = localStorage.getItem('access_token');
+            const userId = userData?.user?.id;
+
+            if (!userId) {
+                throw new Error("User ID not found");
+            }
+
+
+            // Create the update data object
+            const updateData = {
+                [field]: value
+            };
+            console.log ("the data logged from the update" , updateData) ;
+
+            const response = await fetch(`http://localhost:8000/api/accounts/api/users/update/${userId}/` , {
+                method: "PATCH",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${accessToken}`
+                },
+                body: JSON.stringify(updateData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update ${field}`);
+            }
+
+            // Refresh user data after update
+
+            return true;
+        } catch (err) {
+            console.error(`Error updating ${field}:`, err);
+            return false;
+        }
+    };
+
+
 
     const handleLogout = () => {
         localStorage.removeItem('access_token');
@@ -91,22 +137,36 @@ export default function ProfilePage() {
 
                     {/* Containers */}
                     <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 w-full">
-                        <DisModContainer title="Nom" initialContent={userData?.user?.last_name || ""} />
-                        <DisModContainer title="Prenom" initialContent={userData?.user?.first_name || ""} />
-                        <DisplayContainer title="Identifiant" content={userData?.user?.id?.toString() || ""} />
+                        <DisModContainerProfile
+                            title="Nom"
+                            initialContent={userData?.user?.last_name || ""}
+                            onSave={(value) => updateUserData("last_name", value)}
+                        />
+                        <DisModContainerProfile
+                            title="Prénom"
+                            initialContent={userData?.user?.first_name || ""}
+                            onSave={(value) => updateUserData("first_name", value)}
+                        />
+
+                        <DisplayContainer  title="Identifiant" content ={userData?.user?.id?.toString() || ""} />
                         <DisplayContainer title="Role" content={userData?.user?.role || userData?.role || ""} />
                         {isTechnician && (
                             <DisModContainer title="Poste" initialContent={userData?.position || userData?.user?.position || ""} />
                         )}
                         {isTechnician && (
-                            <DisModContainer title="Disponibilite" initialContent={userData?.disponibilite || userData?.user?.disponibilite || ""} />
+                            <DisModContainer title="Disponibilité" initialContent={userData?.disponibilite || userData?.user?.disponibilite || ""} />
                         )}
                     </div>
                 </div>
 
                 {/* Containers - Numero de telephone et email */}
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-10 md:gap-20 md:my-10 px-4 mb:px-10">
-                    <DisModContainer title="Numero de telephone" initialContent={userData?.user?.numero_tel || userData?.numero_tel || ""} />
+                    <DisModContainerProfile
+                        title="Numéro de telephone"
+                        initialContent={userData?.user?.numero_tel || userData?.numero_tel || ""}
+                        onSave={(value) => updateUserData("numero_tel", value)}
+                    />
+
                     <DisplayContainer title="E-Mail" content={userData?.user?.email || userData?.email || ""} />
                 </div>
 

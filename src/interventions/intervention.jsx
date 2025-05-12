@@ -769,7 +769,6 @@ const Intervention = () => {
             </div>
           </div>
         </div>
-        {/* Liste des utilisateurs    ::: gap pour espace entre les cartes et grid pour si la carte prend un colone .. ect     ;;;;.map((user) => ( ... )) permet de générer une carte pour chaque utilisateur. */}
 
         <div className="flex flex-wrap space-y-4 p-4">
           <div className="flex justify-between items-center w-full">
@@ -792,11 +791,11 @@ const Intervention = () => {
             <div className="space-y-2 w-full">
               <InterventionListHeader />
 
-              {displayedInterventions.map((intervention) => (
+              {interventions.map((intervention) => (
                 <div key={intervention.id} className="relative">
                   <InterventionList
                     nom={intervention.title}
-                    equipement={intervention.equipement}
+                    id={intervention.id}
                     urgence={intervention.urgence_display}
                     statut={intervention.statut_display}
                     moreClick={() =>

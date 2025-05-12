@@ -512,7 +512,7 @@ const Mestaches = () => {
                 <div key={intervention.id} className="relative">
                   <InterventionList
                     nom={intervention.title}
-                    equipement={intervention.equipement}
+                    id={intervention.id}
                     urgence={intervention.urgence_display}
                     statut={intervention.statut_display}
                     moreClick={() =>

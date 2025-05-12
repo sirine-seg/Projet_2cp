@@ -453,7 +453,7 @@ const UsersPage = () => {
             /* Vue liste */
             <div className="w-full space-y-2">
               <UserListHeader />
-              {displayedUsers.map((user) => (
+              {users.map((user) => (
                 <div key={user.id} className="relative w-full">
                   <UserList
                     nom={user.first_name}
@@ -568,7 +568,7 @@ const UsersPage = () => {
         {visibleCount < users.length && (
           <h3
             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
-            onClick={() => setVisibleCount(visibleCount + 3)}
+            onClick={() => setVisibleCount(visibleCount + 60)}
           >
             Afficher plus
           </h3>
@@ -591,14 +591,14 @@ const UsersPage = () => {
           onClose={() => setIsUnblockPopupVisible(false)}
           onConfirm={handleDeBloquer}
           userId={selectedUserId}
-          title="Êtes-vous sûr de vouloir débloquer cet utilisateur ?"
+          title="Êtes-vous sûr de vouloir débloquer cet utilisateur?"
           message=""
           confirmText="Debloquer"
         />
 
         {isPopupVisible && (
           <PopupMessage
-            title="L'utilisateur a été bloqué avec succès !"
+            title="L'utilisateur a été bloqué avec succès!"
             message=""
             onClose={() => setIsPopupVisible(false)}
           />
@@ -606,7 +606,7 @@ const UsersPage = () => {
 
         {isPopupVisiblebloque && (
           <PopupMessage
-            title="L'utilisateur a été Debloqué avec succès !"
+            title="L'utilisateur a été débloqué avec succès!"
             message=""
             onClose={() => setisPopupVisiblebloque(false)}
           />

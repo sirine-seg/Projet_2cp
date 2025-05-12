@@ -1,7 +1,7 @@
 export default function DisplayContainer({ title, content, className = "" }) {
 	return (
 	  <div className={`w-full mx-auto ${className}`}>
-		<label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1.5 ml-0.25rem">
+		<label className="flex flex-col items-start font-poppins font-medium text-[#202124] text-[1rem] mb-1.5 ml-0.25rem">
 		  {title}
 		</label>
   

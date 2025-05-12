@@ -10,12 +10,18 @@ import WriteContainer from "../components/writeContainer";
 import ImageUploader from "@/components/imageUploader";
 import PopupMessage from "../components/Popupcheck";
 import { useParams } from "react-router-dom";
+import UserProfilMail from "@/components/userProfilMail.jsx";
+import AssignPopUp from "@/components/assignPopUp.jsx";
+import ChoiceContainer from "@/components/choiceContainer.jsx";
+import { useNavigate } from "react-router-dom";
 
 const SignalerAdmin = () => {
   // URL parameter
-  const { id } = useParams();
+  const { id_equipement } = useParams();
+  console.log("the equipement id : ", id_equipement);
 
   // State management
+  const navigate = useNavigate();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [newIntervention, setNewIntervention] = useState({});
   const [techniciensAjoutes, setTechniciensAjoutes] = useState([]);
@@ -26,17 +32,47 @@ const SignalerAdmin = () => {
   const [selectedUrgence, setSelectedUrgence] = useState("");
   const [users, setUsers] = useState([]);
   const [visibleCount, setVisibleCount] = useState(6);
+  const [showComponent2, setShowComponent2] = useState(false);
+  const [selectedTech, setSelectedTech] = useState([]);
+  const [selectedProfil, setSelectedProfil] = useState(false);
+  const [description, setdescription] = useState("");
+  const [UrgenceLabel, setUrgenceLabel] = useState("");
+  const handleChoiceCLick2 = () => {
+    setShowComponent2(true);
+  };
+
+  function handleChoisir(tech) {
+    setSelectedTech((prevTechs) => {
+      if (!prevTechs.includes(tech.user)) {
+        return [...prevTechs, tech.user];
+      }
+      return prevTechs;
+    });
+    setSelectedProfil(true);
+  }
 
   // Reference for textarea
   const textareaRef = useRef(null);
 
   // Urgency options
   const urgenceOptions = [
-    { id: 0, label: "Urgence vitale" },
-    { id: 1, label: "Urgence élevée" },
-    { id: 2, label: "Urgence modérée" },
-    { id: 3, label: "Faible urgence" },
+    { value: 1, label: "Urgence vitale" },
+    { value: 2, label: "Urgence élevée" },
+    { value: 3, label: "Urgence modérée" },
+    { value: 4, label: "Faible urgence" },
   ];
+
+  const labelUrgence =
+    urgenceOptions.find((option) => option.value === selectedUrgence)?.label ||
+    "--";
+
+  const handleUrgenceSelect = (option) => {
+    console.log("option" + option);
+    setSelectedUrgence(option);
+    console.log("the String" + selectedUrgence); // Update the value
+    //      const label = urgenceOptions.find(option => option.value === valueToFind)?.label || '--';
+    setUrgenceLabel(option.label); // Update the label instantly
+  };
 
   // Handle input changes
   const handleChange = (e) => {
@@ -52,7 +88,7 @@ const SignalerAdmin = () => {
   }, [newIntervention.description]);
 
   // Handle technician assignment
-  const handleAssign = (technicien) => {
+  /*  const handleAssign = (technicien) => {
     // Avoid adding duplicates
     setTechniciensAjoutes((prev) => {
       if (!prev.some((t) => t.email === technicien.email)) {
@@ -60,17 +96,35 @@ const SignalerAdmin = () => {
       }
       return prev;
     });
-  };
+  }; */
+
+  function handleAssign(tech) {
+    // tech is expected to be the full technician object, including user info
+    setSelectedTech(tech.user); // or adjust if tech is already user object
+    setSelectedProfil(true);
+  }
 
   // Fetch technicians
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        // Récupération du token depuis le localStorage
+        const token = localStorage.getItem("access_token");
+
         const response = await fetch(
-          "http://127.0.0.1:8000/api/accounts/techniciens/"
+          "http://127.0.0.1:8000/api/accounts/techniciens/",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              // Ajout du token d'autorisation si disponible
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          }
         );
+
         if (!response.ok)
           throw new Error("Erreur lors de la récupération des utilisateurs");
+
         const data = await response.json();
         setUsers(data);
       } catch (error) {
@@ -80,56 +134,40 @@ const SignalerAdmin = () => {
     fetchUsers();
   }, [visibleCount]);
 
-  // Filter available technicians
   const techniciensDispo = users.filter((user) => user.disponibilite === true);
+  console.log("the dispo techs : ", techniciensDispo);
+  const technicianIds = selectedTech.map((tech) => tech.id);
 
   // Handle form submission
+  const gatherdDataCurrative = {
+    type_intervention: "currative",
+    title: newIntervention.title,
+    equipement: id_equipement,
+    technicien: technicianIds,
+    urgence: selectedUrgence - 1,
+    date_debut: selectedDatedebut,
+    date_fin: selectedDatefin,
+    description: description,
+  };
+
   const handleAddIntervention = () => {
-    const formatDate = (dateStr) => {
-      if (!dateStr) return null;
-      return new Date(dateStr).toISOString();
+    console.log(gatherdDataCurrative);
+    // Récupération du token depuis le localStorage
+    const token = localStorage.getItem("access_token");
+
+    // Create headers with authorization token
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     };
 
-    const formData = new FormData();
-    formData.append("title", newIntervention.title);
-
-    if (selectedDatedebut) {
-      formData.append("date_debut", formatDate(selectedDatedebut));
-    }
-
-    if (selectedDatefin) {
-      formData.append("date_fin", formatDate(selectedDatefin));
-    }
-
-    if (selectedImage) {
-      formData.append("image", selectedImage);
-    }
-
-    // Add technicians
-    if (techniciensAjoutes.length > 0) {
-      techniciensAjoutes.forEach((t) => {
-        formData.append("technicien", t.user.id);
-      });
-    }
-
-    formData.append("description", newIntervention.description);
-    formData.append("equipement", id);
-
-    if (selectedUrgence) {
-      formData.append("urgence", selectedUrgence.id);
-    }
-
-    // Log form data for debugging
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
-    // Submit intervention
+    // Submit intervention with the gathered data
     fetch(
       "http://127.0.0.1:8000/api/interventions/interventions/currative/create/",
       {
         method: "POST",
-        body: formData,
+        headers: headers,
+        body: JSON.stringify(gatherdDataCurrative),
       }
     )
       .then(async (response) => {
@@ -154,6 +192,12 @@ const SignalerAdmin = () => {
       });
   };
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Equipements");
+    setIsPopupVisible(false);
+    console.log("the close popup");
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       <Header />
@@ -169,7 +213,7 @@ const SignalerAdmin = () => {
       <div className="w-full min-h-screen rounded-t-[35px] sm:rounded-t-[45px] px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-4 sm:py-8 shadow-md flex flex-col bg-[#F4F4F4] -mt-12">
         {/* Back navigation */}
         <div className="w-full">
-          <Headerbar title="Signaler Un Problème" />
+          <Headerbar title="Créer une intervention" />
         </div>
 
         {/* Form title */}
@@ -180,9 +224,9 @@ const SignalerAdmin = () => {
         {/* Form fields */}
         <div className="flex flex-col space-y-4 mt-4">
           {/* Date fields */}
-          <div className="flex flex-row w-full space-x-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
             {/* Date Début */}
-            <div className="flex-1">
+            <div className="w-full">
               <DateInput
                 label="Date début"
                 selectedDate={selectedDatedebut}
@@ -191,39 +235,42 @@ const SignalerAdmin = () => {
             </div>
 
             {/* Date Fin */}
-            <div className="flex-1">
+            <div className="w-full">
               <DateInput
                 label="Date fin"
                 selectedDate={selectedDatefin}
                 setSelectedDate={setSelectedDatefin}
               />
             </div>
-          </div>
 
-          {/* Problem title field */}
-          <div className="w-full">
+            {/* Problem title field */}
+
             <WriteContainer
-              title="Problem"
+              title="titre"
               value={newIntervention.title}
               onChange={(val) =>
                 setNewIntervention({ ...newIntervention, title: val })
               }
             />
-          </div>
 
-          {/* Urgency selection */}
-          <div className="w-full">
-            <SelectableInput
+            {/* Urgency selection */}
+
+            <ChoiceContainer
               title="Urgence"
               options={urgenceOptions}
-              selectedOption={selectedUrgence}
-              onSelect={(selectedOption) => setSelectedUrgence(selectedOption)}
+              selectedOption={labelUrgence}
+              onSelect={handleUrgenceSelect}
+              className="text-sm py-1 px-2 max-w-xs w-full"
             />
-          </div>
 
-          {/* Description field */}
-          <div className="w-full">
-            <AutoGrowTextarea onChange={handleChange} />
+            {/* Description field */}
+            <WriteContainer
+              title="Description"
+              //  value={"---"}
+              multiline
+              onChange={(val) => setdescription(val)}
+              className=" px-8"
+            />
           </div>
 
           {/* File upload section */}
@@ -233,30 +280,65 @@ const SignalerAdmin = () => {
             </div>
 
             {/* Technician assignment */}
-            <div className="w-full">
-              <Assigner
-                allTechnicians={techniciensDispo}
-                techniciensAjoutes={techniciensAjoutes}
-                handleAssign={handleAssign}
-              />
+          </div>
+          <div className="w-full">
+            <div className="technician-section">
+              {/* Added a container with flex to align the button to the right */}
+              <div className="flex space-x-4 items-center">
+                <Buttonrec
+                  text="Assigne un Techncien"
+                  bgColor="#F09C0A"
+                  textColor="white"
+                  onClick={handleChoiceCLick2}
+                  className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
+                />
+              </div>
+
+              {/* List of selected technicians appears here */}
+              {selectedTech.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="mb-2 font-semibold">
+                    Technicians sélectionnés:
+                  </h3>
+                  {selectedTech.map((tech, index) => (
+                    <UserProfilMail
+                      key={index}
+                      nom={tech.last_name}
+                      prenom={tech.first_name}
+                      email={tech.email}
+                      imageUrl={tech.photo}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Keep the AssignPopUp component */}
+              {showComponent2 && (
+                <AssignPopUp
+                  technicians={techniciensDispo}
+                  buttonTitle="Assigner"
+                  onClose={() => setShowComponent2(false)}
+                  onAssign={handleChoisir}
+                />
+              )}
             </div>
           </div>
         </div>
 
         {/* Submit button */}
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-4 mb-8">
           <Buttonrec
             text="Enregistrer"
             onClick={handleAddIntervention}
-            className="w-full sm:w-auto px-4"
+            className="w-auto px-4"
           />
         </div>
 
         {/* Success popup */}
         {isPopupVisible && (
           <PopupMessage
-            title="Intervention affecté avec succès !"
-            onClose={() => setIsPopupVisible(false)}
+            title="Intervention créer avec succès !"
+            onClose={handleCloseSuccessPopup}
           />
         )}
       </div>

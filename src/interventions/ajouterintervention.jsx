@@ -203,8 +203,8 @@ const AjouterIntervention = () => {
 
   const typeInterventionOptions = [
     // Add your options here, for example:
-    { label: "Preventive", value: "preventive" },
-    { label: "Currative", value: "currative" },
+    { label: "Préventive", value: "preventive" },
+    { label: "Curative", value: "currative" },
   ];
 
   const [content, setContent] = useState("");
@@ -448,8 +448,6 @@ const AjouterIntervention = () => {
 
           <WriteContainer
             title="Description"
-            //  value={"---"}
-            multiline
             onChange={(val) => setdescription(val)}
             className=" px-8"
           />
