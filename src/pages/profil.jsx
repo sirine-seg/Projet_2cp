@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Headerbar from "../components/Arrowleftt";
 import Profil from "../assets/Profil.svg";
@@ -7,11 +8,15 @@ import DisplayContainer from "../components/displayContainer";
 import Button from "../components/Button";
 import { LogOut } from "lucide-react";
 import DisModContainerProfile from "../components/disModContainerProfile.jsx";
+import Toggle from "../components/toggle.jsx";
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [disponibilite, setDisponibilite] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -106,6 +111,48 @@ export default function ProfilePage() {
   const role = userData?.role || userData?.user?.role || "";
   const isTechnician = ["TECHNICIEN"].includes(role?.toUpperCase());
 
+  const updateDispo = async (field, value) => {
+    setDisponibilite(!disponibilite);
+    try {
+      const accessToken = localStorage.getItem("access_token");
+      const userId = userData?.user?.id;
+
+      if (!userId) {
+        throw new Error("User ID not found");
+      }
+
+      // Create the update data object
+      const updateData = {
+        disponibilite: disponibilite,
+      };
+      console.log("the data logged from the update", updateData);
+
+      const response = await fetch(
+        `http://localhost:8000/api/accounts/techniciens/${userId}/update/`,
+        {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(updateData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to update ${field}`);
+      }
+
+      // Refresh user data after update
+
+      return true;
+    } catch (err) {
+      console.error(`Error updating ${field}:`, err);
+      return false;
+    }
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       <Header />
@@ -131,9 +178,15 @@ export default function ProfilePage() {
             />
 
             <div className="flex flex-col items-center gap-4">
-              <Button text="Modifier photo" />
+              <Button
+                text="Modifier photo"
+              />
               {isTechnician && (
-                <Button text="Voir mes tâches" bgColor="#F09C0A" />
+                <Button
+                  text="Voir mes tâches"
+                  bgColor="#F09C0A"
+                  onClick={() => navigate("/MesTaches")} // Remplacez par votre route
+                />
               )}
             </div>
           </div>
@@ -160,42 +213,32 @@ export default function ProfilePage() {
               content={userData?.user?.role || userData?.role || ""}
             />
             {isTechnician && (
-              <DisModContainer
+              <DisplayContainer
                 title="Poste"
-                initialContent={
-                  userData?.position || userData?.user?.position || ""
-                }
+                initialContent={userData?.poste || userData?.user?.poste || ""}
               />
             )}
+
             {isTechnician && (
-              <DisModContainer
-                title="Disponibilité"
-                initialContent={
-                  userData?.disponibilite || userData?.user?.disponibilite || ""
-                }
-              />
+              <Toggle label="disponibilité" onToggle={updateDispo} />
             )}
           </div>
         </div>
 
         {/* Containers - Numero de telephone et email */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10 md:gap-20 md:my-10 px-4 md:px-10 w-full">
-          <div className="w-full max-w-md">
-            <DisModContainerProfile
-              title="Numéro de téléphone"
-              initialContent={
-                userData?.user?.numero_tel || userData?.numero_tel || ""
-              }
-              onSave={(value) => updateUserData("numero_tel", value)}
-            />
-          </div>
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-10 md:gap-20 md:my-10 px-4 mb:px-10">
+          <DisModContainerProfile
+            title="Numéro de téléphone"
+            initialContent={
+              userData?.user?.numero_tel || userData?.numero_tel || ""
+            }
+            onSave={(value) => updateUserData("numero_tel", value)}
+          />
 
-          <div className="w-full max-w-md">
-            <DisplayContainer
-              title="E-Mail"
-              content={userData?.user?.email || userData?.email || ""}
-            />
-          </div>
+          <DisplayContainer
+            title="E-Mail"
+            content={userData?.user?.email || userData?.email || ""}
+          />
         </div>
 
         {/* Se deconnecter */}

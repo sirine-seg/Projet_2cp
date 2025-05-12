@@ -712,7 +712,7 @@ const Intervention = () => {
 
             <Filtre
               id="status"
-              label="Status"
+              label="Statut"
               options={statusList}
               onSelectFilter={handleStatusFilter}
               titre="Filtrer par Status"

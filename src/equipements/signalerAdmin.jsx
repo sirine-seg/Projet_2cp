@@ -1,18 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import Header from "../components/Header";
 import Headerbar from "../components/Arrowleftt";
-import AutoGrowTextarea from "@/components/description";
-import SelectableInput from "@/components/SelectableInput";
-import DateInput from "@/components/date";
-import Assigner from "@/components/assign";
+import AutoGrowTextarea from "../components/description";
+import SelectableInput from "../components/SelectableInput";
+import DateInput from "../components/date";
+import Assigner from "../components/assign";
 import Buttonrec from "../components/buttonrectangle";
 import WriteContainer from "../components/writeContainer";
-import ImageUploader from "@/components/imageUploader";
+import ImageUploader from "../components/imageUploader";
 import PopupMessage from "../components/Popupcheck";
 import { useParams } from "react-router-dom";
-import UserProfilMail from "@/components/userProfilMail.jsx";
-import AssignPopUp from "@/components/assignPopUp.jsx";
-import ChoiceContainer from "@/components/choiceContainer.jsx";
+import UserProfilMail from "../components/userProfilMail.jsx";
+import AssignPopUp from "../components/assignPopUp.jsx";
+import ChoiceContainer from "../components/choiceContainer.jsx";
 import { useNavigate } from "react-router-dom";
 
 const SignalerAdmin = () => {
@@ -86,17 +86,6 @@ const SignalerAdmin = () => {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [newIntervention.description]);
-
-  // Handle technician assignment
-  /*  const handleAssign = (technicien) => {
-    // Avoid adding duplicates
-    setTechniciensAjoutes((prev) => {
-      if (!prev.some((t) => t.email === technicien.email)) {
-        return [...prev, technicien];
-      }
-      return prev;
-    });
-  }; */
 
   function handleAssign(tech) {
     // tech is expected to be the full technician object, including user info
@@ -217,32 +206,14 @@ const SignalerAdmin = () => {
         </div>
 
         {/* Form title */}
-        <div className="w-full sm:w-80 h-6 justify-start text-neutral-800 text-lg sm:text-xl md:text-2xl font-normal font-['Poppins'] leading-snug tracking-wide mt-8 ml-8">
+        <div className="w-full sm:w-80 h-6 justify-start text-neutral-800 text-lg sm:text-xl md:text-2xl font-normal font-['Poppins'] leading-snug tracking-wide my-6 ml-8">
           Détails de l'intervention
         </div>
 
         {/* Form fields */}
-        <div className="flex flex-col space-y-4 mt-4">
+        <div className="flex flex-col space-y-4 mt-4 mx-8">
           {/* Date fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            {/* Date Début */}
-            <div className="w-full">
-              <DateInput
-                label="Date début"
-                selectedDate={selectedDatedebut}
-                setSelectedDate={setSelectedDatedebut}
-              />
-            </div>
-
-            {/* Date Fin */}
-            <div className="w-full">
-              <DateInput
-                label="Date fin"
-                selectedDate={selectedDatefin}
-                setSelectedDate={setSelectedDatefin}
-              />
-            </div>
-
             {/* Problem title field */}
 
             <WriteContainer
@@ -271,62 +242,65 @@ const SignalerAdmin = () => {
               onChange={(val) => setdescription(val)}
               className=" px-8"
             />
-          </div>
 
-          {/* File upload section */}
-          <div className="w-full">
+            {/* Date */}
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-24">
+              <DateInput
+                label="Date début"
+                selectedDate={selectedDatedebut}
+                setSelectedDate={setSelectedDatedebut}
+              />
+              <DateInput
+                label="Date fin"
+                selectedDate={selectedDatefin}
+                setSelectedDate={setSelectedDatefin}
+              />
+            </div>
+            <div className="flex space-x-4 items-center">
+              <Buttonrec
+                text="Assigne un Techncien"
+                bgColor="#F09C0A"
+                textColor="white"
+                onClick={handleChoiceCLick2}
+                className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
+              />
+            </div>
             <div className="flex items-center">
               <ImageUploader />
             </div>
-
-            {/* Technician assignment */}
           </div>
-          <div className="w-full">
-            <div className="technician-section">
-              {/* Added a container with flex to align the button to the right */}
-              <div className="flex space-x-4 items-center">
-                <Buttonrec
-                  text="Assigne un Techncien"
-                  bgColor="#F09C0A"
-                  textColor="white"
-                  onClick={handleChoiceCLick2}
-                  className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
-                />
+
+          {/* List of selected technicians appears here */}
+          {selectedTech.length > 0 && (
+            <div className="mt-4">
+              <h3 className="mb-2 font-semibold">Technicians sélectionnés:</h3>
+              <div className="flex flex-col gap-4 mt-4">
+                {selectedTech.map((tech, index) => (
+                  <UserProfilMail
+                    key={index}
+                    nom={tech.last_name}
+                    prenom={tech.first_name}
+                    email={tech.email}
+                    imageUrl={tech.photo}
+                  />
+                ))}
               </div>
-
-              {/* List of selected technicians appears here */}
-              {selectedTech.length > 0 && (
-                <div className="mt-4">
-                  <h3 className="mb-2 font-semibold">
-                    Technicians sélectionnés:
-                  </h3>
-                  {selectedTech.map((tech, index) => (
-                    <UserProfilMail
-                      key={index}
-                      nom={tech.last_name}
-                      prenom={tech.first_name}
-                      email={tech.email}
-                      imageUrl={tech.photo}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Keep the AssignPopUp component */}
-              {showComponent2 && (
-                <AssignPopUp
-                  technicians={techniciensDispo}
-                  buttonTitle="Assigner"
-                  onClose={() => setShowComponent2(false)}
-                  onAssign={handleChoisir}
-                />
-              )}
             </div>
-          </div>
+          )}
+
+          {/* Keep the AssignPopUp component */}
+          {showComponent2 && (
+            <AssignPopUp
+              technicians={techniciensDispo}
+              buttonTitle="Assigner"
+              onClose={() => setShowComponent2(false)}
+              onAssign={handleChoisir}
+            />
+          )}
         </div>
 
         {/* Submit button */}
-        <div className="flex justify-center mt-4 mb-8">
+        <div className="flex justify-center mt-14 mb-8">
           <Buttonrec
             text="Enregistrer"
             onClick={handleAddIntervention}

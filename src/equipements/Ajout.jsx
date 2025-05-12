@@ -4,7 +4,7 @@ import Header from "../components/Header.jsx";
 import ChoiceContainer from "../components/choiceContainer";
 import WriteContainer from "../components/writeContainer";
 import Headerbar from "../components/Arrowleftt";
-import PicField from "../components/picfield.jsx";
+import PicField from "../components/picField.jsx";
 import ImportManual from "../components/importManual.jsx";
 import PopupMessage from "../components/Popupcheck.jsx";
 
@@ -25,7 +25,7 @@ const AjoutPage = () => {
     localisation: "",
     codebar: "",
     code: "",
-    etat: "1",
+    etat: "4",
   });
 
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ const AjoutPage = () => {
     formData.append("type", newEquipement.type);
     formData.append("categorie", newEquipement.categorie);
     formData.append("localisation", newEquipement.localisation);
-    formData.append("codebar", newEquipement.codebar);
+    formData.append("code", newEquipement.code);
     formData.append("etat", newEquipement.etat);
 
     if (selectedImage && selectedImage instanceof File) {

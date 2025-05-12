@@ -46,7 +46,7 @@ export default function NotificationPopUp({
       <div className="flex-1 flex-col overflow-y-auto">
         {filteredNotifications.length > 0 ? (
           filteredNotifications.map((notif, index) => (
-            <NotificationCard key={index} {...notif} buttonTitle="Voir" />
+            <NotificationCard key={index} {...notif} intervention={notif.related_intervention} buttonTitle="Voir" />
           ))
         ) : (
           <div className="h-full my-16 flex items-center justify-center text-gray-500 text-sm">
