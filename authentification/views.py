@@ -9,36 +9,37 @@ from dj_rest_auth.jwt_auth import set_jwt_access_cookie, set_jwt_refresh_cookie
 
 import requests
 
+
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
-    callback_url = "postmessage"  # postmessage if using auth-code with @react-oauth/google
+    # postmessage if using auth-code with @react-oauth/google
+    callback_url = "postmessage"
     client_class = OAuth2Client
-
-
 
 
 class GoogleCodeExchangeView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):  # ✅ Use lowercase `post` not `POST`
         code = request.data.get('code')
         print(f"Received code: {code}")
 
-        url = "http://127.0.0.1:8000/api/auth/dj-rest-auth/google/"
+        url = "https://esi-track-deployement.onrender.com/api/auth/dj-rest-auth/google/"
 
-        google_res = requests.post (url , json  = {'code' : code})
-        if google_res.status_code == status.HTTP_200_OK :
-            access_token  = google_res.json()["access"]
+        google_res = requests.post(url, json={'code': code})
+        if google_res.status_code == status.HTTP_200_OK:
+            access_token = google_res.json()["access"]
             refresh_token = google_res.json()["refresh"]
-            print (access_token)
-            print (refresh_token)
-            res = Response (
+            print(access_token)
+            print(refresh_token)
+            res = Response(
                 {
                     "access_token": access_token,
-                    "refresh_token"  : refresh_token,
-                    "detail" : "able to get the token"
-                } ,
+                    "refresh_token": refresh_token,
+                    "detail": "able to get the token"
+                },
                 status=status.HTTP_200_OK
             )
-            set_jwt_access_cookie (res , access_token)
-            set_jwt_refresh_cookie (res , refresh_token)
+            set_jwt_access_cookie(res, access_token)
+            set_jwt_refresh_cookie(res, refresh_token)
             return res
