@@ -112,9 +112,7 @@ const Intervention = () => {
 
       if (!intervention.checked) {
         return [...prev, intervention];
-      }
-
-      else {
+      } else {
         return prev.filter((e) => e.id !== id);
       }
     });
@@ -208,6 +206,9 @@ const Intervention = () => {
         }
 
         const data = await response.json();
+
+        // Trier les données par ID décroissant (du plus récent au plus ancien)
+        data.sort((a, b) => b.id - a.id);
 
         // Apply all filters
         const filtered = data.filter((item) => {
@@ -725,7 +726,6 @@ const Intervention = () => {
               isOpen={openFilterId === "status"}
               setOpenFilterId={setOpenFilterId}
             />
-
           </div>
         </div>
 
@@ -744,9 +744,14 @@ const Intervention = () => {
           {/* Conteneur principal avec flex pour aligner les éléments */}
           <div className="flex justify-between items-center flex-wrap">
             {/* Message des résultats */}
-            <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
-              {Math.min(visibleCount, interventions.length)} Résultats affichés sur {interventions.length}
-            </div>
+            {currentView === "grid" ? (
+              <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
+                {Math.min(visibleCount, interventions.length)} Résultats
+                affichés sur {interventions.length}
+              </div>
+            ) : (
+              <div></div>
+            )}
 
             {/* Conteneur des boutons */}
             <div className="flex space-x-2 mt-2 sm:mt-0">
@@ -839,9 +844,9 @@ const Intervention = () => {
                     urgence={intervention.urgence_display}
                     statut={intervention.statut_display}
                     equipement={intervention.equipement}
-                    date={new Date(
-                      intervention.date_debut
-                    ).toLocaleDateString("fr-FR")}
+                    date={new Date(intervention.date_debut).toLocaleDateString(
+                      "fr-FR"
+                    )}
                     onClick={() =>
                       navigate(`/DetailsIntervention/${intervention.id}`)
                     }
@@ -889,7 +894,7 @@ const Intervention = () => {
           </div>
         )}
 
-        {visibleCount < interventions.length && (
+        {currentView === "grid" && visibleCount < interventions.length && (
           <h3
             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
             onClick={() => setVisibleCount(visibleCount + 60)}

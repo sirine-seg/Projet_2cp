@@ -478,10 +478,14 @@ const Mestaches = () => {
           {/* Conteneur principal avec flex pour aligner les éléments */}
           <div className="flex justify-between items-center flex-wrap">
             {/* Message des résultats */}
+            {currentView === "grid" ? (
             <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
               {Math.min(visibleCount, interventions.length)} Résultats affichés
               sur {interventions.length}
             </div>
+            ) : (
+              <div></div>
+            )}
 
             <div className="flex space-x-2 mt-2 sm:mt-0">
               <div className="flex items-center">
@@ -512,7 +516,7 @@ const Mestaches = () => {
             <div className="space-y-2 w-full">
               <InterventionListHeader />
 
-              {displayedInterventions.map((intervention) => (
+              {interventions.map((intervention) => (
                 <div key={intervention.id} className="relative">
                   <InterventionList
                     nom={intervention.title}
@@ -594,7 +598,7 @@ const Mestaches = () => {
           </div>
         )}
 
-        {visibleCount < interventions.length && (
+        {currentView === "grid" && visibleCount < interventions.length && (
           <h3
             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
             onClick={() => setVisibleCount(visibleCount + 60)}
