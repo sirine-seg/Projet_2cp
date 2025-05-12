@@ -7,10 +7,16 @@ import Header from "../components/Header";
 import CategoryBarChart from "../dashboard/barchart.jsx";
 import PieChartWithLegend from "../dashboard/piechart.jsx";
 import LineChartCard from "../dashboard/linechart.jsx";
-import BarChartCard from "../dashboard/mixedbarchart.jsx";
 import TechnicianInterventionChart from "../dashboard/multiplebarchart.jsx";
 import InterventionProgressCard from "../dashboard/percentagechart.jsx";
 import InfoCard from "../components/InfoCard.jsx";
+import Button from "../components/Button";
+import exportDashboardToPDF from "../components/exportDashboardPdf";
+import exportDashboardToExcel from "../components/exportDashboardExcel";
+
+import upload from "../assets/upload.svg";
+import excelExport from "../assets/excelExport.svg";
+
 
 // Utility function to transform technician intervention data
 const transformTechnicianData = (apiData) => {
@@ -36,6 +42,8 @@ export default function DashboardPage() {
   const [interventionsByMonth, setInterventionsByMonth] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pdfExportLoading, setPdfExportLoading] = useState(false);
+  const [excelExportLoading, setExcelExportLoading] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -167,9 +175,80 @@ export default function DashboardPage() {
     return <div>Error loading dashboard data: {error.message}</div>;
   }
 
+  // Prepare dashboard data for export
+  const getDashboardData = () => ({
+    stats,
+    resolutionTimeData,
+    technicianData: technicianChartData,
+    equipmentData,
+    interventionsByMonth,
+    percentageChartData
+  });
+
+  const handleExportPDF = async () => {
+    try {
+      setPdfExportLoading(true);
+      await exportDashboardToPDF(getDashboardData());
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+    } finally {
+      setPdfExportLoading(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setExcelExportLoading(true);
+      await exportDashboardToExcel(getDashboardData());
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+    } finally {
+      setExcelExportLoading(false);
+    }
+  };
+
   return (
     <div className="w-full min-h-screen">
       <Header bleu />
+      <div className="export-controls p-4 flex justify-end space-x-4">
+        <div className="flex items-center justify-center space-x-4">
+          <div 
+            onClick={handleExportPDF}
+            className={`cursor-pointer flex items-center space-x-2 p-2 bg-gray-100 hover:bg-gray-200 rounded-md ${pdfExportLoading ? 'opacity-50' : ''}`}
+            title="Exporter en PDF"
+            disabled={pdfExportLoading}
+          >
+            {pdfExportLoading ? (
+              <span className="animate-spin inline-block h-5 w-5 border-t-2 border-b-2 border-blue-600 rounded-full mr-2"></span>
+            ) : (
+            <img
+                      src={upload}
+                      alt="export pdf"
+                      className="h-[20px] w-[20px] shrink-0"
+                    />
+            )}
+            <span className="text-sm">PDF</span>
+          </div>
+          
+          <div 
+            onClick={handleExportExcel}
+            className={`cursor-pointer flex items-center space-x-2 p-2 bg-gray-100 hover:bg-gray-200 rounded-md ${excelExportLoading ? 'opacity-50' : ''}`}
+            title="Exporter en Excel"
+            disabled={excelExportLoading}
+          >
+            {excelExportLoading ? (
+              <span className="animate-spin inline-block h-5 w-5 border-t-2 border-b-2 border-green-600 rounded-full mr-2"></span>
+            ) : (
+              <img
+                       src={excelExport}
+                       alt="export excel"
+                       className="h-[20px] w-[20px] shrink-0 "
+                     />
+            )}
+            <span className="text-sm">Excel</span>
+          </div>
+        </div>
+      </div>
 
       <div className="dashboard-grid max-w-full p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 pb-4 sm:pb-6">
@@ -197,7 +276,7 @@ export default function DashboardPage() {
           <InterventionProgressCard data={percentageChartData} />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full py-6">
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 w-full py-6">
           <div className="flex-1">
             <PieChartWithLegend
               title="Suivi des Équipements"
