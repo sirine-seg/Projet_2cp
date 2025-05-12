@@ -25,8 +25,6 @@ const Intervention = () => {
   const [filter, setFilter] = useState("Tout");
 
   const [visibleCount, setVisibleCount] = useState(9); // Nombre d'utilisateurs affichés
-  const [selectedUser, setSelectedUser] = useState(null); // Utilisateur sélectionné pour modification
-  const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
   const [menuOpen, setMenuOpen] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -112,9 +110,7 @@ const Intervention = () => {
 
       if (!intervention.checked) {
         return [...prev, intervention];
-      }
-
-      else {
+      } else {
         return prev.filter((e) => e.id !== id);
       }
     });
@@ -208,6 +204,9 @@ const Intervention = () => {
         }
 
         const data = await response.json();
+
+        // Trier les données par ID décroissant (du plus récent au plus ancien)
+        data.sort((a, b) => b.id - a.id);
 
         // Apply all filters
         const filtered = data.filter((item) => {
@@ -496,13 +495,6 @@ const Intervention = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const handleEdit = (user) => {
-    //un  user en parametre
-    setSelectedUser(user); // Cela permet d'afficher ses informations dans le pop-up.
-    setShowEditPopup(true); //  affiche le pop-up.
-    setMenuOpen(null);
-  };
-
   const handleEnAttenteClick = () => {
     if (filter === "en attente") {
       setFilter("tout"); // or any default filter that means "no specific filter"
@@ -512,16 +504,10 @@ const Intervention = () => {
   };
 
   const [menuOpenId, setMenuOpenId] = useState(null);
-  const statusOptions = [
-    { label: "Modifier", value: "modifier" },
-    { label: "Changer le statut", value: "changer le statut" },
-    { label: "Cancel", value: "Cancel" },
-  ];
 
   // a function to get the menu options based on the status
   const getStatusOption = (status) => {
     const statusOptions = [
-      { label: "Modifier", value: "modifier" },
       { label: "Changer le statut", value: "changer le statut" },
       { label: "Cancel", value: "Cancel" },
     ];
@@ -559,9 +545,7 @@ const Intervention = () => {
   const handleOptionSelect = (value, id) => {
     setMenuOpenId(null); // close menu
 
-    if (value === "modifier") {
-      navigate(`/ModifierIntervention/${id}`);
-    } else if (value === "changer le statut") {
+    if (value === "changer le statut") {
       setSelectedInterventionid(id);
       setIsPopupVisible(true); // Assurez-vous que isPopupVisible est remis à true ici
     } else if (value === "Cancel") {
@@ -725,7 +709,6 @@ const Intervention = () => {
               isOpen={openFilterId === "status"}
               setOpenFilterId={setOpenFilterId}
             />
-
           </div>
         </div>
 
@@ -744,9 +727,14 @@ const Intervention = () => {
           {/* Conteneur principal avec flex pour aligner les éléments */}
           <div className="flex justify-between items-center flex-wrap">
             {/* Message des résultats */}
-            <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
-              {Math.min(visibleCount, interventions.length)} Résultats affichés sur {interventions.length}
-            </div>
+            {currentView === "grid" ? (
+              <div className="text-gray-600 font-semibold text-xs sm:text-sm md:text-base">
+                {Math.min(visibleCount, interventions.length)} Résultats
+                affichés sur {interventions.length}
+              </div>
+            ) : (
+              <div></div>
+            )}
 
             {/* Conteneur des boutons */}
             <div className="flex space-x-2 mt-2 sm:mt-0">
@@ -803,11 +791,23 @@ const Intervention = () => {
                     id={intervention.id}
                     urgence={intervention.urgence_display}
                     statut={intervention.statut_display}
-                    moreClick={() =>
-                      setMenuOpenId(
-                        menuOpenId === intervention.id ? null : intervention.id
-                      )
-                    }
+                    moreClick={() => {
+                      // Si vous souhaitez fermer le menu, vous pouvez aussi gérer cela
+                      if (menuOpenId === intervention.id) {
+                        setMenuData(null); // Fermer ou réinitialiser
+                      } else {
+                        setMenuOpenId(intervention.id); // Ouvrir le menu
+                        setMenuData({
+                          title: intervention.title,
+                          urgence: intervention.urgence_display,
+                          statut: intervention.statut_display,
+                          equipement: intervention.equipement,
+                          date: intervention.date_debut,
+                          type: intervention.type_intervention,
+                          id: intervention.id,
+                        });
+                      }
+                    }}
                     checked={intervention.checked}
                     onToggle={() => handleInterventionToggle(intervention.id)}
                   />
@@ -839,9 +839,9 @@ const Intervention = () => {
                     urgence={intervention.urgence_display}
                     statut={intervention.statut_display}
                     equipement={intervention.equipement}
-                    date={new Date(
-                      intervention.date_debut
-                    ).toLocaleDateString("fr-FR")}
+                    date={new Date(intervention.date_debut).toLocaleDateString(
+                      "fr-FR"
+                    )}
                     onClick={() =>
                       navigate(`/DetailsIntervention/${intervention.id}`)
                     }
@@ -889,7 +889,7 @@ const Intervention = () => {
           </div>
         )}
 
-        {visibleCount < interventions.length && (
+        {currentView === "grid" && visibleCount < interventions.length && (
           <h3
             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
             onClick={() => setVisibleCount(visibleCount + 60)}

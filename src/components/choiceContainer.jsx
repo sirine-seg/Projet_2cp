@@ -18,11 +18,14 @@ export default function ChoiceContainer({
     setIsOpen(false);
   };
 
+  const shouldShowAsterisk = ["Localisation"].includes(title);
+
   return (
     <div className="w-full">
       <div className="mb-4">
-        <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1 ml-0.25rem">
+        <label className="flex items-start text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1 ml-0.25rem">
           {title}
+          {shouldShowAsterisk && <span className="text-red-500 ml-1 text-md">*</span>}
         </label>
         <details
           className="relative w-full cursor-pointer"

@@ -139,7 +139,7 @@ const Signaler = () => {
       {/* Logo en haut à gauche */}
       <Header />
 
-      <div className="w-full bg-[#20599E] text-white py-16 text-center">
+      <div className="w-full bg-[#20599E] text-white pb-16 text-center">
         <h1 className="text-3xl sm:text-3xl md:text-2xl lg:text-4xl font-bold text-[#F4F4F4] mb-4 mt-2">
           Interventions
         </h1>
@@ -165,7 +165,7 @@ const Signaler = () => {
           </div>
 
           <WriteContainer
-            title="titre"
+            title="Titre"
             value={newIntervention.title}
             onChange={(val) =>
               setNewIntervention({ ...newIntervention, title: val })
@@ -180,7 +180,13 @@ const Signaler = () => {
             className="text-sm py-1 px-2 max-w-xs w-full"
           />
 
-          <AutoGrowTextarea onChange={handleChange} />
+          <WriteContainer
+            title="Description"
+            //  value={"---"}
+            multiline
+            onChange={(val) => setdescription(val)}
+            className=" px-8"
+          />
         </div>
 
         <div className="flex items-center w-full sm:w-1/2 py-4 px-7">

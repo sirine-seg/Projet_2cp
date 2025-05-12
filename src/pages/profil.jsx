@@ -220,7 +220,7 @@ export default function ProfilePage() {
             )}
 
             {isTechnician && (
-              <Toggle label="disponibilité" onToggle={updateDispo} />
+              <Toggle label="Disponibilité" onToggle={updateDispo} />
             )}
           </div>
         </div>

@@ -200,6 +200,9 @@ const UsersPage = () => {
       console.log("Fetch depuis le serveur pour :", cacheKey);
       console.log("Données reçues:", data);
 
+      // Trier les données par ID décroissant (du plus récent au plus ancien)
+      data.sort((a, b) => b.id - a.id);
+
       setCachedUsers((prev) => ({ ...prev, [cacheKey]: data }));
       setUsers(data);
       setDisplayedUsers(data.slice(0, visibleCount));
@@ -403,10 +406,14 @@ const UsersPage = () => {
         {/* Résultats et bouton Ajouter */}
         <div className="relative w-full px-4 my-0">
           <div className="flex justify-between items-center flex-wrap">
+            {currentView === "grid" ? (
             <div className="text-gray-600 font-semibold text-sm sm:text-base md:text-lg">
               {Math.min(visibleCount, users.length)} Résultats affichés sur{" "}
               {users.length}
             </div>
+            ) : (
+              <div></div>
+            )}
             <div className="flex items-center space-x-2 mt-2 sm:mt-0">
               {/* View Toggle */}
               <div className="h-9 flex items-center">
@@ -565,7 +572,7 @@ const UsersPage = () => {
         )}
 
         {/* Afficher plus */}
-        {visibleCount < users.length && (
+        {currentView === "grid" && visibleCount < users.length && (
           <h3
             className="mt-6 text-black font-semibold text-lg cursor-pointer hover:underline text-center"
             onClick={() => setVisibleCount(visibleCount + 60)}

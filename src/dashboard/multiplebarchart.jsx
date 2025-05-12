@@ -58,7 +58,7 @@ export default function TechnicianInterventionChart({
   return (
     <Card className="w-full h-full">
       <CardHeader>
-        <div className="flex justify-between items-start gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
           <div>
             <CardTitle className="text-base sm:text-lg md:text-xl">
               {title}

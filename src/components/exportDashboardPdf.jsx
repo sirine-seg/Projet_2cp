@@ -2,8 +2,6 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import autoTable from "jspdf-autotable";
 import headerImg from "../assets/headerEsi.png";
-// You would need to import your header image
-// import headerImg from "../assets/headerEsi.png";
 
 /**
  * Exports dashboard data to PDF with tables and charts data
@@ -69,7 +67,7 @@ const exportDashboardToPDF = (dashboardData) => {
     head: [["Indicateur", "Valeur"]],
     body: statsData,
     theme: 'grid',
-    headStyles: { fillColor:  [30, 64, 175], textColor: [255, 255, 255] },
+    headStyles: { fillColor:  [20, 66, 125], textColor: [255, 255, 255] },
     margin: { top: yPosition }
   });
   
@@ -90,7 +88,7 @@ const exportDashboardToPDF = (dashboardData) => {
     head: [["Catégorie d'Équipement", "Temps Moyen de Résolution"]],
     body: resolutionTableData,
     theme: 'striped',
-    headStyles: { fillColor: [59, 130, 246], textColor:  [255, 255, 255]},
+    headStyles: { fillColor: [32, 89, 158], textColor:  [255, 255, 255]},
     margin: { top: yPosition }
   });
   
@@ -120,7 +118,7 @@ const exportDashboardToPDF = (dashboardData) => {
     head: [["Technicien", "Terminées", "En Cours", "Annulées", "Total"]],
     body: technicianTableData,
     theme: 'grid',
-    headStyles: { fillColor:[245, 158, 11], textColor: [255, 255, 255] },
+    headStyles: { fillColor:[88, 131, 182], textColor: [255, 255, 255] },
     margin: { top: yPosition }
   });
   
@@ -147,7 +145,7 @@ const exportDashboardToPDF = (dashboardData) => {
     head: [["État", "Pourcentage"]],
     body: equipmentTableData,
     theme: 'striped',
-    headStyles: { fillColor:[147, 197, 253], textColor: [255, 255, 255] },
+    headStyles: { fillColor:[143, 172, 207], textColor: [255, 255, 255] },
     margin: { top: yPosition }
   });
   
@@ -176,7 +174,7 @@ const exportDashboardToPDF = (dashboardData) => {
     head: [["Mois", "Préventives", "Curatives", "Total"]],
     body: monthlyTableData,
     theme: 'grid',
-    headStyles: { fillColor: [96, 165, 250], textColor: [255, 255, 255] },
+    headStyles: { fillColor: [240, 156, 10], textColor: [255, 255, 255] },
     margin: { top: yPosition }
   });
   
@@ -204,7 +202,7 @@ const exportDashboardToPDF = (dashboardData) => {
       head: [["Statut", "Pourcentage"]],
       body: statusTableData,
       theme: 'striped',
-      headStyles: { fillColor: [59, 130, 246], textColor: [255, 255, 255] },
+      headStyles: { fillColor: [243, 218, 174], textColor: [255, 255, 255] },
       margin: { top: yPosition }
     });
   }
