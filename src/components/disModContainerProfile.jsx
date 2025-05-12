@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Assurez-vous d'inclure les styles de React DatePicker
 import ModifyPen from "../assets/modifyPen.svg";
@@ -12,7 +12,17 @@ export default function DisModContainer({
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(initialContent);
   const [isHovered, setIsHovered] = useState(false);
-  const [startDate, setStartDate] = useState(initialContent ? new Date(initialContent) : new Date());
+  const [startDate, setStartDate] = useState(
+    initialContent ? new Date(initialContent) : new Date()
+  );
+
+  // Update content and startDate when initialContent changes
+  useEffect(() => {
+    setContent(initialContent);
+    if (type === "date" && initialContent) {
+      setStartDate(new Date(initialContent));
+    }
+  }, [initialContent, type]);
 
   const handleSave = () => {
     if (type === "date") {
@@ -33,8 +43,8 @@ export default function DisModContainer({
       <label className="flex flex-col items-start font-poppins font-medium text-[#202124] text-[1rem] mb-1.5 ml-0.25rem">
         {title}
       </label>
-      
-      <div className="bg-white flex items-start w-full py-3.5 px-4 border border-white rounded-[0.5rem] font-regular font-poppins justify-between shadow-md transition-shadow duration-300 cursor-default">
+
+      <div className="bg-white flex items-start w-full py-3 px-4 border border-white rounded-[0.5rem] font-medium font-poppins justify-between shadow-md transition-shadow duration-300 cursor-default">
         <div className="flex items-center space-x-3">
           {isEditing ? (
             // Affichage selon le type
@@ -71,30 +81,30 @@ export default function DisModContainer({
         </div>
 
         {isEditing ? (
-          <button 
+          <button
             onClick={handleSave}
             className="text-[#20599E] font-medium text-sm"
           >
             Save
           </button>
         ) : (
-          <button 
+          <button
             onClick={() => setIsEditing(true)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className="text-[#202124] transition-transform duration-200"
             style={{
-              cursor: 'pointer',
-              transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+              cursor: "pointer",
+              transform: isHovered ? "scale(1.1)" : "scale(1)",
             }}
           >
-            <img 
-              src={ModifyPen} 
-              alt="ModifyPen" 
-              className="h-5 w-5" 
+            <img
+              src={ModifyPen}
+              alt="ModifyPen"
+              className="h-5 w-5"
               style={{
                 opacity: isHovered ? 0.8 : 1,
-                transition: 'opacity 200ms ease',
+                transition: "opacity 200ms ease",
               }}
             />
           </button>

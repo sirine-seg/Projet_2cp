@@ -203,8 +203,8 @@ const AjouterIntervention = () => {
 
   const typeInterventionOptions = [
     // Add your options here, for example:
-    { label: "Preventive", value: "preventive" },
-    { label: "Currative", value: "currative" },
+    { label: "Préventive", value: "preventive" },
+    { label: "Curative", value: "currative" },
   ];
 
   const [content, setContent] = useState("");
@@ -385,6 +385,11 @@ const AjouterIntervention = () => {
     }
   };
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Interventions");
+    setIsPopupVisible(false);
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       {/* Logo en haut à gauche */}
@@ -448,8 +453,6 @@ const AjouterIntervention = () => {
 
           <WriteContainer
             title="Description"
-            //  value={"---"}
-            multiline
             onChange={(val) => setdescription(val)}
             className=" px-8"
           />
@@ -534,7 +537,7 @@ const AjouterIntervention = () => {
       {isPopupVisible && (
         <PopupMessage
           title="Intervention ajoutée avec succès!"
-          onClose={() => setIsPopupVisible(false)}
+          onClose={handleCloseSuccessPopup}
         />
       )}
     </div>

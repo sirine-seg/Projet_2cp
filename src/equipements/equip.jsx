@@ -57,18 +57,19 @@ const EquipementsPage = () => {
   const [currentView, setCurrentView] = useState("list");
 
   const getEquipementOptions = (isAdmin) => {
-    const options = [
-      { label: "Signaler un problème", value: "signaler" },
-      { label: "Détails", value: "details" },
-    ];
+    const options = [{ label: "Signaler un problème", value: "signaler" }];
 
     if (isAdmin) {
       options.splice(
         1,
         0, // Ajoute entre "signaler" et "détails"
-        { label: "Changer le statut", value: "changer" },
+        { label: "Changer l'état", value: "changer" },
         { label: "Modifier", value: "modifier" }
       );
+    }
+
+    if (currentView === "list") {
+      options.push({ label: "Détails", value: "details" });
     }
 
     return options;
@@ -291,6 +292,7 @@ const EquipementsPage = () => {
     // Update selectedEquipements array based on checked status
     setSelectedEquipements((prev) => {
       const equipment = equipements.find((e) => e.id_equipement === id);
+      console.log("Current intervention.checked value:", equipment?.checked);
       if (!equipment) return prev;
 
       // If equipment is being checked, add it to selectedEquipements
@@ -858,7 +860,7 @@ const EquipementsPage = () => {
 
         {isPopupOpen && selectedEquipement && (
           <PopupChange
-            title="Statut"
+            title="Etat"
             etatOptions={etats}
             selectedStatus={selectedStatus}
             setSelectedStatus={(selected) => {

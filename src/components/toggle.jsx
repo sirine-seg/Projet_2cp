@@ -14,7 +14,7 @@ const Toggle = ({ label, isOn = true, onToggle }) => {
   };
 
   return (
-    <div className="px-2 max-w-xl flex justify-between items-center">
+    <div className="px-2 max-w-2xl flex justify-between items-center">
       {label && (
         <span className="flex-1 text-base sm:text-lg font-medium leading-none">
           {label}

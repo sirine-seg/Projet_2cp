@@ -226,7 +226,7 @@ const Header = ({ bleu = false }) => {
                   role={userData?.user?.role || ""}
                   imageUrl={userData?.user?.photo || null}
                   email={userData?.user?.email || ""}
-                  numero={userData?.user?.phone_number || ""}
+                  numero={userData?.user?.numero_tel || ""}
                 />
               </div>
             )}

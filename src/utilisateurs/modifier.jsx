@@ -1,22 +1,12 @@
 import { useState, useEffect } from "react";
-
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
 import PopupMessage from "../components/Popupcheck";
-import SearchBar from "../components/Searchbar"; 
-import Filterbutton from "../components/Filterbutton"; 
 import Header from "../components/Header";
-import AjouterButton from "../components/Ajouterbutton";
 import Buttonrec from "../components/buttonrectangle";
-import Usercard from "../components/Usercard";
-import Badge from "../components/badge";
-import ChoiceContainer from "../components/choiceContainer"; 
-import WriteContainer from "../components/writeContainer";   
-import Headerbar from "../components/Arrowleftt";  
+import ChoiceContainer from "../components/choiceContainer";
+import WriteContainer from "../components/writeContainer";
+import Headerbar from "../components/Arrowleftt";
 import { useParams } from "react-router-dom";
-
-
 
 const ModifierPagesss = () => {
   const [postesList, setPostesList] = useState([]);
@@ -43,18 +33,21 @@ const ModifierPagesss = () => {
         setErrorMessage("Accès refusé : veuillez vous reconnecter.");
         return;
       }
-  
+
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/accounts/users/${id}/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         const data = await response.json();
-  
+
         if (response.ok) {
           console.log("Données utilisateur récupérées:", data);
           setNewUser({
@@ -63,7 +56,10 @@ const ModifierPagesss = () => {
             email: data.email,
             role: data.role || "Personnel",
             telephone: data.numero_tel,
-            poste: data.role === "Technicien" ? data.technicien?.poste?.id || "" : "",
+            poste:
+              data.role === "Technicien"
+                ? data.technicien?.poste?.id || ""
+                : "",
           });
         } else {
           setErrorMessage("Erreur lors de la récupération des données.");
@@ -73,10 +69,9 @@ const ModifierPagesss = () => {
         setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
       }
     };
-  
+
     fetchUserData();
   }, [id]);
-  
 
   // Récupération des postes
   useEffect(() => {
@@ -86,18 +81,22 @@ const ModifierPagesss = () => {
         console.error("Token d'accès non trouvé !");
         return;
       }
-  
+
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/accounts/postes/', {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        if (!response.ok) throw new Error("Erreur lors du chargement des postes");
-  
+        const response = await fetch(
+          "http://127.0.0.1:8000/api/accounts/postes/",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok)
+          throw new Error("Erreur lors du chargement des postes");
+
         const data = await response.json();
         setPostesList(data);
         console.log("Postes disponibles:", data);
@@ -105,10 +104,9 @@ const ModifierPagesss = () => {
         console.error("Erreur lors de la récupération des postes :", error);
       }
     };
-  
+
     fetchPostes();
   }, []);
-  
 
   const handleChange = (e) => {
     setNewUser({ ...newUser, [e.target.name]: e.target.value });
@@ -119,18 +117,18 @@ const ModifierPagesss = () => {
       setErrorMessage("Veuillez remplir tous les champs.");
       return;
     }
-  
+
     if (newUser.role === "Technicien" && !newUser.poste) {
       setErrorMessage("Veuillez sélectionner un poste pour le technicien.");
       return;
     }
-  
+
     const token = localStorage.getItem("access_token");
     if (!token) {
       setErrorMessage("Token d'accès non trouvé. Veuillez vous reconnecter.");
       return;
     }
-  
+
     const userData = {
       first_name: newUser.prenom,
       last_name: newUser.nom,
@@ -138,33 +136,36 @@ const ModifierPagesss = () => {
       numero_tel: newUser.telephone,
       role: newUser.role,
     };
-  
+
     const technicienData = {
       poste: newUser.role === "Technicien" ? parseInt(newUser.poste) : null,
     };
-  
+
     try {
-      const userResponse = await fetch(`http://127.0.0.1:8000/api/accounts/users/${id}/update/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(userData),
-      });
-  
+      const userResponse = await fetch(
+        `http://127.0.0.1:8000/api/accounts/users/${id}/update/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(userData),
+        }
+      );
+
       if (!userResponse.ok) {
         const errorData = await userResponse.json();
         setErrorMessage(
           "Erreur lors de la modification des informations de l'utilisateur : " +
-          JSON.stringify(errorData)
+            JSON.stringify(errorData)
         );
         return;
       }
-  
+
       const userDataResult = await userResponse.json();
       console.log("Réponse de l'API (user):", userDataResult);
-  
+
       if (newUser.role === "Technicien") {
         const technicienResponse = await fetch(
           `http://127.0.0.1:8000/api/accounts/techniciens/${id}/update/`,
@@ -177,17 +178,20 @@ const ModifierPagesss = () => {
             body: JSON.stringify(technicienData),
           }
         );
-  
+
         if (!technicienResponse.ok) {
           const errorData = await technicienResponse.json();
-          setErrorMessage("Erreur lors de la modification du poste : " + JSON.stringify(errorData));
+          setErrorMessage(
+            "Erreur lors de la modification du poste : " +
+              JSON.stringify(errorData)
+          );
           return;
         }
-  
+
         const technicienDataResult = await technicienResponse.json();
         console.log("Réponse de l'API (technicien):", technicienDataResult);
       }
-  
+
       setIsPopupVisible(false);
       setTimeout(() => setIsPopupVisible(true), 10);
     } catch (error) {
@@ -195,16 +199,20 @@ const ModifierPagesss = () => {
       setErrorMessage("Erreur réseau. Vérifiez votre connexion.");
     }
   };
-  
+
+  const handleCloseSuccessPopup = () => {
+    navigate("/Utilisateurs");
+    setIsPopupVisible(false);
+  };
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E]">
+    <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       {/* Logo en haut à gauche */}
       <Header />
 
       {/* En-tête */}
-      <div className="w-full bg-[#20599E] text-white pt-4 pb-16 text-center">
-        <h1 className="text-4xl lg:text-5xl font-bold text-[#F4F4F4] mb-4">
+      <div className="w-full bg-[#20599E] text-white pb-16 text-center">
+        <h1 className="text-3xl sm:text-3xl md:text-2xl lg:text-4xl font-bold text-[#F4F4F4] mb-4 mt-2">
           Utilisateurs
         </h1>
       </div>
@@ -214,7 +222,7 @@ const ModifierPagesss = () => {
           <Headerbar title="Modifier un utilisateur" />
         </div>
 
-        <div className="w-full max-w-5xl mx-auto mt-12 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="w-full max-w-5xl mx-auto mt-4 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
           <WriteContainer
             title="Nom"
             value={newUser.nom}
@@ -272,9 +280,7 @@ const ModifierPagesss = () => {
         {isPopupVisible && (
           <PopupMessage
             title="L'utilisateur a été modifié avec succès !"
-            onClose={() => {
-              setIsPopupVisible(false);
-            }}
+            onClose={handleCloseSuccessPopup}
           />
         )}
       </div>

@@ -50,21 +50,24 @@ export default function TechnicianInterventionChart({
     </div>
   );
 
+  const visibleStatuses = statuses.filter((status) => {
+    // Vérifie s’il y a au moins une valeur non nulle pour ce status dans le dataset
+    return data.some((entry) => entry[status] > 0);
+  });
+
   return (
-    <Card className="w-full">
+    <Card className="w-full h-full">
       <CardHeader>
-  <div className="flex justify-between items-start gap-4">
-    <div>
-      <CardTitle className="text-base sm:text-lg md:text-xl">{title}</CardTitle>
-      {description && <CardDescription>{description}</CardDescription>}
-    </div>
-    {showLegend && (
-      <div className="flex-shrink-0">
-        {renderLegend()}
-      </div>
-    )}
-  </div>
-</CardHeader>
+        <div className="flex justify-between items-start gap-4">
+          <div>
+            <CardTitle className="text-base sm:text-lg md:text-xl">
+              {title}
+            </CardTitle>
+            {description && <CardDescription>{description}</CardDescription>}
+          </div>
+          {showLegend && <div className="flex-shrink-0">{renderLegend()}</div>}
+        </div>
+      </CardHeader>
 
       <CardContent className="flex-1 overflow-visible">
         <ChartContainer config={{}} className="w-full ">
@@ -74,7 +77,7 @@ export default function TechnicianInterventionChart({
                 layout="vertical"
                 data={data}
                 barCategoryGap={8} // Slightly reduce bar category gap for mobile
-                margin={{ top: 10, right: 0, left: 60, bottom: 5 }} // Adjust margins for mobile
+                margin={{ top: 10, right: 0, left: 80, bottom: 5 }} // Adjust margins for mobile
               >
                 <YAxis
                   type="category"
@@ -85,19 +88,19 @@ export default function TechnicianInterventionChart({
                 />
                 <XAxis type="number" hide />
 
-                {statuses.map((status, index, array) => (
+                {visibleStatuses.map((status, index) => (
                   <Bar
                     key={status}
                     dataKey={status}
                     stackId="interventions"
                     fill={colors[status]}
-                    barSize={16} // Smaller bar size for mobile
+                    barSize={16}
                     radius={
                       index === 0
-                        ? [8, 0, 0, 8]
-                        : index === array.length - 1
-                        ? [0, 8, 8, 0]
-                        : [0, 0, 0, 0]
+                        ? [8, 0, 0, 8] // arrondi à gauche
+                        : index === visibleStatuses.length - 1
+                        ? [0, 8, 8, 0] // arrondi à droite
+                        : [0, 0, 0, 0] // pas d’arrondi
                     }
                   />
                 ))}

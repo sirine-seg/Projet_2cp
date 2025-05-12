@@ -243,6 +243,12 @@ const EditPage = () => {
       });
   };
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Equipements");
+    setIsPopupVisible(false);
+    console.log("the close popup");
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       <Header />
@@ -341,7 +347,7 @@ const EditPage = () => {
         <div className="flex flex-col sm:flex-row w-full mx-auto px-3.5 mt-2">
           {/* Manual file upload */}
           <div className="w-full sm:w-1/2 pr-0 sm:pr-2">
-            <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[0.8125rem] mb-1 ml-0.25rem">
+            <label className="flex flex-col items-start text-sm font-poppins font-medium text-[#202124] text-[1rem] mb-1 ml-0.25rem">
               Manuel
             </label>
 
@@ -395,7 +401,7 @@ const EditPage = () => {
         {isPopupVisible && (
           <PopupMessage
             title="Équipement mis à jour avec succès !"
-            onClose={() => setIsPopupVisible(false)}
+            onClose={handleCloseSuccessPopup}
           />
         )}
       </div>

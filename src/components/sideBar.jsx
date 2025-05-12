@@ -9,8 +9,7 @@ import {
   HelpCircle,
   HardHat,
   ChevronRight,
-  ClipboardList,
-  Loader2
+  ClipboardList
 } from "lucide-react";
 import logo_bleu from "../assets/logo_bleu.svg";
 
@@ -54,15 +53,6 @@ export default function SideBar({ isOpen, setIsOpen }) {
     localStorage.removeItem('access_token');
     window.location.href = '/login';
   };
-
-  //if (loading) {
-  //  return (
-  //    <div className={`fixed top-0 left-0 h-screen w-68 bg-white shadow-lg p-6 z-50 flex items-center justify-center
-  //      ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
-  //      <Loader2 className="animate-spin" />
-  //    </div>
-  //  );
-  //}
 
   return (
     <div

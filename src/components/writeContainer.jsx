@@ -16,7 +16,7 @@ const EyeClosedIcon = () => (
   </svg>
 );
 
-export default function WriteContainer({ title, onSubmit, onChange, value, message, bgColor = "bg-[#FFFFFF]" }) {
+export default function WriteContainer({ title, onSubmit, onChange, value, message, bgColor = "bg-[#FFFFFF]", shadow = "shadow-md" }) {
   const [input, setInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -68,7 +68,7 @@ export default function WriteContainer({ title, onSubmit, onChange, value, messa
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder={title === "Numéro de téléphone" ? "+213XXXXXXXXX" : "---"}
-            className={`w-full py-3 px-4 border border-white rounded-[0.5rem] text-[1rem] font-regular font-poppins ${bgColor} resize-none focus:outline-0 focus:ring-0 shadow-md`}
+            className={`w-full py-3 px-4 border border-white rounded-[0.5rem] text-[1rem] font-regular font-poppins ${bgColor} resize-none focus:outline-0 focus:ring-0 shadow-md ${shadow}`}
             type={title === "Mot de passe" && !showPassword ? "password" : "text"}
           />
           {title === "Mot de passe" && (

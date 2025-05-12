@@ -2,6 +2,7 @@ import { ChevronLeft, MoreHorizontal } from "lucide-react";
 import Profil from "../assets/Profil.svg";
 import { useState, useRef, useEffect } from "react";
 import Options from "../components/options";
+import { useNavigate } from "react-router-dom";
 
 export default function NotificationCard({
   title,
@@ -13,9 +14,11 @@ export default function NotificationCard({
   unread,
   onMarkAsRead,
   id,
+  intervention
 }) {
   const [showOptions, setShowOptions] = useState(false);
   const optionsRef = useRef(null);
+  const navigate = useNavigate();
 
   const optionsList = [
     { label: "Marquer comme lu", value: "mark_as_read" },
@@ -84,7 +87,9 @@ export default function NotificationCard({
 
             <div className="pt-2">
               {buttonTitle && (
-                <button className="bg-[#20599E] text-white px-2.5 py-1 md:px-3 md:py-1.5 pr-3 rounded font-poppins font-semibold flex items-center justify-center gap-1 transition cursor-pointer text-xs md:text-sm">
+                <button
+                  onClick={() => navigate(`/DetailsIntervention/${intervention}`)}
+                  className="bg-[#20599E] text-white px-2.5 py-1 md:px-3 md:py-1.5 pr-3 rounded font-poppins font-semibold flex items-center justify-center gap-1 transition cursor-pointer text-xs md:text-sm">
                   <ChevronLeft size={12} className="md:w-3 md:h-3" />
                   {buttonTitle}
                 </button>

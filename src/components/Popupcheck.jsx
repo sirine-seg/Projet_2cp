@@ -8,8 +8,14 @@ const PopupMessage = ({
   message,
   iconSrc = check,
   iconBgColor = "#E0ECF8",
+  onClose,
 }) => {
   const [isPopupVisible, setIsPopupVisible] = useState(true);
+
+  const handleClose = () => {
+    setIsPopupVisible(false);
+    if (onClose) onClose(); // ← appelle la fonction si elle est fournie
+  };
 
   return (
     <AnimatePresence>
@@ -53,7 +59,7 @@ const PopupMessage = ({
             <motion.img 
               src={quitter} 
               alt="quitter"
-              onClick={() => setIsPopupVisible(false)}
+              onClick={handleClose}
               className="absolute top-4 right-4 h-8 w-8 transition-all duration-200 hover:shadow-sm hover:rounded-lg cursor-pointer"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}

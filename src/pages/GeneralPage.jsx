@@ -16,23 +16,26 @@ export default function GeneralPage() {
   //   hna i fetch the current settings mel back
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
-  
+
     fetch("http://localhost:8000/api/accounts/me/", {
       headers: {
-        "Authorization": `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then((res) => res.json())
       .then((userData) => {
         const userID = userData.user.id;
         console.log("User data:", userData);
-  
+
         // Fetch general notification status
-        fetch(`http://localhost:8000/api/accounts/toggle-notification/${userID}/`, {
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-          },
-        })
+        fetch(
+          `http://localhost:8000/api/accounts/toggle-notification/${userID}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
           .then((res) => res.json())
           .then((data) => {
             setAllNotifications(data.active_notif);
@@ -40,13 +43,16 @@ export default function GeneralPage() {
           .catch((err) =>
             console.error("Failed to load general notification settings:", err)
           );
-  
+
         // Fetch email notification status
-        fetch(`http://localhost:8000/api/accounts/toggle-notification-email/${userID}/`, {
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-          },
-        })
+        fetch(
+          `http://localhost:8000/api/accounts/toggle-notification-email/${userID}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
           .then((res) => res.json())
           .then((data) => {
             setEmailNotifications(data.active_notif_email);
@@ -57,29 +63,33 @@ export default function GeneralPage() {
       })
       .catch((err) => console.error("Failed to fetch user ID:", err));
   }, []);
-  
+
   // Handle toggles
   const handleToggleAllNotifications = () => {
     const accessToken = localStorage.getItem("access_token");
-  
+
     fetch("http://localhost:8000/api/accounts/me/", {
       headers: {
-        "Authorization": `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then((res) => res.json())
       .then((userData) => {
         const userID = userData.user.id;
         console.log("User ID for toggle:", userID);
-  
-        fetch(`http://localhost:8000/api/accounts/toggle-notification/${userID}/`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-          },
-        })
+
+        fetch(
+          `http://localhost:8000/api/accounts/toggle-notification/${userID}/`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
           .then((res) => {
-            if (!res.ok) throw new Error("Failed to toggle general notifications");
+            if (!res.ok)
+              throw new Error("Failed to toggle general notifications");
             return res.json();
           })
           .then((data) => {
@@ -89,28 +99,32 @@ export default function GeneralPage() {
       })
       .catch((err) => console.error("Failed to fetch user ID:", err));
   };
-  
+
   const handleToggleEmailNotifications = () => {
     const accessToken = localStorage.getItem("access_token");
-  
+
     fetch("http://localhost:8000/api/accounts/me/", {
       headers: {
-        "Authorization": `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then((res) => res.json())
       .then((userData) => {
         const userID = userData.user.id;
         console.log("User ID for toggle email:", userID);
-  
-        fetch(`http://localhost:8000/api/accounts/toggle-notification-email/${userID}/`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-          },
-        })
+
+        fetch(
+          `http://localhost:8000/api/accounts/toggle-notification-email/${userID}/`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
           .then((res) => {
-            if (!res.ok) throw new Error("Failed to toggle email notifications");
+            if (!res.ok)
+              throw new Error("Failed to toggle email notifications");
             return res.json();
           })
           .then((data) => {
@@ -120,7 +134,6 @@ export default function GeneralPage() {
       })
       .catch((err) => console.error("Failed to fetch user ID:", err));
   };
-  
 
   const currentEstablishment = {
     name: "Ecole Nationale Superieure d'Informatique",
@@ -133,23 +146,23 @@ export default function GeneralPage() {
 
   return (
     <div className="min-h-screen w-full bg-[#F4F4F4] font-poppins">
-      <div className="fixed top-0 left-0 h-screen w-64 z-30">
-        {/* Mobile - always closed or controlled differently */}
-        <div className="lg:hidden">
+      {/* <div className="fixed top-0 left-0 h-screen w-64 z-30"> */}
+      {/* Mobile - always closed or controlled differently */}
+      {/* <div className="lg:hidden">
           <SideBar isOpen={false} />
-        </div>
+        </div> */}
 
-        {/* Desktop - always open */}
-        <div className="hidden lg:block">
+      {/* Desktop - always open */}
+      {/* <div className="hidden lg:block">
           <SideBar isOpen={true} />
         </div>
-      </div>
+      </div> */}
 
       <div className="top-0 left-0 right-0 z-20">
         <Header bleu />
       </div>
 
-      <div className="pt-10 p-4 mr-4 ml-4 sm:ml-80 sm:mr-24">
+      <div className="pt-10 p-4 mr-4 ml-4 sm:ml-40 sm:mr-24">
         <div className="mb-6 sm:mb-12">
           <Breadcrumb path={["Administration", "General"]} />
         </div>
@@ -160,9 +173,7 @@ export default function GeneralPage() {
           </h1>
         </div>
 
-        <EstablishmentInfoSection
-          initialData={currentEstablishment}
-        />
+        <EstablishmentInfoSection initialData={currentEstablishment} />
 
         <div className="flex items-center gap-2 flex-1 min-w-0 pb-6 sm:pb-10">
           <ChevronRight size={18} className="flex-shrink-0" />

@@ -106,13 +106,14 @@ const Intervention = () => {
 
     setSelectedInterventions((prev) => {
       const intervention = interventions.find((e) => e.id === id);
+      console.log(interventions.find((i) => i.id === id));
+      console.log("Current intervention.checked value:", intervention?.checked);
       if (!intervention) return prev;
 
-      // If equipment is being checked, add it to selectedEquipements
       if (!intervention.checked) {
         return [...prev, intervention];
       }
-      // If equipment is being unchecked, remove it from selectedEquipements
+
       else {
         return prev.filter((e) => e.id !== id);
       }
@@ -144,7 +145,7 @@ const Intervention = () => {
   // Action groupée sur les interventions sélectionnées
   const handleInterventionActionClick = (action) => {
     const selected = interventions.filter((i) => i.checked);
-    alert(
+    console.log(
       `Action "${action}" sur ${selected.length} interventions(s)`,
       selected
     );
@@ -527,6 +528,9 @@ const Intervention = () => {
     if (status === "en attente") {
       statusOptions.push({ label: "Affecter", value: "Affecter" });
     }
+    if (currentView === "list") {
+      statusOptions.push({ label: "Détails", value: "details" });
+    }
     return statusOptions;
   };
 
@@ -568,6 +572,8 @@ const Intervention = () => {
       console.log("selected type : ", menuData.type);
     } else if (value === "Affecter") {
       navigate(`/AffecterIntervention/${id}`);
+    } else if (value === "details") {
+      navigate(`/DetailsIntervention/${id}`);
     }
   };
 
@@ -711,7 +717,7 @@ const Intervention = () => {
 
             <Filtre
               id="status"
-              label="Status"
+              label="Statut"
               options={statusList}
               onSelectFilter={handleStatusFilter}
               titre="Filtrer par Status"
@@ -750,7 +756,7 @@ const Intervention = () => {
 
               {/* Bouton Disponible (s'affiche seulement si "Technicien" est sélectionné) */}
               <Buttonrec
-                text="en attente"
+                text="En attente"
                 bgColor={filter === "en attente" ? "#F09C0A" : "#D1D5DB"} // yellow if selected, grey otherwise
                 textColor={filter === "en attente" ? "white" : "black"} // blacktext if selected, white otherwise
                 onClick={handleEnAttenteClick}
@@ -768,7 +774,6 @@ const Intervention = () => {
             </div>
           </div>
         </div>
-        {/* Liste des utilisateurs    ::: gap pour espace entre les cartes et grid pour si la carte prend un colone .. ect     ;;;;.map((user) => ( ... )) permet de générer une carte pour chaque utilisateur. */}
 
         <div className="flex flex-wrap space-y-4 p-4">
           <div className="flex justify-between items-center w-full">
@@ -791,11 +796,11 @@ const Intervention = () => {
             <div className="space-y-2 w-full">
               <InterventionListHeader />
 
-              {displayedInterventions.map((intervention) => (
+              {interventions.map((intervention) => (
                 <div key={intervention.id} className="relative">
                   <InterventionList
                     nom={intervention.title}
-                    equipement={intervention.equipement}
+                    id={intervention.id}
                     urgence={intervention.urgence_display}
                     statut={intervention.statut_display}
                     moreClick={() =>
@@ -803,7 +808,7 @@ const Intervention = () => {
                         menuOpenId === intervention.id ? null : intervention.id
                       )
                     }
-                    checked={intervention.checked || false}
+                    checked={intervention.checked}
                     onToggle={() => handleInterventionToggle(intervention.id)}
                   />
 

@@ -139,6 +139,7 @@ export default function NotificationPage() {
               <NotificationCard
                 key={notif.id}
                 id={notif.id}
+                intervention={notif.related_intervention}
                 title={notif.title}
                 description={notif.description}
                 time={notif.time}

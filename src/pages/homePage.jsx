@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import SignalRaccourci from "../components/SignalRaccourci";
-import DashboardRaccourci from "../components/DashboardRaccourci";
-import InterventionCard from "../components/InterventionCard";
+import SignalRaccourci from "../components/signalRaccourci.jsx";
+import DashboardRaccourci from "../components/dashboardRaccourci.jsx";
+import InterventionCard from "../components/interventionCard.jsx";
 
 export default function HomePage() {
   const [interventions, setInterventions] = useState([]);
@@ -48,6 +48,11 @@ export default function HomePage() {
     fetchInterventions();
   }, []);
 
+  const lastTwoInterventions = [...interventions]
+      .sort((a, b) => b.id - a.id)
+      .slice(0, 2);
+
+
   return (
     <div className="w-full min-h-screen font-poppins">
       {/* Header */}
@@ -86,7 +91,7 @@ export default function HomePage() {
                     <InterventionCard />
                   </div>
                 ) : (
-                  interventions.slice(0, 2).map((intervention, index) => (
+                  lastTwoInterventions.slice(0, 2).map((intervention, index) => (
                     <div key={index} className="w-full max-w-md">
                       <InterventionCard
                         id={intervention.id}
@@ -98,6 +103,7 @@ export default function HomePage() {
                           intervention.date_debut
                         ).toLocaleDateString("fr-FR")}
                       />
+                      <div className="mt-4"></div>
                     </div>
                   ))
                 )}

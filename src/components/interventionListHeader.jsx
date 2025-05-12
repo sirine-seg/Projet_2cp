@@ -10,8 +10,8 @@ const InterventionListHeader = () => {
                 {/* Rond (invisible mais occupe l'espace sur mobile) */}
                 <span className="sm:hidden flex-shrink-0 w-3 h-3 rounded-full opacity-0"></span>
 
-                <span className="w-[30%] sm:w-[25%] overflow-hidden whitespace-nowrap">Nom</span>
-                <span className="w-[30%] sm:w-[25%] overflow-hidden whitespace-nowrap">Équipement</span>
+                <span className="w-[15%] sm:w-[10%] overflow-hidden whitespace-nowrap">Id</span>
+                <span className="w-[30%] sm:w-[35%] overflow-hidden whitespace-nowrap">Nom</span>
 
                 {/* Urgence desktop */}
                 <div className="w-[20%] hidden sm:flex items-center space-x-2">

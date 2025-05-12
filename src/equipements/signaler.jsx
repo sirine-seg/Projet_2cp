@@ -147,6 +147,12 @@ const Signaler = () => {
 
   console.log("selectedUrgence", selectedUrgence);
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Equipements");
+    setIsPopupVisible(false);
+    console.log("the close popup");
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       <Header />
@@ -220,7 +226,7 @@ const Signaler = () => {
         {isPopupVisible && (
           <PopupMessage
             title="Problème signalé avec succès !"
-            onClose={() => setIsPopupVisible(false)}
+            onClose={handleCloseSuccessPopup}
           />
         )}
       </div>
