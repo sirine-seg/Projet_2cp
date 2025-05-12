@@ -169,6 +169,9 @@ const Mestaches = () => {
 
         const data = await response.json();
 
+        // Trier les données par ID décroissant (du plus récent au plus ancien)
+        data.sort((a, b) => b.id - a.id);
+
         // Apply search filter (if needed)
         const filtered = data.filter((item) => {
           const searchTermLower = searchTerm.toLowerCase();

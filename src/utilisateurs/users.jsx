@@ -200,6 +200,9 @@ const UsersPage = () => {
       console.log("Fetch depuis le serveur pour :", cacheKey);
       console.log("Données reçues:", data);
 
+      // Trier les données par ID décroissant (du plus récent au plus ancien)
+      data.sort((a, b) => b.id - a.id);
+
       setCachedUsers((prev) => ({ ...prev, [cacheKey]: data }));
       setUsers(data);
       setDisplayedUsers(data.slice(0, visibleCount));

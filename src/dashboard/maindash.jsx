@@ -207,7 +207,7 @@ export default function DashboardPage() {
     <div className="w-full min-h-screen font-poppins">
       <Header bleu />
       <div className="export-controls p-4 flex justify-end space-x-4">
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex items-center justify-center space-x-4 px-20">
           <div 
             onClick={handleExportPDF}
             className={`cursor-pointer flex items-center space-x-2 p-2 bg-gray-100 hover:bg-gray-200 rounded-md ${pdfExportLoading ? 'opacity-50' : ''}`}
@@ -218,12 +218,12 @@ export default function DashboardPage() {
               <span className="animate-spin inline-block h-5 w-5 border-t-2 border-b-2 border-blue-600 rounded-full mr-2"></span>
             ) : (
             <img
-                      src={upload}
-                      alt="export pdf"
-                      className="h-[20px] w-[20px] shrink-0"
-                    />
+              src={upload}
+              alt="export pdf"
+              className="h-[20px] w-[20px] shrink-0"
+            />
             )}
-            <span className="text-sm">PDF</span>
+            <span className="text-sm">Import PDF</span>
           </div>
           
           <div 
@@ -236,17 +236,17 @@ export default function DashboardPage() {
               <span className="animate-spin inline-block h-5 w-5 border-t-2 border-b-2 border-green-600 rounded-full mr-2"></span>
             ) : (
               <img
-                       src={excelExport}
-                       alt="export excel"
-                       className="h-[20px] w-[20px] shrink-0 "
-                     />
+                src={excelExport}
+                alt="export excel"
+                className="h-[20px] w-[20px] shrink-0 "
+              />
             )}
-            <span className="text-sm">Excel</span>
+            <span className="text-sm">Import Excel</span>
           </div>
         </div>
       </div>
 
-      <div className="dashboard-grid max-w-full p-6">
+      <div className="dashboard-grid max-w-full px-6 py-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 pb-4 sm:pb-6">
           <InfoCard
             label="Nombre des interventions"

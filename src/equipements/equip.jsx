@@ -236,6 +236,9 @@ const EquipementsPage = () => {
       const data = await response.json();
       console.log("Fetch depuis le serveur pour :", cacheKey, data);
 
+      // Trier les données par ID décroissant (du plus récent au plus ancien)
+      data.sort((a, b) => b.id_equipement - a.id_equipement);
+
       setCachedEquipements((prev) => ({ ...prev, [cacheKey]: data }));
       setEquipements(data);
 

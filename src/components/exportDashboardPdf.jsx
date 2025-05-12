@@ -202,7 +202,7 @@ const exportDashboardToPDF = (dashboardData) => {
       head: [["Statut", "Pourcentage"]],
       body: statusTableData,
       theme: 'striped',
-      headStyles: { fillColor: [59, 130, 246], textColor: [255, 255, 255] },
+      headStyles: { fillColor: [243, 218, 174], textColor: [255, 255, 255] },
       margin: { top: yPosition }
     });
   }
