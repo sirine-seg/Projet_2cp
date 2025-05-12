@@ -29,8 +29,8 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 # Allowed hosts
-ALLOWED_HOSTS = os.environ.get(
-    'ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ['esi-track-deployement.onrender.com',
+                 'localhost', '127.0.0.1']
 
 # Database
 DATABASE_URL = os.environ.get(
