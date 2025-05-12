@@ -8,6 +8,7 @@ import PopupChange from "../components/popupChange.jsx";
 import useIsSmallScreen from "../hooks/useIsSmallScreen";
 import Filtre from "../components/filtre";
 import AddMobile from "../components/addMobile";
+import PopupMessage from "../components/Popupcheck";
 
 import ViewToggle from "../components/viewToggle";
 import InterventionList from "../components/interventionList";
@@ -28,6 +29,7 @@ const Mestaches = () => {
   const navigate = useNavigate();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedInterventionid, setSelectedInterventionid] = useState(null);
+  const [isPopupCheckVisible, setIsPopupCheckVisible] = useState(false);
 
   const isSmall = useIsSmallScreen();
 
@@ -148,7 +150,8 @@ const Mestaches = () => {
   useEffect(() => {
     const fetchInterventions = async () => {
       try {
-        let apiUrl = "http://127.0.0.1:8000/api/interventions/interventions/tache/";
+        let apiUrl =
+          "http://127.0.0.1:8000/api/interventions/interventions/tache/";
 
         const accessToken = localStorage.getItem("access_token"); // Assuming token is stored in localStorage
 
@@ -329,13 +332,13 @@ const Mestaches = () => {
 
     if (value === "changer le statut") {
       // Find the intervention data by id
-      const intervention = interventions.find(int => int.id === id);
+      const intervention = interventions.find((int) => int.id === id);
 
       // Set the MenuData with the intervention details needed for the API call
       setMenuData({
         id: intervention.id,
         // Determine the type from the intervention object
-        type: intervention.type_intervention || 'currative' // Default to currative if not specified
+        type: intervention.type_intervention || "currative", // Default to currative if not specified
       });
 
       setSelectedInterventionid(id);
@@ -397,14 +400,16 @@ const Mestaches = () => {
 
         // Refresh the interventions list to show the updated status
         // You could either call fetchInterventions() again or update the local state:
-        setInterventions(interventions.map(item =>
-          item.id === MenuData.id
-            ? { ...item, statut_display: selectedStatus }
-            : item
-        ));
+        setInterventions(
+          interventions.map((item) =>
+            item.id === MenuData.id
+              ? { ...item, statut_display: selectedStatus }
+              : item
+          )
+        );
 
-        // Show success message
-        alert("Statut mis à jour avec succès");
+        setIsPopupVisible(false);
+        setIsPopupCheckVisible(true);
       } else {
         console.error("Missing MenuData or API URL for status update");
       }
@@ -606,6 +611,13 @@ const Mestaches = () => {
             selectedStatus={selectedStatus}
             setSelectedStatus={setSelectedStatus}
             update={updateStatus}
+            onClose={() => setIsPopupVisible(false)}
+          />
+        )}
+
+        {isPopupCheckVisible && (
+          <PopupMessage
+            title="Statut changé avec succès!"
             onClose={() => setIsPopupVisible(false)}
           />
         )}
