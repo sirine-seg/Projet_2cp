@@ -166,6 +166,7 @@ class UnblockUserView(APIView):
 
 class MeAPIView (generics.RetrieveAPIView):
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         user = self.request.user
@@ -179,11 +180,10 @@ class MeAPIView (generics.RetrieveAPIView):
         user = self.request.user
         # If they’re in the Admin role, return the Admin record
         if user.role == User.TECHNICIEN:
-            # ← your related_name on the OneToOneField
             return Technicien.objects.filter(user=user).first()
         elif user.role == User.PERSONNEL:
-            return Personnel.objects.filter(user=user).first()  # ← likewise
-        return Admin.objects.filter(user=user).first()  # ← likewise
+            return Personnel.objects.filter(user=user).first()
+        return Admin.objects.filter(user=user).first()
 
 
 class PosteListView(generics.ListAPIView):
