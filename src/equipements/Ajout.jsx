@@ -118,6 +118,12 @@ const AjoutPage = () => {
     fetchOptions();
   }, []);
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Equipements");
+    setIsPopupVisible(false);
+    console.log("the close popup");
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       <Header />
@@ -226,7 +232,7 @@ const AjoutPage = () => {
       {isPopupVisible && (
         <PopupMessage
           title="Équipement ajouté avec succès !"
-          onClose={() => setIsPopupVisible(false)}
+          onClose={handleCloseSuccessPopup}
         />
       )}
     </div>

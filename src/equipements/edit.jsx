@@ -243,6 +243,12 @@ const EditPage = () => {
       });
   };
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Equipements");
+    setIsPopupVisible(false);
+    console.log("the close popup");
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       <Header />
@@ -395,7 +401,7 @@ const EditPage = () => {
         {isPopupVisible && (
           <PopupMessage
             title="Équipement mis à jour avec succès !"
-            onClose={() => setIsPopupVisible(false)}
+            onClose={handleCloseSuccessPopup}
           />
         )}
       </div>

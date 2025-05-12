@@ -385,6 +385,11 @@ const AjouterIntervention = () => {
     }
   };
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Interventions");
+    setIsPopupVisible(false);
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       {/* Logo en haut à gauche */}
@@ -532,7 +537,7 @@ const AjouterIntervention = () => {
       {isPopupVisible && (
         <PopupMessage
           title="Intervention ajoutée avec succès!"
-          onClose={() => setIsPopupVisible(false)}
+          onClose={handleCloseSuccessPopup}
         />
       )}
     </div>

@@ -130,6 +130,11 @@ const AjoutPage = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Utilisateurs");
+    setIsPopupVisible(false);
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       {/* Logo en haut à gauche */}
@@ -219,8 +224,8 @@ const AjoutPage = () => {
 
         {isPopupVisible && (
           <PopupMessage
-            title="L’utilisateur a été ajouté avec succès !"
-            onClose={() => setIsPopupVisible(false)}
+            title="L'utilisateur a été ajouté avec succès!"
+            onClose={handleCloseSuccessPopup}
           />
         )}
       </div>

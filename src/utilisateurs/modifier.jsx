@@ -200,6 +200,11 @@ const ModifierPagesss = () => {
     }
   };
 
+  const handleCloseSuccessPopup = () => {
+    navigate("/Utilisateurs");
+    setIsPopupVisible(false);
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[#20599E] font-poppins">
       {/* Logo en haut à gauche */}
@@ -275,9 +280,7 @@ const ModifierPagesss = () => {
         {isPopupVisible && (
           <PopupMessage
             title="L'utilisateur a été modifié avec succès !"
-            onClose={() => {
-              setIsPopupVisible(false);
-            }}
+            onClose={handleCloseSuccessPopup}
           />
         )}
       </div>
