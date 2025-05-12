@@ -756,7 +756,7 @@ const Intervention = () => {
 
               {/* Bouton Disponible (s'affiche seulement si "Technicien" est sélectionné) */}
               <Buttonrec
-                text="en attente"
+                text="En attente"
                 bgColor={filter === "en attente" ? "#F09C0A" : "#D1D5DB"} // yellow if selected, grey otherwise
                 textColor={filter === "en attente" ? "white" : "black"} // blacktext if selected, white otherwise
                 onClick={handleEnAttenteClick}

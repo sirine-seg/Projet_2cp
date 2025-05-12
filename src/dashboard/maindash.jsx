@@ -204,7 +204,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="w-full min-h-screen">
+    <div className="w-full min-h-screen font-poppins">
       <Header bleu />
       <div className="export-controls p-4 flex justify-end space-x-4">
         <div className="flex items-center justify-center space-x-4">

@@ -25,7 +25,6 @@ const Mestaches = () => {
   const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
   const [menuOpen, setMenuOpen] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [popupOpen, setPopupOpen] = useState(false);
   const navigate = useNavigate();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedInterventionid, setSelectedInterventionid] = useState(null);
@@ -430,7 +429,7 @@ const Mestaches = () => {
       {/* En-tête */}
       <div className="w-full bg-[#20599E] text-white pb-16 text-center">
         <h1 className="text-3xl sm:text-3xl md:text-2xl lg:text-4xl font-bold text-[#F4F4F4] mb-4 mt-2">
-          Mes taches
+          Mes tâches
         </h1>
         {/* bare de recherhce  */}
         <SearchBar

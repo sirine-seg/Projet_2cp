@@ -77,7 +77,7 @@ export default function TechnicianInterventionChart({
                 layout="vertical"
                 data={data}
                 barCategoryGap={8} // Slightly reduce bar category gap for mobile
-                margin={{ top: 10, right: 0, left: 60, bottom: 5 }} // Adjust margins for mobile
+                margin={{ top: 10, right: 0, left: 80, bottom: 5 }} // Adjust margins for mobile
               >
                 <YAxis
                   type="category"
