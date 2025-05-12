@@ -165,7 +165,7 @@ const Signaler = () => {
           </div>
 
           <WriteContainer
-            title="titre"
+            title="Titre"
             value={newIntervention.title}
             onChange={(val) =>
               setNewIntervention({ ...newIntervention, title: val })

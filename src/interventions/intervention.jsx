@@ -25,8 +25,6 @@ const Intervention = () => {
   const [filter, setFilter] = useState("Tout");
 
   const [visibleCount, setVisibleCount] = useState(9); // Nombre d'utilisateurs affichés
-  const [selectedUser, setSelectedUser] = useState(null); // Utilisateur sélectionné pour modification
-  const [showEditPopup, setShowEditPopup] = useState(false); // Affichage du pop-up
   const [menuOpen, setMenuOpen] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -497,13 +495,6 @@ const Intervention = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const handleEdit = (user) => {
-    //un  user en parametre
-    setSelectedUser(user); // Cela permet d'afficher ses informations dans le pop-up.
-    setShowEditPopup(true); //  affiche le pop-up.
-    setMenuOpen(null);
-  };
-
   const handleEnAttenteClick = () => {
     if (filter === "en attente") {
       setFilter("tout"); // or any default filter that means "no specific filter"
@@ -513,16 +504,10 @@ const Intervention = () => {
   };
 
   const [menuOpenId, setMenuOpenId] = useState(null);
-  const statusOptions = [
-    { label: "Modifier", value: "modifier" },
-    { label: "Changer le statut", value: "changer le statut" },
-    { label: "Cancel", value: "Cancel" },
-  ];
 
   // a function to get the menu options based on the status
   const getStatusOption = (status) => {
     const statusOptions = [
-      { label: "Modifier", value: "modifier" },
       { label: "Changer le statut", value: "changer le statut" },
       { label: "Cancel", value: "Cancel" },
     ];
@@ -560,9 +545,7 @@ const Intervention = () => {
   const handleOptionSelect = (value, id) => {
     setMenuOpenId(null); // close menu
 
-    if (value === "modifier") {
-      navigate(`/ModifierIntervention/${id}`);
-    } else if (value === "changer le statut") {
+    if (value === "changer le statut") {
       setSelectedInterventionid(id);
       setIsPopupVisible(true); // Assurez-vous que isPopupVisible est remis à true ici
     } else if (value === "Cancel") {

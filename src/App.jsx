@@ -14,7 +14,6 @@ import Modifie from './utilisateurs/modifier.jsx';
 import Intervention from './interventions/intervention.jsx';
 import Interventioninfo from './interventions/interventioninfo.jsx';
 import Affecterintervention from './interventions/affecterintervention.jsx';
-import Modifierintervention from './interventions/modifierintervention.jsx';
 import AjouterInterventionRedirect from './redirect/AjouterInterventionRedirect.jsx';
 
 import TacheTech from './interventions/tacheTech.jsx';
@@ -91,7 +90,6 @@ function App() {
 
         <Route path="/Interventions" element={< Intervention />} />
         <Route path="/AjouterIntervention" element={< AjouterInterventionRedirect userRole={userRole} />} />
-        <Route path="/ModifierIntervention/:id" element={< Modifierintervention />} />
         <Route path="/AffecterIntervention/:id_intervention" element={< Affecterintervention />} />
         <Route path="/DetailsIntervention/:id" element={< Interventioninfo />} />
 
