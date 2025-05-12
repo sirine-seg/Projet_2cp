@@ -19,10 +19,11 @@ const Filterbutton = ({
         transition-all duration-300
         cursor-pointer
         h-6 sm:h-8
+        shadow-sm
         ${selected ? 'text-white' : 'text-black'}
       `}
       style={{ 
-        backgroundColor: selected ? bgColor : '#F4F4F4',
+        backgroundColor: selected ? bgColor : '#FFFFFF',
         border: selected ? '1px solid transparent' : '1px solid transparent'
       }}
     >

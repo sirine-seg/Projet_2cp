@@ -408,6 +408,11 @@ const UsersPage = () => {
               {users.length}
             </div>
             <div className="flex items-center space-x-2 mt-2 sm:mt-0">
+              {/* View Toggle */}
+              <div className="h-9 flex items-center">
+                <ViewToggle onChange={(view) => setCurrentView(view)} />
+              </div>
+              
               {/* Bouton Disponible (s'affiche seulement si "Technicien" est sélectionné) */}
               {filter === "Technicien" && (
                 <Filterbutton
@@ -418,11 +423,6 @@ const UsersPage = () => {
                   className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-xs sm:text-sm md:text-base rounded-lg shadow-md hover:bg-gray-400"
                 />
               )}
-
-              {/* View Toggle */}
-              <div className="h-9 flex items-center">
-                <ViewToggle onChange={(view) => setCurrentView(view)} />
-              </div>
 
               {/* Bouton Ajouter */}
               {!isSmall && (

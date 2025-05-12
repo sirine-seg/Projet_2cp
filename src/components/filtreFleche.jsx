@@ -79,7 +79,7 @@ const Filtre = ({
     if (isActive) {
       return "bg-[#F09C0A] text-white"; // Orange au clic
     }
-    return "bg-[#F4F4F4] text-black"; // Blanc par défaut
+    return "bg-[#FFFFFF] text-black"; // Blanc par défaut
   };
   return (
     <div ref={containerRef} className="relative">
@@ -96,7 +96,6 @@ const Filtre = ({
           border-transparent
           hover:shadow-md
           h-6 sm:h-8
-          
           ${getButtonStyle()}
         `}
         onClick={() => {
