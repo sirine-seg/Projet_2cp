@@ -191,7 +191,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",  # frontend dev server
     # Add your frontend domain when deployed
-    "https://your-frontend-app.onrender.com",
+    "https://esi-track-front-deployement-2.vercel.app",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
