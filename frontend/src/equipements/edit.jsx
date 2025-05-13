@@ -35,7 +35,7 @@ const EditPage = () => {
   const [equipement, setEquipement] = useState(
     state?.equipement || {
       nom: "",
-      type: "",
+      typee: "",
       categorie: "",
       localisation: "",
       codebar: "",
@@ -109,9 +109,9 @@ const EditPage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        const typeOptions = data.map((type) => ({
-          value: type.id,
-          label: type.nom,
+        const typeOptions = data.map((typee) => ({
+          value: typee.id,
+          label: typee.nom,
         }));
         setTypes(typeOptions);
       })
@@ -205,7 +205,7 @@ const EditPage = () => {
 
     // Ajout des champs dans formData
     formData.append("nom", equipement.nom);
-    formData.append("type", equipement.type);
+    formData.append("typee", equipement.typee);
     formData.append("categorie", equipement.categorie);
     formData.append("localisation", equipement.localisation);
     formData.append("codebar", equipement.codebar);
@@ -334,10 +334,10 @@ const EditPage = () => {
               title="Type"
               options={types}
               selectedOption={
-                types.find((t) => t.value === equipement.type)?.label || ""
+                types.find((t) => t.value === equipement.typee)?.label || ""
               }
               onSelect={(value) =>
-                setEquipement({ ...equipement, type: value })
+                setEquipement({ ...equipement, typee: value })
               }
             />
           </div>

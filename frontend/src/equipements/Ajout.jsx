@@ -25,7 +25,7 @@ const AjoutPage = () => {
     localisation: "",
     codebar: "",
     code: "",
-    etat: "4",
+    etat: "1",
   });
 
   const navigate = useNavigate();
@@ -213,7 +213,7 @@ const AjoutPage = () => {
                 types.find((t) => t.value === newEquipement.typee)?.label || ""
               }
               onSelect={(value) =>
-                setNewEquipement({ ...newEquipement, type: value })
+                setNewEquipement({ ...newEquipement, typee: value })
               }
             />
           </div>
