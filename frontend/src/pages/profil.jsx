@@ -93,7 +93,7 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   if (error) {
