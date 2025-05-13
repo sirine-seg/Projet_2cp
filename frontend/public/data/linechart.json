@@ -1,0 +1,14 @@
+[
+  { "mois": "Jan", "Preventives": 11, "Curatives": 15 },
+  { "mois": "Fev", "Preventives": 3,  "Curatives": 25 },
+  { "mois": "Mar", "Preventives": 7,  "Curatives": 20 },
+  { "mois": "Avr", "Preventives": 5,  "Curatives": 32 },
+  { "mois": "Mai", "Preventives": 6,  "Curatives": 36 },
+  { "mois": "Jui", "Preventives": 4,  "Curatives": 18 },
+  { "mois": "Jul", "Preventives": 6,  "Curatives": 12 },
+  { "mois": "Aou", "Preventives": 3,  "Curatives": 14 },
+  { "mois": "Sep", "Preventives": 10, "Curatives": 22 },
+  { "mois": "Oct", "Preventives": 6,  "Curatives": 17 },
+  { "mois": "Nov", "Preventives": 3,  "Curatives": 29 },
+  { "mois": "Dec", "Preventives": 7,  "Curatives": 24 }
+]

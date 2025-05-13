@@ -1,0 +1,8 @@
+[
+    { "technician": "Tech1", "Terminee": 15, "EnCours": 10, "Annulee": 5 },
+    { "technician": "Tech2", "Terminee": 12, "EnCours": 6, "Annulee": 8 },
+    { "technician": "Tech3", "Terminee": 10, "EnCours": 12, "Annulee": 4 },
+    { "technician": "Tech4", "Terminee": 18, "EnCours": 9, "Annulee": 3 },
+    { "technician": "Tech5", "Terminee": 20, "EnCours": 10, "Annulee": 2 }
+  ]
+  
