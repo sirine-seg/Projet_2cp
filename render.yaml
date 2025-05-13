@@ -16,7 +16,13 @@ services:
       - key: ALLOWED_HOSTS
         value: ".onrender.com,esitrack-backend.onrender.com,esi-track-deployement.onrender.com"
       - key: FRONTEND_URL
-        value: "https://your-frontend-app.onrender.com/"
+        value: "https://esi-track-front-deployement-2.vercel.app/"
+      - key: GOOGLE_CLIENT_ID
+        value: "746021296567-ps7a99uvjgduiic1536edgo26tajha98.apps.googleusercontent.com"  # Replace with your actual client ID
+      - key: GOOGLE_CLIENT_SECRET
+        value: "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"  # Replace with your actual client secret
+      - key: CORS_ALLOW_CREDENTIALS
+        value: "true"
 
 databases:
   - name: esitrack-db
