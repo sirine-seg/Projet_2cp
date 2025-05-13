@@ -42,4 +42,5 @@ class GoogleCodeExchangeView(APIView):
             )
             set_jwt_access_cookie(res, access_token)
             set_jwt_refresh_cookie(res, refresh_token)
+            print(f"Response: {res.data}")
             return res
